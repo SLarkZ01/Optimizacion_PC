@@ -189,8 +189,9 @@ import { cn } from "@/lib/utils";
 
 ### Componentes shadcn/ui
 - Ubicación: `components/ui/`
-- **NO modificar directamente** - Son generados por shadcn CLI
-- Para personalizar, crear wrapper o usar `cn()` con clases adicionales
+- **Generados por shadcn CLI** - Evitar modificaciones extensivas
+- **SÍ modificar** cuando haya errores de lint/TypeScript (ej: interfaces vacías, funciones impuras)
+- Para personalizar estilos, crear wrapper o usar `cn()` con clases adicionales
 
 ### Constantes Centralizadas
 - Toda la data estática debe ir en `lib/constants.ts`
