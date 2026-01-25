@@ -1,6 +1,21 @@
-import * as Icons from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import {
+  CreditCard,
+  Calendar,
+  Wifi,
+  CheckCircle,
+  Circle,
+  type LucideIcon,
+} from "lucide-react";
 import { ProcessStep } from "@/lib/types";
+
+// Mapa de iconos usado en PROCESS_STEPS - evita importar todo lucide-react (bundle-barrel-imports)
+const ICON_MAP: Record<string, LucideIcon> = {
+  CreditCard,
+  Calendar,
+  Wifi,
+  CheckCircle,
+  Circle,
+};
 
 interface ProcessStepCardProps {
   step: ProcessStep;
@@ -8,7 +23,7 @@ interface ProcessStepCardProps {
 }
 
 const ProcessStepCard = ({ step, isLast }: ProcessStepCardProps) => {
-  const IconComponent = (Icons[step.icon as keyof typeof Icons] as LucideIcon) || Icons.Circle;
+  const IconComponent = ICON_MAP[step.icon] ?? Circle;
 
   return (
     <div className="relative flex flex-col items-center text-center group">

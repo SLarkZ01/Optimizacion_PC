@@ -4,16 +4,17 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/constants";
 
+// Pre-calcular URL de WhatsApp a nivel de módulo (rerender-lazy-state-init)
+const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+  SITE_CONFIG.contact.whatsappMessage
+)}`;
+
+const scrollToSection = (href: string) => {
+  const element = document.querySelector(href);
+  element?.scrollIntoView({ behavior: "smooth" });
+};
+
 const CTASection = () => {
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const whatsappUrl = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-    SITE_CONFIG.contact.whatsappMessage
-  )}`;
-
   return (
     <section className="py-20 md:py-32 relative overflow-hidden">
       {/* Background Gradient */}
@@ -47,7 +48,7 @@ const CTASection = () => {
               className="border-accent text-accent hover:bg-accent/10 text-lg px-8 py-6"
               asChild
             >
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 w-5 h-5" />
                 Consultar por WhatsApp
               </a>

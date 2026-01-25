@@ -13,7 +13,8 @@ const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
+    // Usar passive: true para mejor rendimiento de scroll (client-passive-event-listeners)
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

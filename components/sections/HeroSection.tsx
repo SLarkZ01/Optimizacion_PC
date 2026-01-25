@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { STATS } from "@/lib/constants";
 
-const HeroSection = () => {
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
+// Hoisting de función fuera del componente (rerender-functional-setstate)
+const scrollToSection = (href: string) => {
+  const element = document.querySelector(href);
+  element?.scrollIntoView({ behavior: "smooth" });
+};
 
+// Handler estable para evitar recrear en cada render
+const handlePricingClick = () => scrollToSection("#precios");
+
+const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Effects */}
@@ -45,7 +49,7 @@ const HeroSection = () => {
             <Button
               size="lg"
               className="gradient-primary hover:opacity-90 transition-opacity text-lg px-8 py-6"
-              onClick={() => scrollToSection("#precios")}
+              onClick={handlePricingClick}
             >
               Optimizar Mi PC
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -54,7 +58,7 @@ const HeroSection = () => {
               size="lg"
               variant="outline"
               className="border-primary/30 hover:bg-primary/10 text-lg px-8 py-6"
-              onClick={() => scrollToSection("#precios")}
+              onClick={handlePricingClick}
             >
               Ver Precios
             </Button>

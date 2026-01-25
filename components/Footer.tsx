@@ -1,15 +1,14 @@
-"use client";
-
 import { Monitor, Mail, MessageCircle, Twitter, Instagram, Youtube } from "lucide-react";
 import { SITE_CONFIG, NAV_LINKS } from "@/lib/constants";
+import ScrollLink from "@/components/ScrollLink";
 
+/**
+ * Footer como Server Component.
+ * La interactividad del scroll se delega a ScrollLink (cliente).
+ * Esto reduce el JavaScript enviado al cliente. (server-serialization)
+ */
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const whatsappUrl = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
     SITE_CONFIG.contact.whatsappMessage
@@ -67,12 +66,12 @@ const Footer = () => {
             <ul className="space-y-2">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <button
-                    onClick={() => scrollToSection(link.href)}
+                  <ScrollLink
+                    href={link.href}
                     className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                   >
                     {link.label}
-                  </button>
+                  </ScrollLink>
                 </li>
               ))}
             </ul>

@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { PRICING_PLANS, CURRENCIES, CurrencyCode } from "@/lib/constants";
 import PricingCard from "@/components/PricingCard";
 import { Button } from "@/components/ui/button";
 
+// Hoisting de array constante fuera del componente (rerender-memo-with-default-value)
+const CURRENCY_OPTIONS: CurrencyCode[] = ["USD", "COP", "EUR", "MXN", "ARS"];
+
 const PricingSection = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("USD");
 
-  const currencies: CurrencyCode[] = ["USD", "COP", "EUR", "MXN", "ARS"];
+  // Handler memoizado para evitar recrear en cada render (rerender-functional-setstate)
+  const handleCurrencyChange = useCallback((currency: CurrencyCode) => {
+    setSelectedCurrency(currency);
+  }, []);
 
   return (
     <section id="precios" className="py-20 md:py-32 bg-card/30">
@@ -26,12 +32,12 @@ const PricingSection = () => {
 
         {/* Currency Selector */}
         <div className="flex justify-center gap-2 mb-12 flex-wrap">
-          {currencies.map((currency) => (
+          {CURRENCY_OPTIONS.map((currency) => (
             <Button
               key={currency}
               variant={selectedCurrency === currency ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedCurrency(currency)}
+              onClick={() => handleCurrencyChange(currency)}
               className={
                 selectedCurrency === currency
                   ? "gradient-primary border-0"

@@ -1,14 +1,33 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Feature } from "@/lib/types";
-import * as Icons from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import {
+  Zap,
+  Shield,
+  Trash2,
+  Monitor,
+  Clock,
+  Lock,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
+
+// Mapa de iconos usado en FEATURES - evita importar todo lucide-react (bundle-barrel-imports)
+const ICON_MAP: Record<string, LucideIcon> = {
+  Zap,
+  Shield,
+  Trash2,
+  Monitor,
+  Clock,
+  Lock,
+  Star,
+};
 
 interface FeatureCardProps {
   feature: Feature;
 }
 
 const FeatureCard = ({ feature }: FeatureCardProps) => {
-  const IconComponent = (Icons[feature.icon as keyof typeof Icons] as LucideIcon) || Icons.Star;
+  const IconComponent = ICON_MAP[feature.icon] ?? Star;
 
   return (
     <Card className="bg-card/50 border-border hover:border-primary/50 transition-all duration-300 hover:scale-105 group">
