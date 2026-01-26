@@ -213,6 +213,20 @@
     background: hsl(var(--card) / 0.6);
     border: 1px solid hsl(var(--border) / 0.5);
   }
+
+  /* Performance optimization: content-visibility for long lists (rendering-content-visibility)
+   * This enables the browser to skip rendering off-screen content until needed
+   * Significant performance improvement for FAQ lists and testimonials */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+  }
+
+  /* For smaller list items like accordion items */
+  .content-auto-sm {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 80px;
+  }
 }
 
 /* Custom scrollbar for dark theme */

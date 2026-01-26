@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { Testimonial } from "@/lib/types";
@@ -18,7 +19,8 @@ const STAR_RATINGS: Record<number, React.ReactNode> = {
   5: <div className="flex gap-1 mb-3">{StarIcon}{StarIcon}{StarIcon}{StarIcon}{StarIcon}</div>,
 };
 
-const TestimonialCard = ({ testimonial }: TestimonialCardProps) => {
+// Memoizado para evitar re-renders innecesarios (rerender-memo)
+const TestimonialCard = memo(function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
     <Card className="bg-card/50 border-border hover:border-primary/30 transition-all duration-300">
       <CardContent className="p-6">
@@ -41,6 +43,6 @@ const TestimonialCard = ({ testimonial }: TestimonialCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
 
 export default TestimonialCard;

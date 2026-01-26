@@ -29,7 +29,7 @@ const FAQSection = () => {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-card border border-border rounded-lg px-6 data-[state=open]:border-primary/50"
+                className="bg-card border border-border rounded-lg px-6 data-[state=open]:border-primary/50 content-auto-sm"
               >
                 <AccordionTrigger className="text-left hover:no-underline py-6">
                   <span className="font-medium">{item.question}</span>

@@ -4,7 +4,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/constants";
 
-// Pre-calcular URL de WhatsApp a nivel de módulo (rerender-lazy-state-init)
+// Pre-calcular URL de WhatsApp a nivel de módulo (js-cache-function-results)
 const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
   SITE_CONFIG.contact.whatsappMessage
 )}`;
@@ -17,13 +17,20 @@ const scrollToSection = (href: string) => {
 // Hoisted handler to avoid recreation on each render
 const handlePricingClick = () => scrollToSection("#precios");
 
+// JSX estático hoisted fuera del componente (rendering-hoist-jsx)
+const BackgroundEffects = (
+  <>
+    <div className="absolute inset-0 gradient-primary opacity-10" />
+    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+  </>
+);
+
 const CTASection = () => {
   return (
     <section className="py-20 md:py-32 relative overflow-hidden">
       {/* Background Gradient */}
-      <div className="absolute inset-0 gradient-primary opacity-10" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+      {BackgroundEffects}
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
@@ -37,7 +44,7 @@ const CTASection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-<Button
+            <Button
               size="lg"
               className="gradient-primary hover:opacity-90 transition-opacity text-lg px-8 py-6"
               onClick={handlePricingClick}

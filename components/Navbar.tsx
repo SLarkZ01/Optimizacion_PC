@@ -100,8 +100,8 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
+        {/* Mobile Menu - Ternario explícito (rendering-conditional-render) */}
+        {isOpen ? (
           <div className="md:hidden glass border-t border-border/50 py-4 animate-fade-in">
             <div className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => (
@@ -113,7 +113,7 @@ const Navbar = () => {
                   {link.label}
                 </button>
               ))}
-<Button
+              <Button
                 onClick={handlePricingClick}
                 className="gradient-primary hover:opacity-90 transition-opacity mt-2"
               >
@@ -121,7 +121,7 @@ const Navbar = () => {
               </Button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </nav>
   );

@@ -14,13 +14,50 @@ const scrollToSection = (href: string) => {
 // Handler estable para evitar recrear en cada render
 const handlePricingClick = () => scrollToSection("#precios");
 
+// JSX estático hoisted fuera del componente (rendering-hoist-jsx)
+const BackgroundEffects = (
+  <>
+    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+  </>
+);
+
+// Trust badges hoisted (rendering-hoist-jsx)
+const TrustBadges = (
+  <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <Zap className="w-5 h-5 text-primary" />
+      <span className="text-sm">Velocidad garantizada</span>
+    </div>
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <Shield className="w-5 h-5 text-accent" />
+      <span className="text-sm">100% Seguro</span>
+    </div>
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <CreditCard className="w-5 h-5 text-secondary" />
+      <span className="text-sm">Pago protegido</span>
+    </div>
+  </div>
+);
+
+// Scroll indicator hoisted (rendering-hoist-jsx)
+const ScrollIndicator = (
+  <div
+    className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
+    aria-hidden="true"
+  >
+    <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
+      <div className="w-1 h-2 rounded-full bg-muted-foreground/50" />
+    </div>
+  </div>
+);
+
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
+      {BackgroundEffects}
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -65,20 +102,7 @@ const HeroSection = () => {
           </div>
 
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 md:gap-12">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Zap className="w-5 h-5 text-primary" />
-              <span className="text-sm">Velocidad garantizada</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Shield className="w-5 h-5 text-accent" />
-              <span className="text-sm">100% Seguro</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <CreditCard className="w-5 h-5 text-secondary" />
-              <span className="text-sm">Pago protegido</span>
-            </div>
-          </div>
+          {TrustBadges}
 
           {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-4 max-w-md mx-auto">
@@ -96,15 +120,8 @@ const HeroSection = () => {
         </div>
       </div>
 
-{/* Scroll Indicator */}
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
-        aria-hidden="true"
-      >
-        <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
-          <div className="w-1 h-2 rounded-full bg-muted-foreground/50" />
-        </div>
-      </div>
+      {/* Scroll Indicator */}
+      {ScrollIndicator}
     </section>
   );
 };

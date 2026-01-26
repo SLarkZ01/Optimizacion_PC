@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,8 @@ interface PricingCardProps {
   currencyCode: string;
 }
 
-const PricingCard = ({ plan, currency, currencyCode }: PricingCardProps) => {
+// Memoizado para evitar re-renders cuando cambian otros planes (rerender-memo)
+const PricingCard = memo(function PricingCard({ plan, currency, currencyCode }: PricingCardProps) {
   const convertedPrice = Math.round(plan.priceUSD * currency.rate);
   
   const formatPrice = (price: number) => {
@@ -30,13 +32,14 @@ const PricingCard = ({ plan, currency, currencyCode }: PricingCardProps) => {
           : "border-border bg-card/50 hover:border-primary/50"
       )}
     >
-      {plan.popular && (
+      {/* Ternario explícito en lugar de && (rendering-conditional-render) */}
+      {plan.popular ? (
         <div className="absolute top-0 right-0">
           <Badge className="rounded-none rounded-bl-lg gradient-primary text-primary-foreground border-0">
             Más Popular
           </Badge>
         </div>
-      )}
+      ) : null}
 
       <CardHeader className="text-center pb-2">
         <CardTitle className="text-2xl">{plan.name}</CardTitle>
@@ -85,6 +88,6 @@ const PricingCard = ({ plan, currency, currencyCode }: PricingCardProps) => {
       </CardFooter>
     </Card>
   );
-};
+});
 
 export default PricingCard;

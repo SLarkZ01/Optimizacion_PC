@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Feature } from "@/lib/types";
 import {
@@ -26,7 +27,8 @@ interface FeatureCardProps {
   feature: Feature;
 }
 
-const FeatureCard = ({ feature }: FeatureCardProps) => {
+// Memoizado para evitar re-renders innecesarios (rerender-memo)
+const FeatureCard = memo(function FeatureCard({ feature }: FeatureCardProps) {
   const IconComponent = ICON_MAP[feature.icon] ?? Star;
 
   return (
@@ -40,6 +42,6 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
 
 export default FeatureCard;

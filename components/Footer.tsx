@@ -7,13 +7,17 @@ import ScrollLink from "@/components/ScrollLink";
  * La interactividad del scroll se delega a ScrollLink (cliente).
  * Esto reduce el JavaScript enviado al cliente. (server-serialization)
  */
+
+// Pre-calcular URL de WhatsApp a nivel de módulo (js-cache-function-results)
+const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+  SITE_CONFIG.contact.whatsappMessage
+)}`;
+
+// Pre-calcular el año actual a nivel de módulo para SSR (js-cache-function-results)
+// En producción esto se ejecuta una vez por build/revalidación
+const CURRENT_YEAR = new Date().getFullYear();
+
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  const whatsappUrl = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-    SITE_CONFIG.contact.whatsappMessage
-  )}`;
-
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-12">
@@ -92,7 +96,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href={whatsappUrl}
+                  href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
@@ -108,7 +112,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="pt-8 border-t border-border text-center">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} {SITE_CONFIG.name}. Todos los derechos reservados.
+            © {CURRENT_YEAR} {SITE_CONFIG.name}. Todos los derechos reservados.
           </p>
         </div>
       </div>
