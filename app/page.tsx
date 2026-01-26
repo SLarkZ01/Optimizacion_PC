@@ -1,13 +1,32 @@
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import AboutSection from "@/components/sections/AboutSection";
-import ProcessSection from "@/components/sections/ProcessSection";
-import PricingSection from "@/components/sections/PricingSection";
-import TestimonialsSection from "@/components/sections/TestimonialsSection";
-import FAQSection from "@/components/sections/FAQSection";
-import CTASection from "@/components/sections/CTASection";
+
+// Dynamic imports for below-the-fold sections (improves initial bundle size)
+const ProcessSection = dynamic(
+  () => import("@/components/sections/ProcessSection"),
+  { loading: () => <div className="py-20 md:py-32 animate-pulse bg-muted/10" /> }
+);
+const PricingSection = dynamic(
+  () => import("@/components/sections/PricingSection"),
+  { loading: () => <div className="py-20 md:py-32 animate-pulse bg-card/30" /> }
+);
+const TestimonialsSection = dynamic(
+  () => import("@/components/sections/TestimonialsSection"),
+  { loading: () => <div className="py-20 md:py-32 animate-pulse bg-muted/10" /> }
+);
+const FAQSection = dynamic(
+  () => import("@/components/sections/FAQSection"),
+  { loading: () => <div className="py-20 md:py-32 animate-pulse bg-card/30" /> }
+);
+const CTASection = dynamic(
+  () => import("@/components/sections/CTASection"),
+  { loading: () => <div className="py-20 md:py-32 animate-pulse bg-muted/10" /> }
+);
 
 export default function Home() {
   return (
@@ -17,11 +36,13 @@ export default function Home() {
         <HeroSection />
         <FeaturesSection />
         <AboutSection />
-        <ProcessSection />
-        <PricingSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <CTASection />
+        <Suspense fallback={<div className="py-20 md:py-32" />}>
+          <ProcessSection />
+          <PricingSection />
+          <TestimonialsSection />
+          <FAQSection />
+          <CTASection />
+        </Suspense>
       </main>
       <Footer />
     </div>

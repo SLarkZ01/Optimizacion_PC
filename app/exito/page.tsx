@@ -1,15 +1,15 @@
-"use client";
-
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SITE_CONFIG } from "@/lib/constants";
 
+// Pre-calculate WhatsApp URL at module level (Server Component optimization)
+const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+  "Hola! Acabo de realizar el pago para optimizar mi PC."
+)}`;
+
 export default function ExitoPage() {
-  const whatsappUrl = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-    "Hola! Acabo de realizar el pago para optimizar mi PC."
-  )}`;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -67,7 +67,7 @@ export default function ExitoPage() {
               className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
               asChild
             >
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                 Agendar por WhatsApp
                 <ArrowRight className="ml-2 w-4 h-4" />
               </a>

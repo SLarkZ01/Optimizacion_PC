@@ -31,13 +31,14 @@ const PricingSection = () => {
         </div>
 
         {/* Currency Selector */}
-        <div className="flex justify-center gap-2 mb-12 flex-wrap">
+        <div className="flex justify-center gap-2 mb-12 flex-wrap" role="group" aria-label="Seleccionar moneda">
           {CURRENCY_OPTIONS.map((currency) => (
             <Button
               key={currency}
               variant={selectedCurrency === currency ? "default" : "outline"}
               size="sm"
               onClick={() => handleCurrencyChange(currency)}
+              aria-pressed={selectedCurrency === currency}
               className={
                 selectedCurrency === currency
                   ? "gradient-primary border-0"

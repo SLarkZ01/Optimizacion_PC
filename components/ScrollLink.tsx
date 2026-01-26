@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 interface ScrollLinkProps {
   href: string;
   children: React.ReactNode;
@@ -18,7 +20,7 @@ const ScrollLink = ({ href, children, className }: ScrollLinkProps) => {
   };
 
   return (
-    <button onClick={scrollToSection} className={className}>
+    <button onClick={scrollToSection} className={cn("cursor-pointer", className)}>
       {children}
     </button>
   );

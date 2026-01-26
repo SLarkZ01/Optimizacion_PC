@@ -14,6 +14,9 @@ const scrollToSection = (href: string) => {
   element?.scrollIntoView({ behavior: "smooth" });
 };
 
+// Hoisted handler to avoid recreation on each render
+const handlePricingClick = () => scrollToSection("#precios");
+
 const CTASection = () => {
   return (
     <section className="py-20 md:py-32 relative overflow-hidden">
@@ -34,10 +37,10 @@ const CTASection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
+<Button
               size="lg"
               className="gradient-primary hover:opacity-90 transition-opacity text-lg px-8 py-6"
-              onClick={() => scrollToSection("#precios")}
+              onClick={handlePricingClick}
             >
               Optimizar Ahora
               <ArrowRight className="ml-2 w-5 h-5" />

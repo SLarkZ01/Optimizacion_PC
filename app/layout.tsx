@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -42,8 +43,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <TooltipProvider>
           {children}
-          <Toaster />
-          <Sonner />
+          <Suspense fallback={null}>
+            <Toaster />
+            <Sonner />
+          </Suspense>
         </TooltipProvider>
       </body>
     </html>

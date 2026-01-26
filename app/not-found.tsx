@@ -1,8 +1,7 @@
-"use client";
-
 import Link from "next/link";
-import { Home, ArrowLeft } from "lucide-react";
+import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
 
 export default function NotFound() {
   return (
@@ -37,10 +36,7 @@ export default function NotFound() {
               Ir al Inicio
             </Link>
           </Button>
-          <Button variant="outline" onClick={() => window.history.back()}>
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Volver Atras
-          </Button>
+          <BackButton />
         </div>
       </div>
     </div>
