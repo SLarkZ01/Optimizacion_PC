@@ -1,7 +1,9 @@
-// PCOptimize Type Definitions
+// Definiciones de tipos de PCOptimize
+
+export type PlanId = "basic" | "gamer" | "premium";
 
 export interface PricingPlan {
-  id: string;
+  id: PlanId;
   name: string;
   priceUSD: number;
   duration: string;

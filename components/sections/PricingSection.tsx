@@ -6,7 +6,7 @@ import PricingCard from "@/components/cards/PricingCard";
 import { Button } from "@/components/ui/button";
 
 // Hoisting de array constante fuera del componente (rerender-memo-with-default-value)
-const CURRENCY_OPTIONS: CurrencyCode[] = ["USD", "COP", "EUR", "MXN", "ARS"];
+const CURRENCY_OPTIONS: CurrencyCode[] = ["USD", "COP", "MXN", "ARS", "CLP", "PEN", "EUR"];
 
 const PricingSection = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("USD");
@@ -19,7 +19,7 @@ const PricingSection = () => {
   return (
     <section id="precios" className="py-20 md:py-32 bg-card/30">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Encabezado de sección */}
         <div className="text-center max-w-2xl mx-auto mb-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Planes y <span className="gradient-text">Precios</span>
@@ -30,7 +30,7 @@ const PricingSection = () => {
           </p>
         </div>
 
-        {/* Currency Selector */}
+        {/* Selector de moneda */}
         <div className="flex justify-center gap-2 mb-12 flex-wrap" role="group" aria-label="Seleccionar moneda">
           {CURRENCY_OPTIONS.map((currency) => (
             <Button
@@ -50,8 +50,8 @@ const PricingSection = () => {
           ))}
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {/* Tarjetas de precios - 3 columnas en escritorio */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {PRICING_PLANS.map((plan) => (
             <PricingCard
               key={plan.id}
@@ -62,8 +62,14 @@ const PricingSection = () => {
           ))}
         </div>
 
-        {/* Trust Note */}
-        <p className="text-center text-muted-foreground text-sm mt-8">
+        {/* Nota de BIOS */}
+        <p className="text-center text-muted-foreground text-xs mt-6">
+          *Optimizaciones de BIOS disponibles en PCs de escritorio. En laptops
+          estas opciones suelen estar bloqueadas por el fabricante.
+        </p>
+
+        {/* Nota de confianza */}
+        <p className="text-center text-muted-foreground text-sm mt-4">
           🔒 Pagos procesados de forma segura por Stripe. No almacenamos datos
           de tu tarjeta.
         </p>

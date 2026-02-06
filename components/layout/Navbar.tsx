@@ -19,24 +19,24 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Memoized handler to avoid recreation
+  // Handler memoizado para evitar recreación
   const handleNavClick = useCallback((href: string) => {
     setIsOpen(false);
     scrollToSection(href);
   }, []);
 
-  // Stable handler for pricing section
+  // Handler estable para sección de precios
   const handlePricingClick = useCallback(() => {
     handleNavClick("#precios");
   }, [handleNavClick]);
 
-  // Stable handler for logo click
+  // Handler estable para clic en logo
   const handleLogoClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Toggle mobile menu
+  // Alternar menú móvil
   const toggleMenu = useCallback(() => {
     setIsOpen(prev => !prev);
   }, []);
@@ -61,7 +61,7 @@ const Navbar = () => {
             <span className="gradient-text">{SITE_CONFIG.name}</span>
           </a>
 
-          {/* Desktop Navigation */}
+          {/* Navegación de escritorio */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
               <button
@@ -74,7 +74,7 @@ const Navbar = () => {
             ))}
           </div>
 
-{/* CTA Button */}
+{/* Botón de acción */}
           <div className="hidden md:block">
             <Button
               onClick={handlePricingClick}
@@ -84,7 +84,7 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Botón menú móvil */}
           <button
             className="md:hidden p-2 text-foreground cursor-pointer"
             onClick={toggleMenu}
@@ -95,7 +95,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu - Ternario explícito (rendering-conditional-render) */}
+        {/* Menú móvil - Ternario explícito (rendering-conditional-render) */}
         {isOpen ? (
           <div className="md:hidden glass border-t border-border/50 py-4 animate-fade-in">
             <div className="flex flex-col gap-4">

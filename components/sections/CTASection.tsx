@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { scrollToSection } from "@/lib/utils";
 
-// Hoisted handler to avoid recreation on each render
+// Handler hoisted para evitar recreación en cada render
 const handlePricingClick = () => scrollToSection("#precios");
 
 // JSX estático hoisted fuera del componente (rendering-hoist-jsx)
@@ -20,7 +20,7 @@ const BackgroundEffects = (
 const CTASection = () => {
   return (
     <section className="py-20 md:py-32 relative overflow-hidden">
-      {/* Background Gradient */}
+      {/* Gradiente de fondo */}
       {BackgroundEffects}
 
       <div className="container mx-auto px-4 relative z-10">

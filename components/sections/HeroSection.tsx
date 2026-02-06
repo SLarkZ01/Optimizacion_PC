@@ -18,7 +18,7 @@ const BackgroundEffects = (
   </>
 );
 
-// Trust badges hoisted (rendering-hoist-jsx)
+// Badges de confianza hoisted (rendering-hoist-jsx)
 const TrustBadges = (
   <div className="flex flex-wrap justify-center gap-6 md:gap-12">
     <div className="flex items-center gap-2 text-muted-foreground">
@@ -36,7 +36,7 @@ const TrustBadges = (
   </div>
 );
 
-// Scroll indicator hoisted (rendering-hoist-jsx)
+// Indicador de scroll hoisted (rendering-hoist-jsx)
 const ScrollIndicator = (
   <div
     className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
@@ -51,12 +51,12 @@ const ScrollIndicator = (
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background Effects */}
+      {/* Efectos de fondo */}
       {BackgroundEffects}
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
+          {/* Insignia */}
           <Badge
             variant="outline"
             className="mb-6 px-4 py-2 border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
@@ -64,19 +64,19 @@ const HeroSection = () => {
             🚀 +100 PCs optimizadas
           </Badge>
 
-          {/* Headline */}
+          {/* Título principal */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             Tu PC como nueva{" "}
             <span className="gradient-text">en 30 minutos</span>
           </h1>
 
-          {/* Subheadline */}
+          {/* Subtítulo */}
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Servicio profesional de optimización remota. Limpiamos, aceleramos y
             protegemos tu computadora sin que salgas de casa.
           </p>
 
-          {/* CTA Buttons */}
+          {/* Botones de acción */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button
               size="lg"
@@ -96,10 +96,10 @@ const HeroSection = () => {
             </Button>
           </div>
 
-          {/* Trust Badges */}
+          {/* Badges de confianza */}
           {TrustBadges}
 
-          {/* Stats */}
+          {/* Estadísticas */}
           <div className="mt-16 grid grid-cols-3 gap-4 max-w-md mx-auto">
             {STATS.map((stat, index) => (
               <div key={index} className="text-center">
@@ -115,7 +115,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Indicador de scroll */}
       {ScrollIndicator}
     </section>
   );

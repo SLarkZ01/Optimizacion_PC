@@ -5,7 +5,7 @@ const ProcessSection = () => {
   return (
     <section id="proceso" className="py-20 md:py-32">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Encabezado de sección */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             ¿Cómo <span className="gradient-text">funciona</span>?
@@ -15,7 +15,7 @@ const ProcessSection = () => {
           </p>
         </div>
 
-        {/* Process Steps */}
+        {/* Pasos del proceso */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
           {PROCESS_STEPS.map((step, index) => (
             <ProcessStepCard

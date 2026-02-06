@@ -57,7 +57,11 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 │   ├── types.ts            # Definiciones de tipos TypeScript
 │   ├── constants.ts        # Constantes y configuración del sitio
 │   ├── icons.ts            # ICON_MAP centralizado (Lucide icons por nombre)
-│   └── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
+│   ├── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
+│   ├── supabase.ts         # Clientes Supabase (browser, server, admin)
+│   └── database.types.ts   # Tipos TypeScript del esquema de DB
+├── supabase/
+│   └── schema.sql          # SQL para crear tablas (customers, purchases, bookings)
 └── public/                 # Archivos estáticos (favicon.ico)
 ```
 
@@ -76,12 +80,14 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 | TypeScript       | ^5       | Strict mode habilitado                   |
 | Tailwind CSS     | ^4       | v4 con PostCSS (sin tailwind.config)     |
 | shadcn/ui        | new-york | 6 componentes UI (accordion, badge, button, card, sonner, tooltip) |
+| Supabase         | 2.95.2   | @supabase/supabase-js + @supabase/ssr    |
 | Bun              | -        | Gestor de paquetes (usar `bun` no `npm`) |
 
 ### Librerías Principales
 - **UI**: Radix UI primitives, Lucide React (iconos)
 - **Forms**: React Hook Form + Zod (validación)
 - **Notificaciones**: Sonner (toasts)
+- **Base de Datos**: Supabase (PostgreSQL) con clientes browser/server/admin
 - **Utilidades**: clsx, tailwind-merge, class-variance-authority
 
 ---

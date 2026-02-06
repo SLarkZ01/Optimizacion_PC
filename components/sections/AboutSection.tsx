@@ -6,7 +6,7 @@ const AboutSection = () => {
     <section id="sobre-mi" className="py-20 md:py-32 bg-card/30">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Image / Avatar Side */}
+          {/* Lado de imagen / avatar */}
           <div className="relative">
             <div className="aspect-square max-w-md mx-auto rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 p-1">
               <div className="w-full h-full rounded-2xl bg-card flex items-center justify-center">
@@ -23,7 +23,7 @@ const AboutSection = () => {
               </div>
             </div>
 
-            {/* Floating Stats */}
+            {/* Estadísticas flotantes */}
             <Card className="absolute -bottom-4 -right-4 md:right-0 bg-card border-primary/30 glow-primary">
               <CardContent className="p-4 flex items-center gap-3">
                 <Award className="w-8 h-8 text-primary" />
@@ -35,7 +35,7 @@ const AboutSection = () => {
             </Card>
           </div>
 
-          {/* Content Side */}
+          {/* Lado de contenido */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Hola, soy <span className="gradient-text">Thomas</span>
@@ -53,7 +53,7 @@ const AboutSection = () => {
               presentación.
             </p>
 
-            {/* Trust Points */}
+            {/* Puntos de confianza */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 text-accent" />

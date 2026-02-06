@@ -17,7 +17,7 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode }: 
   const convertedPrice = Math.round(plan.priceUSD * currency.rate);
   
   const formatPrice = (price: number) => {
-    if (currencyCode === "COP" || currencyCode === "ARS") {
+    if (currencyCode === "COP" || currencyCode === "ARS" || currencyCode === "CLP") {
       return price.toLocaleString();
     }
     return price.toString();
@@ -54,7 +54,7 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode }: 
             </span>
             <span className={cn(
               "font-bold",
-              plan.popular ? "text-5xl gradient-text" : "text-5xl"
+              plan.popular ? "text-4xl md:text-5xl gradient-text" : "text-4xl md:text-5xl"
             )}>
               {formatPrice(convertedPrice)}
             </span>

@@ -18,7 +18,7 @@ const Footer = () => {
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand */}
+          {/* Marca */}
           <div className="md:col-span-2">
             <a href="#" className="flex items-center gap-2 text-xl font-bold mb-4">
               <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
@@ -60,7 +60,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Navegación */}
           <div>
             <h4 className="font-semibold mb-4">Navegación</h4>
             <ul className="space-y-2">
@@ -77,7 +77,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contacto */}
           <div>
             <h4 className="font-semibold mb-4">Contacto</h4>
             <ul className="space-y-3">
@@ -105,7 +105,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Copyright */}
+        {/* Derechos de autor */}
         <div className="pt-8 border-t border-border text-center">
           <p className="text-muted-foreground text-sm">
             © {CURRENT_YEAR} {SITE_CONFIG.name}. Todos los derechos reservados.

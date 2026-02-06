@@ -13,12 +13,12 @@ const ProcessStepCard = memo(function ProcessStepCard({ step, isLast }: ProcessS
 
   return (
     <div className="relative flex flex-col items-center text-center group">
-      {/* Connector Line - usar ternario explícito (rendering-conditional-render) */}
+      {/* Línea conectora - usar ternario explícito (rendering-conditional-render) */}
       {isLast ? null : (
         <div className="hidden md:block absolute top-10 left-[calc(50%+2rem)] w-[calc(100%-4rem)] h-0.5 bg-gradient-to-r from-primary to-secondary opacity-30" />
       )}
 
-      {/* Step Number */}
+      {/* Número de paso */}
       <div className="relative mb-4">
         <div className="w-20 h-20 rounded-2xl gradient-primary flex items-center justify-center group-hover:glow-primary transition-all duration-300">
           <IconComponent className="w-8 h-8 text-primary-foreground" />

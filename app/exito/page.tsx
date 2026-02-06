@@ -4,37 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
-// Pre-calculate WhatsApp URL at module level (Server Component optimization)
+// Pre-calcular URL de WhatsApp a nivel de módulo (optimización de Server Component)
 const WHATSAPP_URL = getWhatsAppUrl("Hola! Acabo de realizar el pago para optimizar mi PC.");
 
 export default function ExitoPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      {/* Background Effects */}
+      {/* Efectos de fondo */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
 
       <Card className="relative z-10 max-w-lg w-full bg-card border-accent/30">
         <CardContent className="p-8 text-center">
-          {/* Success Icon */}
+          {/* Ícono de éxito */}
           <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-accent" />
           </div>
 
-          {/* Title */}
+          {/* Título */}
           <h1 className="text-3xl font-bold mb-4">
             Pago <span className="text-accent">Exitoso</span>!
           </h1>
 
-          {/* Message */}
+          {/* Mensaje */}
           <p className="text-muted-foreground mb-6">
             Gracias por tu compra. Hemos recibido tu pago correctamente. En
             breve recibiras un correo con los detalles de tu pedido.
           </p>
 
-          {/* Next Steps */}
+          {/* Próximos pasos */}
           <div className="bg-muted/50 rounded-lg p-4 mb-8 text-left">
             <h3 className="font-semibold mb-3">Proximos pasos:</h3>
             <ol className="space-y-2 text-sm text-muted-foreground">
@@ -59,7 +59,7 @@ export default function ExitoPage() {
             </ol>
           </div>
 
-          {/* Action Buttons */}
+          {/* Botones de acción */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"

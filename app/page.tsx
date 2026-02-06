@@ -6,7 +6,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import AboutSection from "@/components/sections/AboutSection";
 
-// Dynamic imports for below-the-fold sections (improves initial bundle size)
+// Imports dinámicos para secciones debajo del fold (mejora tamaño del bundle inicial)
 const ProcessSection = dynamic(
   () => import("@/components/sections/ProcessSection"),
   { loading: () => <div className="py-20 md:py-32 animate-pulse bg-muted/10" /> }

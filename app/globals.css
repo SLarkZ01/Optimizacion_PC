@@ -3,15 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* PCOptimize Design System - Dark Tech Theme */
-/* Tailwind v4 compatible with CSS custom properties */
+/* Sistema de Diseño PCOptimize - Tema Tech Oscuro */
+/* Compatible con Tailwind v4 usando propiedades CSS personalizadas */
 
 @theme inline {
-  /* Font families */
+  /* Familias tipográficas */
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 
-  /* Colors mapped to CSS variables */
+  /* Colores mapeados a variables CSS */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -32,14 +32,14 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  /* Chart colors */
+  /* Colores de gráficos */
   --color-chart-1: hsl(var(--chart-1));
   --color-chart-2: hsl(var(--chart-2));
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
 
-  /* Sidebar colors */
+  /* Colores de barra lateral */
   --color-sidebar: hsl(var(--sidebar));
   --color-sidebar-foreground: hsl(var(--sidebar-foreground));
   --color-sidebar-primary: hsl(var(--sidebar-primary));
@@ -49,7 +49,7 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  /* Border radius */
+  /* Radio de borde */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -59,55 +59,55 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* Dark theme as default for tech landing */
+/* Tema oscuro como predeterminado para landing tech */
 :root {
   --radius: 0.75rem;
 
-  /* Background & Foreground - Dark tech theme */
+  /* Fondo y texto - Tema tech oscuro */
   --background: 222 47% 7%;
   --foreground: 210 40% 98%;
 
-  /* Card */
+  /* Tarjeta */
   --card: 222 47% 11%;
   --card-foreground: 210 40% 98%;
 
-  /* Popover */
+  /* Popover (emergente) */
   --popover: 222 47% 11%;
   --popover-foreground: 210 40% 98%;
 
-  /* Primary - Blue #3B82F6 */
+  /* Primario - Azul #3B82F6 */
   --primary: 217 91% 60%;
   --primary-foreground: 222 47% 7%;
 
-  /* Secondary - Purple #8B5CF6 */
+  /* Secundario - Morado #8B5CF6 */
   --secondary: 258 90% 66%;
   --secondary-foreground: 210 40% 98%;
 
-  /* Muted */
+  /* Atenuado */
   --muted: 217 33% 17%;
   --muted-foreground: 215 20% 65%;
 
-  /* Accent - Green #10B981 */
+  /* Acento - Verde #10B981 */
   --accent: 160 84% 39%;
   --accent-foreground: 222 47% 7%;
 
-  /* Destructive */
+  /* Destructivo */
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
 
-  /* Border, Input, Ring */
+  /* Borde, Input, Anillo */
   --border: 217 33% 17%;
   --input: 217 33% 17%;
   --ring: 217 91% 60%;
 
-  /* Chart colors */
+  /* Colores de gráficos */
   --chart-1: 217 91% 60%;
   --chart-2: 258 90% 66%;
   --chart-3: 160 84% 39%;
   --chart-4: 43 96% 56%;
   --chart-5: 0 84% 60%;
 
-  /* Sidebar */
+  /* Barra lateral */
   --sidebar: 222 47% 7%;
   --sidebar-foreground: 210 40% 98%;
   --sidebar-primary: 217 91% 60%;
@@ -117,14 +117,14 @@
   --sidebar-border: 217 33% 17%;
   --sidebar-ring: 217 91% 60%;
 
-  /* Custom tokens for PCOptimize */
+  /* Tokens personalizados para PCOptimize */
   --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(258 90% 66%));
   --gradient-accent: linear-gradient(135deg, hsl(160 84% 39%), hsl(217 91% 60%));
   --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
   --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
 }
 
-/* Light theme */
+/* Tema claro */
 .light {
   --background: 0 0% 100%;
   --foreground: 222 47% 11%;
@@ -179,7 +179,7 @@
 }
 
 @layer utilities {
-  /* PCOptimize custom utilities */
+  /* Utilidades personalizadas de PCOptimize */
   .gradient-primary {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
   }
@@ -214,22 +214,22 @@
     border: 1px solid hsl(var(--border) / 0.5);
   }
 
-  /* Performance optimization: content-visibility for long lists (rendering-content-visibility)
-   * This enables the browser to skip rendering off-screen content until needed
-   * Significant performance improvement for FAQ lists and testimonials */
+  /* Optimización de rendimiento: content-visibility para listas largas
+   * Permite al navegador omitir el renderizado de contenido fuera de pantalla
+   * Mejora significativa de rendimiento para FAQ y testimonios */
   .content-auto {
     content-visibility: auto;
     contain-intrinsic-size: auto 200px;
   }
 
-  /* For smaller list items like accordion items */
+  /* Para elementos más pequeños como ítems de acordeón */
   .content-auto-sm {
     content-visibility: auto;
     contain-intrinsic-size: auto 80px;
   }
 }
 
-/* Custom scrollbar for dark theme */
+/* Scrollbar personalizado para tema oscuro */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -247,7 +247,7 @@
   background: hsl(var(--muted-foreground));
 }
 
-/* Animations */
+/* Animaciones */
 @keyframes fade-in {
   from {
     opacity: 0;

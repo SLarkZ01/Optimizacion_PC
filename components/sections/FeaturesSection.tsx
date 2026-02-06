@@ -5,7 +5,7 @@ const FeaturesSection = () => {
   return (
     <section id="servicios" className="py-20 md:py-32">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Encabezado de sección */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             ¿Por qué elegir{" "}
@@ -17,7 +17,7 @@ const FeaturesSection = () => {
           </p>
         </div>
 
-        {/* Features Grid */}
+        {/* Grilla de servicios */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {FEATURES.map((feature, index) => (
             <FeatureCard key={index} feature={feature} />
