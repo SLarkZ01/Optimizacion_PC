@@ -1,5 +1,5 @@
 import { PROCESS_STEPS } from "@/lib/constants";
-import ProcessStepCard from "@/components/ProcessStepCard";
+import ProcessStepCard from "@/components/cards/ProcessStepCard";
 
 const ProcessSection = () => {
   return (

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -44,7 +43,6 @@ export default function RootLayout({
         <TooltipProvider>
           {children}
           <Suspense fallback={null}>
-            <Toaster />
             <Sonner />
           </Suspense>
         </TooltipProvider>

@@ -2,7 +2,7 @@
 
 > **Nota de mantenimiento**: Este archivo debe actualizarse cuando cambien las convenciones,
 > se agreguen tests, o evolucione el stack tecnológico del proyecto.
-> Última actualización: Enero 2026
+> Última actualización: Febrero 2026
 
 ## Descripción del Proyecto
 
@@ -41,21 +41,24 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 
 ```
 ├── app/                    # App Router de Next.js
-│   ├── layout.tsx          # Layout raíz con providers globales
+│   ├── layout.tsx          # Layout raíz con providers globales (Sonner)
 │   ├── page.tsx            # Página principal (landing)
 │   ├── globals.css         # Estilos globales y variables CSS
 │   ├── exito/              # Ruta /exito (página de confirmación)
 │   └── not-found.tsx       # Página 404 personalizada
 ├── components/
-│   ├── ui/                 # Componentes shadcn/ui (NO MODIFICAR DIRECTAMENTE)
+│   ├── layout/             # Componentes de layout (Navbar, Footer)
 │   ├── sections/           # Secciones de la landing (Hero, Features, etc.)
-│   └── *.tsx               # Componentes reutilizables (Cards, Navbar, Footer)
-├── hooks/                  # Custom React hooks
+│   ├── cards/              # Cards de dominio (FeatureCard, PricingCard, etc.)
+│   ├── shared/             # Componentes genéricos reutilizables (BackButton, ScrollLink)
+│   └── ui/                 # Componentes shadcn/ui (accordion, badge, button, card, sonner, tooltip)
 ├── lib/
-│   ├── utils.ts            # Utilidad cn() para clases de Tailwind
+│   ├── utils.ts            # Utilidades: cn() + scrollToSection()
 │   ├── types.ts            # Definiciones de tipos TypeScript
-│   └── constants.ts        # Constantes y configuración del sitio
-└── public/                 # Archivos estáticos
+│   ├── constants.ts        # Constantes y configuración del sitio
+│   ├── icons.ts            # ICON_MAP centralizado (Lucide icons por nombre)
+│   └── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
+└── public/                 # Archivos estáticos (favicon.ico)
 ```
 
 ### Path Alias
@@ -72,7 +75,7 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 | React            | 19.2.3   | React 19 con nuevas características      |
 | TypeScript       | ^5       | Strict mode habilitado                   |
 | Tailwind CSS     | ^4       | v4 con PostCSS (sin tailwind.config)     |
-| shadcn/ui        | new-york | 50+ componentes UI basados en Radix      |
+| shadcn/ui        | new-york | 6 componentes UI (accordion, badge, button, card, sonner, tooltip) |
 | Bun              | -        | Gestor de paquetes (usar `bun` no `npm`) |
 
 ### Librerías Principales
@@ -189,6 +192,7 @@ import { cn } from "@/lib/utils";
 
 ### Componentes shadcn/ui
 - Ubicación: `components/ui/`
+- **6 componentes activos**: accordion, badge, button, card, sonner, tooltip
 - **Generados por shadcn CLI** - Evitar modificaciones extensivas
 - **SÍ modificar** cuando haya errores de lint/TypeScript (ej: interfaces vacías, funciones impuras)
 - Para personalizar estilos, crear wrapper o usar `cn()` con clases adicionales
@@ -201,6 +205,11 @@ import { cn } from "@/lib/utils";
 ### Tipos Centralizados
 - Definir interfaces en `lib/types.ts`
 - Importar con: `import type { PricingPlan } from "@/lib/types"`
+
+### Utilidades Centralizadas
+- **`lib/utils.ts`**: `cn()` para clases condicionales + `scrollToSection()` para navegación suave
+- **`lib/icons.ts`**: `ICON_MAP` centralizado de Lucide icons (evitar mapas duplicados en componentes)
+- **`lib/whatsapp.ts`**: `getWhatsAppUrl(message?)` + `WHATSAPP_URL` pre-calculada
 
 ---
 

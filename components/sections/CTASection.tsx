@@ -2,17 +2,8 @@
 
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SITE_CONFIG } from "@/lib/constants";
-
-// Pre-calcular URL de WhatsApp a nivel de módulo (js-cache-function-results)
-const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-  SITE_CONFIG.contact.whatsappMessage
-)}`;
-
-const scrollToSection = (href: string) => {
-  const element = document.querySelector(href);
-  element?.scrollIntoView({ behavior: "smooth" });
-};
+import { WHATSAPP_URL } from "@/lib/whatsapp";
+import { scrollToSection } from "@/lib/utils";
 
 // Hoisted handler to avoid recreation on each render
 const handlePricingClick = () => scrollToSection("#precios");

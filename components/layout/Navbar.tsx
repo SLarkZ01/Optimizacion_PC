@@ -4,12 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Menu, X, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
-
-// Hoisted scrollToSection function (avoids recreation on each render)
-const scrollToElement = (href: string) => {
-  const element = document.querySelector(href);
-  element?.scrollIntoView({ behavior: "smooth" });
-};
+import { scrollToSection } from "@/lib/utils";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,15 +20,15 @@ const Navbar = () => {
   }, []);
 
   // Memoized handler to avoid recreation
-  const scrollToSection = useCallback((href: string) => {
+  const handleNavClick = useCallback((href: string) => {
     setIsOpen(false);
-    scrollToElement(href);
+    scrollToSection(href);
   }, []);
 
   // Stable handler for pricing section
   const handlePricingClick = useCallback(() => {
-    scrollToSection("#precios");
-  }, [scrollToSection]);
+    handleNavClick("#precios");
+  }, [handleNavClick]);
 
   // Stable handler for logo click
   const handleLogoClick = useCallback((e: React.MouseEvent) => {
@@ -71,7 +66,7 @@ const Navbar = () => {
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
-                onClick={() => scrollToSection(link.href)}
+                onClick={() => handleNavClick(link.href)}
                 className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium cursor-pointer"
               >
                 {link.label}
@@ -107,7 +102,7 @@ const Navbar = () => {
               {NAV_LINKS.map((link) => (
                 <button
                   key={link.href}
-                  onClick={() => scrollToSection(link.href)}
+                  onClick={() => handleNavClick(link.href)}
                   className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2 cursor-pointer"
                 >
                   {link.label}

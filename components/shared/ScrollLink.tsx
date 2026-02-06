@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, scrollToSection } from "@/lib/utils";
 
 interface ScrollLinkProps {
   href: string;
@@ -14,13 +14,8 @@ interface ScrollLinkProps {
  * (server-serialization)
  */
 const ScrollLink = ({ href, children, className }: ScrollLinkProps) => {
-  const scrollToSection = () => {
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <button onClick={scrollToSection} className={cn("cursor-pointer", className)}>
+    <button onClick={() => scrollToSection(href)} className={cn("cursor-pointer", className)}>
       {children}
     </button>
   );

@@ -1,17 +1,13 @@
 import { Monitor, Mail, MessageCircle, Twitter, Instagram, Youtube } from "lucide-react";
 import { SITE_CONFIG, NAV_LINKS } from "@/lib/constants";
-import ScrollLink from "@/components/ScrollLink";
+import { WHATSAPP_URL } from "@/lib/whatsapp";
+import ScrollLink from "@/components/shared/ScrollLink";
 
 /**
  * Footer como Server Component.
  * La interactividad del scroll se delega a ScrollLink (cliente).
  * Esto reduce el JavaScript enviado al cliente. (server-serialization)
  */
-
-// Pre-calcular URL de WhatsApp a nivel de módulo (js-cache-function-results)
-const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-  SITE_CONFIG.contact.whatsappMessage
-)}`;
 
 // Pre-calcular el año actual a nivel de módulo para SSR (js-cache-function-results)
 // En producción esto se ejecuta una vez por build/revalidación

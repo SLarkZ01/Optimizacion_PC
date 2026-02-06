@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { PRICING_PLANS, CURRENCIES, CurrencyCode } from "@/lib/constants";
-import PricingCard from "@/components/PricingCard";
+import PricingCard from "@/components/cards/PricingCard";
 import { Button } from "@/components/ui/button";
 
 // Hoisting de array constante fuera del componente (rerender-memo-with-default-value)

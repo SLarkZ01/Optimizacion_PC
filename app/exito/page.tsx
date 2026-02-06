@@ -2,12 +2,10 @@ import Link from "next/link";
 import { CheckCircle, ArrowRight, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SITE_CONFIG } from "@/lib/constants";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 // Pre-calculate WhatsApp URL at module level (Server Component optimization)
-const WHATSAPP_URL = `https://wa.me/${SITE_CONFIG.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-  "Hola! Acabo de realizar el pago para optimizar mi PC."
-)}`;
+const WHATSAPP_URL = getWhatsAppUrl("Hola! Acabo de realizar el pago para optimizar mi PC.");
 
 export default function ExitoPage() {
 

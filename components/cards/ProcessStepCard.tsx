@@ -1,22 +1,6 @@
 import { memo } from "react";
-import {
-  CreditCard,
-  Calendar,
-  Wifi,
-  CheckCircle,
-  Circle,
-  type LucideIcon,
-} from "lucide-react";
 import { ProcessStep } from "@/lib/types";
-
-// Mapa de iconos usado en PROCESS_STEPS - evita importar todo lucide-react (bundle-barrel-imports)
-const ICON_MAP: Record<string, LucideIcon> = {
-  CreditCard,
-  Calendar,
-  Wifi,
-  CheckCircle,
-  Circle,
-};
+import { ICON_MAP, DEFAULT_ICON } from "@/lib/icons";
 
 interface ProcessStepCardProps {
   step: ProcessStep;
@@ -25,7 +9,7 @@ interface ProcessStepCardProps {
 
 // Memoizado para evitar re-renders innecesarios (rerender-memo)
 const ProcessStepCard = memo(function ProcessStepCard({ step, isLast }: ProcessStepCardProps) {
-  const IconComponent = ICON_MAP[step.icon] ?? Circle;
+  const IconComponent = ICON_MAP[step.icon] ?? DEFAULT_ICON;
 
   return (
     <div className="relative flex flex-col items-center text-center group">

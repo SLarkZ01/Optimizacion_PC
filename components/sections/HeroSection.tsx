@@ -4,12 +4,7 @@ import { ArrowRight, Zap, Shield, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { STATS } from "@/lib/constants";
-
-// Hoisting de función fuera del componente (rerender-functional-setstate)
-const scrollToSection = (href: string) => {
-  const element = document.querySelector(href);
-  element?.scrollIntoView({ behavior: "smooth" });
-};
+import { scrollToSection } from "@/lib/utils";
 
 // Handler estable para evitar recrear en cada render
 const handlePricingClick = () => scrollToSection("#precios");

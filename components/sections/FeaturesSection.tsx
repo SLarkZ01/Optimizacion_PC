@@ -1,5 +1,5 @@
 import { FEATURES } from "@/lib/constants";
-import FeatureCard from "@/components/FeatureCard";
+import FeatureCard from "@/components/cards/FeatureCard";
 
 const FeaturesSection = () => {
   return (
