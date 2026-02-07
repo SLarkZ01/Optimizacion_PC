@@ -63,3 +63,23 @@ export interface ContactInfo {
   whatsapp: string;
   whatsappMessage: string;
 }
+
+// ============================================================
+// Tipos para la API de Checkout (Stripe)
+// ============================================================
+
+/** Cuerpo de la solicitud POST /api/checkout */
+export interface CheckoutRequest {
+  planId: PlanId;
+  currencyCode: string;
+}
+
+/** Respuesta exitosa de POST /api/checkout */
+export interface CheckoutResponse {
+  url: string;
+}
+
+/** Respuesta de error de la API */
+export interface ApiError {
+  error: string;
+}

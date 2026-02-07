@@ -44,8 +44,12 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 │   ├── layout.tsx          # Layout raíz con providers globales (Sonner)
 │   ├── page.tsx            # Página principal (landing)
 │   ├── globals.css         # Estilos globales y variables CSS
-│   ├── exito/              # Ruta /exito (página de confirmación)
-│   └── not-found.tsx       # Página 404 personalizada
+│   ├── not-found.tsx       # Página 404 personalizada
+│   ├── exito/              # Ruta /exito (página de confirmación post-pago)
+│   └── api/
+│       ├── checkout/       # POST /api/checkout — Crea Stripe Checkout Session
+│       └── webhooks/
+│           └── stripe/     # POST /api/webhooks/stripe — Webhook de Stripe
 ├── components/
 │   ├── layout/             # Componentes de layout (Navbar, Footer)
 │   ├── sections/           # Secciones de la landing (Hero, Features, etc.)
@@ -54,12 +58,13 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 │   └── ui/                 # Componentes shadcn/ui (accordion, badge, button, card, sonner, tooltip)
 ├── lib/
 │   ├── utils.ts            # Utilidades: cn() + scrollToSection()
-│   ├── types.ts            # Definiciones de tipos TypeScript
+│   ├── types.ts            # Definiciones de tipos TypeScript (incluye CheckoutRequest/Response)
 │   ├── constants.ts        # Constantes y configuración del sitio
 │   ├── icons.ts            # ICON_MAP centralizado (Lucide icons por nombre)
 │   ├── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
+│   ├── stripe.ts           # Cliente Stripe server + STRIPE_PRICE_IDS + helpers
 │   ├── supabase.ts         # Clientes Supabase (browser, server, admin)
-│   └── database.types.ts   # Tipos TypeScript del esquema de DB
+│   └── database.types.ts   # Tipos TypeScript del esquema de DB (usar `type`, no `interface`)
 ├── supabase/
 │   └── schema.sql          # SQL para crear tablas (customers, purchases, bookings)
 └── public/                 # Archivos estáticos (favicon.ico)
@@ -81,12 +86,14 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 | Tailwind CSS     | ^4       | v4 con PostCSS (sin tailwind.config)     |
 | shadcn/ui        | new-york | 6 componentes UI (accordion, badge, button, card, sonner, tooltip) |
 | Supabase         | 2.95.2   | @supabase/supabase-js + @supabase/ssr    |
+| Stripe           | 20.3.1   | stripe (server) + @stripe/stripe-js (client) |
 | Bun              | -        | Gestor de paquetes (usar `bun` no `npm`) |
 
 ### Librerías Principales
 - **UI**: Radix UI primitives, Lucide React (iconos)
 - **Forms**: React Hook Form + Zod (validación)
 - **Notificaciones**: Sonner (toasts)
+- **Pagos**: Stripe Checkout (server-side session creation + webhooks)
 - **Base de Datos**: Supabase (PostgreSQL) con clientes browser/server/admin
 - **Utilidades**: clsx, tailwind-merge, class-variance-authority
 

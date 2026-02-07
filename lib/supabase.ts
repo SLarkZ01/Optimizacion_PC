@@ -1,9 +1,10 @@
 // Utilidades de clientes Supabase para PCOptimize
 // Cliente navegador: para Client Components ("use client")
 // Cliente servidor: para Server Components, Route Handlers y Server Actions
+// Cliente admin: para webhooks y API routes que necesitan permisos elevados
 
-import { createBrowserClient } from "@supabase/ssr";
-import { createServerClient } from "@supabase/ssr";
+import { createBrowserClient, createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { Database } from "@/lib/database.types";
 
@@ -50,11 +51,18 @@ export async function createServerSupabaseClient() {
 // ============================================================
 // Cliente admin (solo servidor, omite RLS)
 // Usar únicamente en webhooks, server actions o API routes que
-// necesiten permisos elevados.
+// necesiten permisos elevados. Usa createClient de @supabase/supabase-js
+// directamente (no SSR) porque no necesita cookies ni sesión.
 // ============================================================
 export function createAdminClient() {
-  return createBrowserClient<Database>(
+  return createSupabaseClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    },
   );
 }
