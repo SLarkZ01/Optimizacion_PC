@@ -23,8 +23,8 @@ export type DbCustomer = {
 export type DbPurchase = {
   id: string;
   customer_id: string;
-  stripe_session_id: string;
-  stripe_payment_intent_id: string | null;
+  paypal_order_id: string;
+  paypal_capture_id: string | null;
   plan_type: PlanType;
   amount: number;
   currency: string;

@@ -205,7 +205,7 @@ export const FAQ_ITEMS = [
   },
   {
     question: "¿Qué métodos de pago aceptan?",
-    answer: "Aceptamos tarjetas de crédito y débito (Visa, Mastercard, American Express) a través de Stripe, que es una plataforma de pagos 100% segura utilizada por empresas como Amazon y Google.",
+    answer: "Aceptamos pagos a través de PayPal, que permite pagar con tarjetas de crédito, débito, saldo de PayPal y otros métodos locales. PayPal es una plataforma de pagos 100% segura utilizada por millones de personas en todo el mundo.",
   },
 ] as const;
 

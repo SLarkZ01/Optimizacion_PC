@@ -28,30 +28,30 @@ CREATE TABLE customers (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
-COMMENT ON TABLE customers IS 'Registros de clientes creados durante el checkout de Stripe';
+COMMENT ON TABLE customers IS 'Registros de clientes creados durante el checkout de PayPal';
 COMMENT ON COLUMN customers.phone IS 'Número de WhatsApp/teléfono para contacto';
 
 -- ===========================================
 -- Tabla: purchases
 -- ===========================================
--- Almacena registros de pagos/compras de Stripe
+-- Almacena registros de pagos/compras de PayPal
 
 CREATE TABLE purchases (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   customer_id UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
-  stripe_session_id TEXT UNIQUE NOT NULL,
-  stripe_payment_intent_id TEXT UNIQUE,
+  paypal_order_id TEXT UNIQUE NOT NULL,
+  paypal_capture_id TEXT UNIQUE,
   plan_type plan_type NOT NULL,
-  amount INTEGER NOT NULL,              -- Monto en la unidad más pequeña de la moneda (centavos)
-  currency TEXT NOT NULL DEFAULT 'usd',  -- Código de moneda ISO 4217
+  amount NUMERIC(10, 2) NOT NULL,        -- Monto en USD (ej: 19.00)
+  currency TEXT NOT NULL DEFAULT 'USD',   -- Código de moneda ISO 4217
   status payment_status NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
-COMMENT ON TABLE purchases IS 'Registros de pagos de sesiones de checkout de Stripe';
-COMMENT ON COLUMN purchases.amount IS 'Monto en centavos (ej: 1500 = $15.00 USD)';
-COMMENT ON COLUMN purchases.currency IS 'ISO 4217 en minúsculas (usd, cop, eur, etc.)';
+COMMENT ON TABLE purchases IS 'Registros de pagos capturados desde PayPal Orders API';
+COMMENT ON COLUMN purchases.amount IS 'Monto en USD (ej: 19.00 = $19 USD)';
+COMMENT ON COLUMN purchases.currency IS 'ISO 4217 en mayúsculas (USD). Siempre se cobra en USD';
 
 -- ===========================================
 -- Tabla: bookings
@@ -80,7 +80,7 @@ COMMENT ON COLUMN bookings.notes IS 'Notas internas sobre la reserva/servicio';
 
 CREATE INDEX idx_purchases_customer_id ON purchases(customer_id);
 CREATE INDEX idx_purchases_status ON purchases(status);
-CREATE INDEX idx_purchases_stripe_session ON purchases(stripe_session_id);
+CREATE INDEX idx_purchases_paypal_order ON purchases(paypal_order_id);
 CREATE INDEX idx_bookings_purchase_id ON bookings(purchase_id);
 CREATE INDEX idx_bookings_status ON bookings(status);
 CREATE INDEX idx_bookings_scheduled_date ON bookings(scheduled_date);

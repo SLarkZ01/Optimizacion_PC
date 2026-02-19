@@ -1,15 +1,24 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { PRICING_PLANS, CURRENCIES, CurrencyCode } from "@/lib/constants";
+import type { PricingRegion } from "@/lib/paypal";
 import PricingCard from "@/components/cards/PricingCard";
 import { Button } from "@/components/ui/button";
 
 // Hoisting de array constante fuera del componente (rerender-memo-with-default-value)
 const CURRENCY_OPTIONS: CurrencyCode[] = ["USD", "COP", "MXN", "ARS", "CLP", "PEN", "EUR"];
 
+// Monedas de países de Latinoamérica (precios más bajos)
+const LATAM_CURRENCIES: CurrencyCode[] = ["COP", "MXN", "ARS", "CLP", "PEN"];
+
 const PricingSection = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>("USD");
+
+  // Determinar la región de precios basada en la moneda seleccionada
+  const region: PricingRegion = useMemo(() => {
+    return LATAM_CURRENCIES.includes(selectedCurrency) ? "latam" : "international";
+  }, [selectedCurrency]);
 
   // Handler memoizado para evitar recrear en cada render (rerender-functional-setstate)
   const handleCurrencyChange = useCallback((currency: CurrencyCode) => {
@@ -26,7 +35,7 @@ const PricingSection = () => {
           </h2>
           <p className="text-muted-foreground">
             Elige el plan que mejor se adapte a las necesidades de tu PC.
-            Pagos 100% seguros con Stripe.
+            Pagos 100% seguros con PayPal.
           </p>
         </div>
 
@@ -58,6 +67,7 @@ const PricingSection = () => {
               plan={plan}
               currency={CURRENCIES[selectedCurrency]}
               currencyCode={selectedCurrency}
+              region={region}
             />
           ))}
         </div>
@@ -70,7 +80,7 @@ const PricingSection = () => {
 
         {/* Nota de confianza */}
         <p className="text-center text-muted-foreground text-sm mt-4">
-          🔒 Pagos procesados de forma segura por Stripe. No almacenamos datos
+          Pagos procesados de forma segura por PayPal. No almacenamos datos
           de tu tarjeta.
         </p>
       </div>

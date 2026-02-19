@@ -65,18 +65,31 @@ export interface ContactInfo {
 }
 
 // ============================================================
-// Tipos para la API de Checkout (Stripe)
+// Tipos para la API de PayPal
 // ============================================================
 
-/** Cuerpo de la solicitud POST /api/checkout */
-export interface CheckoutRequest {
+/** Cuerpo de la solicitud POST /api/paypal/create-order */
+export interface CreateOrderRequest {
   planId: PlanId;
-  currencyCode: string;
+  region: string;
 }
 
-/** Respuesta exitosa de POST /api/checkout */
-export interface CheckoutResponse {
-  url: string;
+/** Respuesta exitosa de POST /api/paypal/create-order */
+export interface CreateOrderResponse {
+  orderID: string;
+}
+
+/** Cuerpo de la solicitud POST /api/paypal/capture-order */
+export interface CaptureOrderRequest {
+  orderID: string;
+}
+
+/** Respuesta exitosa de POST /api/paypal/capture-order */
+export interface CaptureOrderResponse {
+  success: boolean;
+  orderID: string;
+  redirectUrl: string;
+  warning?: string;
 }
 
 /** Respuesta de error de la API */

@@ -12,10 +12,10 @@ const WHATSAPP_URL = getWhatsAppUrl("Hola! Acabo de realizar el pago para optimi
 async function ExitoContent({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{ order_id?: string }>;
 }) {
   const params = await searchParams;
-  const sessionId = params.session_id;
+  const orderId = params.order_id;
 
   return (
     <Card className="relative z-10 max-w-lg w-full bg-card border-accent/30">
@@ -36,10 +36,10 @@ async function ExitoContent({
           breve recibiras un correo con los detalles de tu pedido.
         </p>
 
-        {/* ID de sesión (visible solo si existe, útil para soporte) */}
-        {sessionId ? (
+        {/* ID de orden PayPal (visible solo si existe, util para soporte) */}
+        {orderId ? (
           <p className="text-xs text-muted-foreground/60 mb-4 font-mono">
-            Ref: {sessionId.slice(0, 20)}...
+            Ref: {orderId}
           </p>
         ) : null}
 
@@ -105,11 +105,11 @@ function ExitoLoading() {
   );
 }
 
-// Página principal con Suspense boundary para searchParams async
+// Pagina principal con Suspense boundary para searchParams async
 export default function ExitoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{ order_id?: string }>;
 }) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
