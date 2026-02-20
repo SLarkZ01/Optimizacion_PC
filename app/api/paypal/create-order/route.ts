@@ -13,7 +13,7 @@ import {
 import type { PlanId } from "@/lib/types";
 
 // Planes y regiones válidos para validación
-const VALID_PLANS: PlanId[] = ["basic", "gamer", "premium"];
+const VALID_PLANS: PlanId[] = ["basic", "gamer"];
 const VALID_REGIONS: PricingRegion[] = ["latam", "international"];
 
 export async function POST(request: Request) {

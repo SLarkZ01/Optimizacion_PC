@@ -1,11 +1,10 @@
 // Definiciones de tipos de PCOptimize
 
-export type PlanId = "basic" | "gamer" | "premium";
+export type PlanId = "basic" | "gamer";
 
 export interface PricingPlan {
   id: PlanId;
   name: string;
-  priceUSD: number;
   duration: string;
   description: string;
   features: readonly string[];
@@ -43,12 +42,6 @@ export interface FAQItem {
 export interface NavLink {
   href: string;
   label: string;
-}
-
-export interface Currency {
-  symbol: string;
-  rate: number;
-  name: string;
 }
 
 export interface SocialLinks {

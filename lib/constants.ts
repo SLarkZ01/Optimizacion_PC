@@ -16,23 +16,13 @@ export const SITE_CONFIG = {
   },
 };
 
-export const CURRENCIES = {
-  USD: { symbol: "$", rate: 1, name: "USD" },
-  COP: { symbol: "$", rate: 3679, name: "COP" },
-  MXN: { symbol: "$", rate: 20, name: "MXN" },
-  ARS: { symbol: "$", rate: 1000, name: "ARS" },
-  CLP: { symbol: "$", rate: 933, name: "CLP" },
-  PEN: { symbol: "S/", rate: 3.8, name: "PEN" },
-  EUR: { symbol: "€", rate: 0.92, name: "EUR" },
-} as const;
-
-export type CurrencyCode = keyof typeof CURRENCIES;
+// Precios siempre en USD — no hay conversión a monedas locales.
+// La región (latam/international) se detecta automáticamente por IP.
 
 export const PRICING_PLANS = [
   {
     id: "basic",
     name: "Básico",
-    priceUSD: 15,
     duration: "30-45 min aprox.",
     description: "Limpieza esencial para trabajo y uso diario",
     features: [
@@ -51,7 +41,6 @@ export const PRICING_PLANS = [
   {
     id: "gamer",
     name: "Gamer",
-    priceUSD: 25,
     duration: "1 - 1.5 horas aprox.",
     description: "Máximo rendimiento para gaming y streaming",
     features: [
@@ -68,22 +57,6 @@ export const PRICING_PLANS = [
     ],
     popular: true,
     cta: "Elegir Gamer",
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    priceUSD: 35,
-    duration: "1 - 1.5 horas + soporte",
-    description: "Para gamers competitivos y streamers exigentes",
-    features: [
-      "Todo lo del plan Gamer",
-      "1 mes de soporte por Discord/WhatsApp",
-      "Re-optimización gratis si algo cambia",
-      "Respuesta prioritaria",
-      "Ayuda post-servicio incluida",
-    ],
-    popular: false,
-    cta: "Elegir Premium",
   },
 ] as const;
 

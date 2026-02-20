@@ -36,12 +36,6 @@ export const PAYPAL_PRICES: Record<PlanId, Record<PricingRegion, number>> = {
     latam: 32,
     international: 45,
   },
-  premium: {
-    // Premium mantiene el precio más alto (no está en Notion,
-    // pero se conserva por compatibilidad con la UI de 3 planes)
-    latam: 40,
-    international: 55,
-  },
 };
 
 // ============================================================
@@ -51,7 +45,6 @@ export const PAYPAL_PRICES: Record<PlanId, Record<PricingRegion, number>> = {
 export const PLAN_NAMES: Record<PlanId, string> = {
   basic: "PCOptimize - Plan Básico",
   gamer: "PCOptimize - Plan Gamer",
-  premium: "PCOptimize - Plan Premium",
 };
 
 // ============================================================

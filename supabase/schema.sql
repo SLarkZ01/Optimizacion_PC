@@ -1,10 +1,11 @@
 -- ===========================================
 -- PCOptimize - Esquema de Base de Datos
 -- ===========================================
--- Ejecutar esto en el Editor SQL de Supabase para crear todas las tablas
--- Última actualización: Febrero 2026
+-- Referencia del estado actual de la DB en Supabase.
+-- Para aplicar desde cero, ejecutar en orden en el Editor SQL de Supabase.
+-- Ultima actualizacion: Febrero 2026
 
--- Habilitar extensión UUID (generalmente ya está habilitada)
+-- Habilitar extension UUID (generalmente ya esta habilitada)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ===========================================
@@ -18,7 +19,7 @@ CREATE TYPE booking_status AS ENUM ('scheduled', 'completed', 'cancelled', 'no_s
 -- ===========================================
 -- Tabla: customers
 -- ===========================================
--- Almacena información de clientes recopilada durante el checkout
+-- Almacena informacion de clientes recopilada durante el checkout
 
 CREATE TABLE customers (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -29,12 +30,12 @@ CREATE TABLE customers (
 );
 
 COMMENT ON TABLE customers IS 'Registros de clientes creados durante el checkout de PayPal';
-COMMENT ON COLUMN customers.phone IS 'Número de WhatsApp/teléfono para contacto';
+COMMENT ON COLUMN customers.phone IS 'Numero de WhatsApp/telefono para contacto';
 
 -- ===========================================
 -- Tabla: purchases
 -- ===========================================
--- Almacena registros de pagos/compras de PayPal
+-- Almacena registros de pagos capturados desde PayPal Orders API
 
 CREATE TABLE purchases (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -42,16 +43,18 @@ CREATE TABLE purchases (
   paypal_order_id TEXT UNIQUE NOT NULL,
   paypal_capture_id TEXT UNIQUE,
   plan_type plan_type NOT NULL,
-  amount NUMERIC(10, 2) NOT NULL,        -- Monto en USD (ej: 19.00)
-  currency TEXT NOT NULL DEFAULT 'USD',   -- Código de moneda ISO 4217
+  amount NUMERIC(10, 2) NOT NULL,        -- Monto en USD (ej: 19.00 = $19 USD)
+  currency TEXT NOT NULL DEFAULT 'USD',   -- ISO 4217 en mayusculas (USD)
   status payment_status NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 COMMENT ON TABLE purchases IS 'Registros de pagos capturados desde PayPal Orders API';
+COMMENT ON COLUMN purchases.paypal_order_id IS 'ID de orden de PayPal (ej: 5O190127TN364715T)';
+COMMENT ON COLUMN purchases.paypal_capture_id IS 'ID de captura de PayPal tras completar el pago';
 COMMENT ON COLUMN purchases.amount IS 'Monto en USD (ej: 19.00 = $19 USD)';
-COMMENT ON COLUMN purchases.currency IS 'ISO 4217 en mayúsculas (USD). Siempre se cobra en USD';
+COMMENT ON COLUMN purchases.currency IS 'ISO 4217 en mayusculas (USD). Siempre se cobra en USD';
 
 -- ===========================================
 -- Tabla: bookings
@@ -75,7 +78,7 @@ COMMENT ON COLUMN bookings.rustdesk_id IS 'ID de acceso remoto RustDesk proporci
 COMMENT ON COLUMN bookings.notes IS 'Notas internas sobre la reserva/servicio';
 
 -- ===========================================
--- Índices para rendimiento
+-- Indices para rendimiento
 -- ===========================================
 
 CREATE INDEX idx_purchases_customer_id ON purchases(customer_id);
@@ -87,16 +90,21 @@ CREATE INDEX idx_bookings_scheduled_date ON bookings(scheduled_date);
 CREATE INDEX idx_customers_email ON customers(email);
 
 -- ===========================================
--- Función trigger para updated_at
+-- Funcion trigger para updated_at
 -- ===========================================
+-- search_path fijo previene inyeccion de esquema (recomendacion Supabase)
 
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Aplicar a purchases
 CREATE TRIGGER set_purchases_updated_at
@@ -113,32 +121,43 @@ CREATE TRIGGER set_bookings_updated_at
 -- ===========================================
 -- Seguridad a Nivel de Fila (RLS)
 -- ===========================================
--- Habilitar RLS en todas las tablas. El acceso se controla mediante
--- la clave service_role desde el servidor (API routes, webhooks).
--- No se necesita acceso directo del cliente.
+-- RLS habilitado en todas las tablas.
+-- Todo acceso pasa por API routes del servidor con la clave service_role.
+-- No hay acceso directo desde el cliente (browser).
 
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
--- El rol de servicio omite RLS automáticamente.
--- Si necesitamos acceso anónimo en el futuro (ej: autoservicio del cliente),
--- agregar políticas aquí. Por ahora, todas las operaciones de BD pasan
--- por API routes del servidor usando la clave service_role.
+-- Politicas por operacion con rol service_role explicito
+-- (evita advertencias del advisor de seguridad de Supabase)
 
--- Política: Permitir acceso completo al rol de servicio (este es el
--- comportamiento por defecto, pero se deja explícito para documentación)
-CREATE POLICY "Rol de servicio tiene acceso completo a customers"
-  ON customers FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- customers
+CREATE POLICY "service_role puede leer customers"
+  ON customers FOR SELECT TO service_role USING (true);
+CREATE POLICY "service_role puede insertar customers"
+  ON customers FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "service_role puede actualizar customers"
+  ON customers FOR UPDATE TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role puede eliminar customers"
+  ON customers FOR DELETE TO service_role USING (true);
 
-CREATE POLICY "Rol de servicio tiene acceso completo a purchases"
-  ON purchases FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- purchases
+CREATE POLICY "service_role puede leer purchases"
+  ON purchases FOR SELECT TO service_role USING (true);
+CREATE POLICY "service_role puede insertar purchases"
+  ON purchases FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "service_role puede actualizar purchases"
+  ON purchases FOR UPDATE TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role puede eliminar purchases"
+  ON purchases FOR DELETE TO service_role USING (true);
 
-CREATE POLICY "Rol de servicio tiene acceso completo a bookings"
-  ON bookings FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- bookings
+CREATE POLICY "service_role puede leer bookings"
+  ON bookings FOR SELECT TO service_role USING (true);
+CREATE POLICY "service_role puede insertar bookings"
+  ON bookings FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "service_role puede actualizar bookings"
+  ON bookings FOR UPDATE TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role puede eliminar bookings"
+  ON bookings FOR DELETE TO service_role USING (true);

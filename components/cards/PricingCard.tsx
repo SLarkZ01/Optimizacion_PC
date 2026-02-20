@@ -6,39 +6,28 @@ import { toast } from "sonner";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { PricingPlan, Currency } from "@/lib/types";
-import type { CurrencyCode } from "@/lib/constants";
+import type { PricingPlan } from "@/lib/types";
 import type { PricingRegion } from "@/lib/paypal";
 import { cn } from "@/lib/utils";
 
 interface PricingCardProps {
   plan: PricingPlan;
-  currency: Currency;
-  currencyCode: CurrencyCode;
+  /** Precio real en USD que se cobra a través de PayPal */
+  priceUSD: number;
   region: PricingRegion;
 }
 
 // Memoizado para evitar re-renders cuando cambian otros planes (rerender-memo)
-const PricingCard = memo(function PricingCard({ plan, currency, currencyCode, region }: PricingCardProps) {
+const PricingCard = memo(function PricingCard({ plan, priceUSD, region }: PricingCardProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-  const convertedPrice = Math.round(plan.priceUSD * currency.rate);
-
-  const formatPrice = (price: number) => {
-    if (currencyCode === "COP" || currencyCode === "ARS" || currencyCode === "CLP") {
-      return price.toLocaleString();
-    }
-    return price.toString();
-  };
+  const isLatam = region === "latam";
 
   // Crear orden de PayPal llamando a nuestro backend
   const createOrder = useCallback(async (): Promise<string> => {
     const response = await fetch("/api/paypal/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        planId: plan.id,
-        region,
-      }),
+      body: JSON.stringify({ planId: plan.id, region }),
     });
 
     const data = await response.json();
@@ -70,7 +59,6 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode, re
         return;
       }
 
-      // Redirigir a página de éxito
       if (result.redirectUrl) {
         window.location.href = result.redirectUrl;
       }
@@ -92,7 +80,7 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode, re
           : "border-border bg-card/50 hover:border-primary/50"
       )}
     >
-      {/* Ternario explícito en lugar de && (rendering-conditional-render) */}
+      {/* Badge "Más Popular" */}
       {plan.popular ? (
         <div className="absolute top-0 right-0">
           <Badge className="rounded-none rounded-bl-lg gradient-primary text-primary-foreground border-0">
@@ -108,18 +96,30 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode, re
 
       <CardContent className="text-center">
         <div className="mb-6">
+          {/* Precio en USD */}
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-2xl font-medium text-muted-foreground">
-              {currency.symbol}
-            </span>
+            <span className="text-2xl font-medium text-muted-foreground">$</span>
             <span className={cn(
               "font-bold",
               plan.popular ? "text-4xl md:text-5xl gradient-text" : "text-4xl md:text-5xl"
             )}>
-              {formatPrice(convertedPrice)}
+              {priceUSD}
             </span>
-            <span className="text-muted-foreground ml-1">{currencyCode}</span>
+            <span className="text-muted-foreground ml-1">USD</span>
           </div>
+
+          {/* Badge de precio especial Latam */}
+          {isLatam ? (
+            <div className="mt-2 flex justify-center">
+              <Badge
+                variant="outline"
+                className="text-xs border-accent/50 text-accent bg-accent/10"
+              >
+                Precio especial Latinoamérica
+              </Badge>
+            </div>
+          ) : null}
+
           <p className="text-sm text-muted-foreground mt-2">{plan.duration}</p>
         </div>
 
@@ -134,7 +134,6 @@ const PricingCard = memo(function PricingCard({ plan, currency, currencyCode, re
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3">
-        {/* Indicador de procesamiento post-aprobación */}
         {isProcessing ? (
           <div className="w-full flex items-center justify-center gap-2 py-3 text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
