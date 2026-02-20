@@ -1,27 +1,27 @@
-// Helper para envío de emails con Resend
+// Helper para envío de emails con Brevo (antes Sendinblue)
 // Se usa directamente desde la API de capture-order, no desde N8N
 // Esto garantiza que el cliente reciba su confirmación incluso si N8N falla
 
-import { Resend } from "resend";
+import { BrevoClient } from "@getbrevo/brevo";
 import type { PlanId } from "@/lib/types";
 import { PLAN_NAMES } from "@/lib/paypal";
 
-// Inicialización diferida: el cliente se crea en tiempo de ejecución,
-// no en tiempo de build, para evitar error si RESEND_API_KEY no está disponible
-let _resend: Resend | null = null;
-function getResendClient(): Resend {
-  if (!_resend) {
-    _resend = new Resend(process.env.RESEND_API_KEY);
-  }
-  return _resend;
-}
-
-// Dominio remitente — usar el dominio verificado en Resend
-// En desarrollo/sin dominio propio se puede usar onboarding@resend.dev (solo envía al dueño de la cuenta)
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "PCOptimize <onboarding@resend.dev>";
-
 // Link de Cal.com para agendar sesiones
 const CAL_COM_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
+
+// ============================================================
+// Inicialización diferida del cliente Brevo
+// Se crea en tiempo de ejecución para evitar errores en build time
+// ============================================================
+
+let _brevo: BrevoClient | null = null;
+
+function getBrevoClient(): BrevoClient {
+  if (!_brevo) {
+    _brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY ?? "" });
+  }
+  return _brevo;
+}
 
 // ============================================================
 // Tipos
@@ -42,6 +42,7 @@ export interface ConfirmationEmailData {
 function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
   const { customerName, planId, amount, orderId } = data;
   const planName = PLAN_NAMES[planId] ?? "PCOptimize";
+  const calUrl = CAL_COM_URL;
   const greeting = customerName ? `Hola ${customerName.split(" ")[0]}` : "Hola";
 
   return `
@@ -75,7 +76,7 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
             <td style="background-color:#1e293b;padding:32px;">
 
               <p style="margin:0 0 24px 0;font-size:18px;color:#e2e8f0;">
-                ${greeting} 👋
+                ${greeting} &#x1F44B;
               </p>
 
               <p style="margin:0 0 24px 0;font-size:15px;color:#94a3b8;line-height:1.6;">
@@ -92,12 +93,12 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
                         <td style="padding:8px 0;font-size:14px;color:#e2e8f0;text-align:right;font-weight:600;">${planName}</td>
                       </tr>
                       <tr>
-                        <td style="padding:8px 0;border-top:1px solid #1e293b;font-size:14px;color:#64748b;">Monto pagado</td>
-                        <td style="padding:8px 0;border-top:1px solid #1e293b;font-size:18px;color:#3b82f6;text-align:right;font-weight:700;">$${amount} USD</td>
+                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:14px;color:#64748b;">Monto pagado</td>
+                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:18px;color:#3b82f6;text-align:right;font-weight:700;">$${amount} USD</td>
                       </tr>
                       <tr>
-                        <td style="padding:8px 0;border-top:1px solid #1e293b;font-size:14px;color:#64748b;">ID de orden</td>
-                        <td style="padding:8px 0;border-top:1px solid #1e293b;font-size:12px;color:#475569;text-align:right;font-family:monospace;">${orderId}</td>
+                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:14px;color:#64748b;">ID de orden</td>
+                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:12px;color:#475569;text-align:right;font-family:monospace;">${orderId}</td>
                       </tr>
                     </table>
                   </td>
@@ -117,9 +118,9 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
               <!-- CTA Agendar -->
               <table cellpadding="0" cellspacing="0" style="margin:0 auto 32px auto;">
                 <tr>
-                  <td style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:8px;padding:1px;">
-                    <a href="${CAL_COM_URL}" target="_blank"
-                       style="display:block;padding:14px 32px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:7px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;text-align:center;">
+                  <td style="background:#3b82f6;border-radius:8px;">
+                    <a href="${calUrl}" target="_blank"
+                       style="display:block;padding:14px 32px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;text-align:center;">
                       &#x1F4C5; Agendar mi sesión ahora
                     </a>
                   </td>
@@ -172,7 +173,7 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
 // ============================================================
 
 /**
- * Envía el email de confirmación de pago al cliente.
+ * Envía el email de confirmación de pago al cliente via Brevo.
  * Se llama desde /api/paypal/capture-order después de capturar el pago.
  * No lanza excepciones — loguea el error y retorna false si falla,
  * para no bloquear la respuesta al cliente (el pago ya fue cobrado).
@@ -180,8 +181,8 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
 export async function sendPaymentConfirmationEmail(
   data: ConfirmationEmailData
 ): Promise<boolean> {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY no configurada — omitiendo envío de email de confirmación");
+  if (!process.env.BREVO_API_KEY) {
+    console.warn("BREVO_API_KEY no configurada — omitiendo envío de email de confirmación");
     return false;
   }
 
@@ -191,29 +192,23 @@ export async function sendPaymentConfirmationEmail(
     ? `${firstName}, tu pago fue recibido — Agenda tu sesión`
     : "Tu pago fue recibido — Agenda tu sesión";
 
+  const fromName = process.env.BREVO_FROM_NAME || "PCOptimize";
+  const fromEmail = process.env.BREVO_FROM_EMAIL || "no-reply@pcoptimize.com";
+
   try {
-    const { data: result, error } = await getResendClient().emails.send({
-      from: FROM_EMAIL,
-      to: [data.toEmail],
+    const response = await getBrevoClient().transactionalEmails.sendTransacEmail({
+      sender: { name: fromName, email: fromEmail },
+      to: [{ email: data.toEmail, name: data.customerName || undefined }],
       subject,
-      html: buildConfirmationEmailHtml(data),
-      tags: [
-        { name: "plan", value: data.planId },
-        { name: "type", value: "payment_confirmation" },
-      ],
+      htmlContent: buildConfirmationEmailHtml(data),
     });
 
-    if (error) {
-      console.error("Resend: Error enviando email de confirmación:", error);
-      return false;
-    }
-
     console.log(
-      `Resend: Email de confirmación enviado a ${data.toEmail} (Plan: ${planName}, Orden: ${data.orderId}, ID: ${result?.id})`
+      `Brevo: Email de confirmación enviado a ${data.toEmail} (Plan: ${planName}, Orden: ${data.orderId}, MessageID: ${response.messageId})`
     );
     return true;
   } catch (err) {
-    console.error("Resend: Excepción enviando email de confirmación:", err);
+    console.error("Brevo: Error enviando email de confirmación:", err);
     return false;
   }
 }
