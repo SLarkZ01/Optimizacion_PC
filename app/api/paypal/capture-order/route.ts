@@ -31,6 +31,8 @@ export async function POST(request: Request) {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${accessToken}`,
+          // Solicitar respuesta completa para recibir custom_id con el plan
+          "Prefer": "return=representation",
         },
       }
     );
