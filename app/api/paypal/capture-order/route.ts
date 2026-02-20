@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/paypal";
 import { createAdminClient } from "@/lib/supabase";
+import { sendPaymentConfirmationEmail } from "@/lib/email";
 import type { PlanType } from "@/lib/database.types";
 
 export async function POST(request: Request) {
@@ -71,6 +72,9 @@ export async function POST(request: Request) {
     } catch {
       console.warn("No se pudo parsear custom_id de PayPal:", customId);
     }
+
+    // Validar que el plan es uno de los planes activos (por si llega un valor legacy de DB)
+    const activePlanId = (planId === "gamer" ? "gamer" : "basic") as import("@/lib/types").PlanId;
 
     const email = payer?.email_address;
     const name = payer?.name
@@ -140,6 +144,15 @@ export async function POST(request: Request) {
           `PayPal Capture: Compra registrada - Plan: ${planId} (${region}), Email: ${email}, Monto: $${amount} USD`
         );
       }
+
+      // Enviar email de confirmación via Resend (no bloquea si falla)
+      await sendPaymentConfirmationEmail({
+        toEmail: email,
+        customerName: name,
+        planId: activePlanId,
+        amount,
+        orderId: orderID,
+      });
     } else {
       console.warn("PayPal Capture: No se recibió email del pagador");
     }
