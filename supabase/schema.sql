@@ -3,7 +3,7 @@
 -- ===========================================
 -- Referencia del estado actual de la DB en Supabase.
 -- Para aplicar desde cero, ejecutar en orden en el Editor SQL de Supabase.
--- Ultima actualizacion: Febrero 2026
+-- Ultima actualizacion: Febrero 2026 (mejoras Supabase best practices)
 
 -- Habilitar extension UUID (generalmente ya esta habilitada)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -43,8 +43,8 @@ CREATE TABLE purchases (
   paypal_order_id TEXT UNIQUE NOT NULL,
   paypal_capture_id TEXT UNIQUE,
   plan_type plan_type NOT NULL,
-  amount NUMERIC(10, 2) NOT NULL,        -- Monto en USD (ej: 19.00 = $19 USD)
-  currency TEXT NOT NULL DEFAULT 'USD',   -- ISO 4217 en mayusculas (USD)
+  amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0),  -- Monto en USD (ej: 19.00 = $19 USD)
+  currency TEXT NOT NULL DEFAULT 'USD' CHECK (currency = 'USD'),  -- ISO 4217 en mayusculas (USD)
   status payment_status NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
@@ -81,27 +81,39 @@ COMMENT ON COLUMN bookings.notes IS 'Notas internas sobre la reserva/servicio';
 -- Indices para rendimiento
 -- ===========================================
 
+-- Indices de FK (necesarios para JOINs eficientes)
 CREATE INDEX idx_purchases_customer_id ON purchases(customer_id);
-CREATE INDEX idx_purchases_status ON purchases(status);
-CREATE INDEX idx_purchases_paypal_order ON purchases(paypal_order_id);
 CREATE INDEX idx_bookings_purchase_id ON bookings(purchase_id);
-CREATE INDEX idx_bookings_status ON bookings(status);
+
+-- Indices parciales: solo indexan filas activas (mas pequeños y rapidos)
+-- Reemplazan full indexes en columnas status
+CREATE INDEX idx_purchases_pending ON purchases(created_at DESC) WHERE status = 'pending';
+CREATE INDEX idx_bookings_scheduled ON bookings(scheduled_date) WHERE status = 'scheduled';
+
+-- Indice en bookings.scheduled_date para consultas de agenda
 CREATE INDEX idx_bookings_scheduled_date ON bookings(scheduled_date);
-CREATE INDEX idx_customers_email ON customers(email);
+
+-- Indice en purchases.created_at para consultas admin (ordenar por fecha)
+CREATE INDEX idx_purchases_created_at ON purchases(created_at DESC);
+
+-- NOTA: idx_customers_email e idx_purchases_paypal_order NO se crean porque
+-- ya estan cubiertos por los UNIQUE constraints (customers_email_key y
+-- purchases_paypal_order_id_key) que generan indices implicitos.
 
 -- ===========================================
 -- Funcion trigger para updated_at
 -- ===========================================
--- search_path fijo previene inyeccion de esquema (recomendacion Supabase)
+-- search_path fijo previene search_path hijacking (lint: 0011_function_search_path_mutable)
+-- SECURITY INVOKER: la funcion corre con privilegios del llamador (mas seguro)
 
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY INVOKER
 SET search_path = ''
 AS $$
 BEGIN
-  NEW.updated_at = NOW();
+  NEW.updated_at = now();
   RETURN NEW;
 END;
 $$;
@@ -110,13 +122,13 @@ $$;
 CREATE TRIGGER set_purchases_updated_at
   BEFORE UPDATE ON purchases
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION public.set_updated_at();
 
 -- Aplicar a bookings
 CREATE TRIGGER set_bookings_updated_at
   BEFORE UPDATE ON bookings
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION public.set_updated_at();
 
 -- ===========================================
 -- Seguridad a Nivel de Fila (RLS)
@@ -124,6 +136,10 @@ CREATE TRIGGER set_bookings_updated_at
 -- RLS habilitado en todas las tablas.
 -- Todo acceso pasa por API routes del servidor con la clave service_role.
 -- No hay acceso directo desde el cliente (browser).
+
+-- Revocar privilegio de creacion en schema public al rol public
+-- Evita que usuarios no autorizados creen objetos en el schema (security-privileges.md)
+REVOKE CREATE ON SCHEMA public FROM public;
 
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
