@@ -1,13 +1,59 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { CheckCircle, Calendar, Mail, Home, Loader2, ArrowRight } from "lucide-react";
+import { CheckCircle, Calendar, Mail, Home, Loader2, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { createAdminClient } from "@/lib/supabase";
+import type { PlanType } from "@/lib/database.types";
 
 // URL de Cal.com para agendar la sesión
 const CAL_COM_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
+const WHATSAPP_URL = `https://wa.me/573126081990`;
 
-// Componente interno que lee los searchParams
+// Nombres de planes legibles
+const PLAN_LABELS: Record<PlanType, string> = {
+  basic: "Basic",
+  gamer: "Gamer",
+  premium: "Premium",
+};
+
+// Datos del pago obtenidos desde Supabase
+interface PurchaseData {
+  customerName: string | null;
+  planType: PlanType;
+  amount: number;
+}
+
+// Consultar Supabase para obtener datos reales del pago
+async function getPurchaseData(orderId: string): Promise<PurchaseData | null> {
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("purchases")
+      .select("plan_type, amount, customers(name)")
+      .eq("paypal_order_id", orderId)
+      .eq("status", "completed")
+      .single();
+
+    if (!data) return null;
+
+    // customers puede ser un array o un objeto según el join
+    const customerRow = Array.isArray(data.customers)
+      ? data.customers[0]
+      : data.customers;
+    const customerName = (customerRow as { name: string | null } | null)?.name ?? null;
+
+    return {
+      customerName,
+      planType: data.plan_type as PlanType,
+      amount: Number(data.amount),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Componente interno que lee los searchParams y carga datos de Supabase
 async function ExitoContent({
   searchParams,
 }: {
@@ -15,6 +61,14 @@ async function ExitoContent({
 }) {
   const params = await searchParams;
   const orderId = params.order_id;
+
+  // Intentar obtener datos reales del pago desde Supabase
+  const purchase = orderId ? await getPurchaseData(orderId) : null;
+  const firstName = purchase?.customerName
+    ? purchase.customerName.split(" ")[0]
+    : null;
+    const planLabel = purchase ? (PLAN_LABELS[purchase.planType] ?? purchase.planType) : null;
+  const amount = purchase?.amount ?? null;
 
   return (
     <Card className="relative z-10 max-w-lg w-full bg-card border-accent/30">
@@ -24,35 +78,68 @@ async function ExitoContent({
           <CheckCircle className="w-10 h-10 text-accent" />
         </div>
 
-        {/* Título */}
+        {/* Título personalizado si tenemos nombre */}
         <h1 className="text-3xl font-bold mb-3">
-          ¡Pago <span className="text-accent">confirmado</span>!
+          {firstName ? (
+            <>¡Listo, <span className="text-accent">{firstName}</span>!</>
+          ) : (
+            <>¡Pago <span className="text-accent">confirmado</span>!</>
+          )}
         </h1>
 
         {/* Mensaje principal */}
         <p className="text-muted-foreground mb-2">
           Recibimos tu pago correctamente.
         </p>
-        <p className="text-sm text-muted-foreground mb-6">
+        <p className="text-sm text-muted-foreground mb-5">
           Te enviamos un email con los detalles y el link para agendar tu sesión.
         </p>
 
-        {/* ID de orden (visible solo si existe, útil para soporte) */}
-        {orderId ? (
-          <p className="text-xs text-muted-foreground/50 mb-6 font-mono">
+        {/* Resumen del pago (solo si tenemos datos reales) */}
+        {purchase && (
+          <div className="bg-muted/50 rounded-lg p-4 mb-5 text-left">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Resumen del pago
+            </p>
+            <div className="flex justify-between items-center text-sm mb-2">
+              <span className="text-muted-foreground">Plan</span>
+              <span className="font-semibold text-foreground">{planLabel}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm border-t border-border pt-2">
+              <span className="text-muted-foreground">Monto pagado</span>
+              <span className="font-bold text-primary text-base">${amount} USD</span>
+            </div>
+          </div>
+        )}
+
+        {/* ID de orden (solo referencia) */}
+        {orderId && (
+          <p className="text-xs text-muted-foreground/50 mb-5 font-mono">
             Ref: {orderId}
           </p>
-        ) : null}
+        )}
 
         {/* CTA principal — Agendar */}
         <Button
-          className="w-full mb-4 bg-accent hover:bg-accent/90 text-accent-foreground text-base py-6"
+          className="w-full mb-3 bg-accent hover:bg-accent/90 text-accent-foreground text-base py-6"
           asChild
         >
           <a href={CAL_COM_URL} target="_blank" rel="noopener noreferrer">
             <Calendar className="mr-2 w-5 h-5" />
             Agendar mi sesión ahora
             <ArrowRight className="ml-2 w-4 h-4" />
+          </a>
+        </Button>
+
+        {/* CTA secundario — WhatsApp */}
+        <Button
+          variant="outline"
+          className="w-full mb-6 border-green-500/50 text-green-400 hover:bg-green-500/10"
+          asChild
+        >
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            <MessageCircle className="mr-2 w-4 h-4" />
+            Contactar por WhatsApp
           </a>
         </Button>
 
@@ -81,7 +168,7 @@ async function ExitoContent({
                 <CheckCircle className="w-3 h-3" />
               </div>
               <span>
-                <strong className="text-foreground">Conéctate con RustDesk</strong> — te enviamos el link 2h antes por WhatsApp
+                <strong className="text-foreground">Instala RustDesk</strong> — envíanos tu ID 15 min antes de la sesión por WhatsApp
               </span>
             </li>
           </ol>

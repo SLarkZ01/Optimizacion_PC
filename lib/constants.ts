@@ -6,7 +6,7 @@ export const SITE_CONFIG = {
   description: "Servicio profesional de optimización remota de computadoras. Limpieza, velocidad y seguridad garantizada.",
   contact: {
     email: "contacto@pcoptimize.com",
-    whatsapp: "+1234567890",
+    whatsapp: "+573126081990",
     whatsappMessage: "Hola! Me interesa optimizar mi PC",
   },
   social: {

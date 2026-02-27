@@ -147,7 +147,7 @@ export async function POST(request: Request) {
         );
       }
 
-      // Enviar email de confirmación via Resend (no bloquea si falla)
+      // Enviar email de confirmación via Brevo (no bloquea si falla)
       await sendPaymentConfirmationEmail({
         toEmail: email,
         customerName: name,

@@ -79,10 +79,12 @@ export type Database = {
       };
       bookings: {
         Row: DbBooking;
-        Insert: Omit<DbBooking, "id" | "created_at" | "updated_at"> & {
+        Insert: Omit<DbBooking, "id" | "created_at" | "updated_at" | "rustdesk_id" | "notes"> & {
           id?: string;
           created_at?: string;
           updated_at?: string;
+          rustdesk_id?: string | null;
+          notes?: string | null;
         };
         Update: Partial<Omit<DbBooking, "id">>;
         Relationships: [
