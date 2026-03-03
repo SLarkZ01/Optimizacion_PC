@@ -99,7 +99,45 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      search_purchases: {
+        Args: { p_search?: string; p_page?: number; p_limit?: number };
+        Returns: {
+          id: string;
+          customer_id: string;
+          paypal_order_id: string;
+          paypal_capture_id: string | null;
+          plan_type: PlanType;
+          amount: number;
+          currency: string;
+          status: PaymentStatus;
+          created_at: string;
+          updated_at: string;
+          customer_name: string | null;
+          customer_email: string;
+          total_count: number;
+        }[];
+      };
+      search_bookings: {
+        Args: { p_search?: string; p_page?: number; p_limit?: number };
+        Returns: {
+          id: string;
+          purchase_id: string;
+          cal_booking_id: string | null;
+          scheduled_date: string | null;
+          status: BookingStatus;
+          rustdesk_id: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+          purchase_plan_type: PlanType;
+          purchase_amount: number;
+          customer_name: string | null;
+          customer_email: string;
+          total_count: number;
+        }[];
+      };
+    };
     Enums: {
       plan_type: PlanType;
       payment_status: PaymentStatus;

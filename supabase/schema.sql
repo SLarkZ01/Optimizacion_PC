@@ -3,7 +3,7 @@
 -- ===========================================
 -- Referencia del estado actual de la DB en Supabase.
 -- Para aplicar desde cero, ejecutar en orden en el Editor SQL de Supabase.
--- Ultima actualizacion: Febrero 2026 (mejoras Supabase best practices)
+-- Ultima actualizacion: Marzo 2026 (limpieza de grants, indices y funciones)
 
 -- Habilitar extension UUID (generalmente ya esta habilitada)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -90,15 +90,18 @@ CREATE INDEX idx_bookings_purchase_id ON bookings(purchase_id);
 CREATE INDEX idx_purchases_pending ON purchases(created_at DESC) WHERE status = 'pending';
 CREATE INDEX idx_bookings_scheduled ON bookings(scheduled_date) WHERE status = 'scheduled';
 
--- Indice en bookings.scheduled_date para consultas de agenda
-CREATE INDEX idx_bookings_scheduled_date ON bookings(scheduled_date);
-
 -- Indice en purchases.created_at para consultas admin (ordenar por fecha)
 CREATE INDEX idx_purchases_created_at ON purchases(created_at DESC);
 
 -- NOTA: idx_customers_email e idx_purchases_paypal_order NO se crean porque
 -- ya estan cubiertos por los UNIQUE constraints (customers_email_key y
 -- purchases_paypal_order_id_key) que generan indices implicitos.
+-- NOTA: idx_bookings_scheduled_date (full index) fue eliminado en Marzo 2026
+-- porque idx_bookings_scheduled (partial index) lo cubre de forma mas eficiente.
+
+-- Indice en customers.name para busqueda de texto en el dashboard admin
+-- (.ilike() sobre name sin este indice haria seq scan en tabla completa)
+CREATE INDEX idx_customers_name ON customers(name);
 
 -- ===========================================
 -- Funcion trigger para updated_at
@@ -141,6 +144,20 @@ CREATE TRIGGER set_bookings_updated_at
 -- Evita que usuarios no autorizados creen objetos en el schema (security-privileges.md)
 REVOKE CREATE ON SCHEMA public FROM public;
 
+-- Revocar todos los privilegios de anon y authenticated sobre las tablas.
+-- El acceso de escritura/lectura se gestiona via service_role en API routes.
+-- Esto sigue el principio de minimo privilegio: denegar por defecto a nivel
+-- de GRANT, luego abrir solo lo estrictamente necesario via politicas RLS.
+REVOKE ALL ON public.customers FROM anon, authenticated;
+REVOKE ALL ON public.purchases FROM anon, authenticated;
+REVOKE ALL ON public.bookings  FROM anon, authenticated;
+
+-- Restaurar solo SELECT para authenticated (necesario para el dashboard admin
+-- que usa Supabase Auth con rol authenticated + politicas RLS de lectura).
+GRANT SELECT ON public.customers TO authenticated;
+GRANT SELECT ON public.purchases TO authenticated;
+GRANT SELECT ON public.bookings  TO authenticated;
+
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
@@ -177,3 +194,147 @@ CREATE POLICY "service_role puede actualizar bookings"
   ON bookings FOR UPDATE TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "service_role puede eliminar bookings"
   ON bookings FOR DELETE TO service_role USING (true);
+
+-- Politicas de lectura para el dashboard admin (rol authenticated via Supabase Auth)
+CREATE POLICY "authenticated_read_customers"
+  ON customers FOR SELECT TO authenticated USING (true);
+CREATE POLICY "authenticated_read_purchases"
+  ON purchases FOR SELECT TO authenticated USING (true);
+CREATE POLICY "authenticated_read_bookings"
+  ON bookings FOR SELECT TO authenticated USING (true);
+
+-- ===========================================
+-- RPCs de búsqueda paginada para el dashboard
+-- ===========================================
+-- Se usan RPCs porque el SDK de Supabase-js no soporta .or() sobre
+-- tablas relacionadas con !inner join (filtrar en columnas de la tabla
+-- relacionada en el cliente genera un error de PostgREST).
+-- SECURITY INVOKER + search_path fijo (best practices).
+-- COUNT(*) OVER() devuelve el total en la misma query, evitando
+-- un segundo viaje a la DB solo para contar.
+
+CREATE OR REPLACE FUNCTION public.search_purchases(
+  p_search TEXT DEFAULT '',
+  p_page   INT  DEFAULT 1,
+  p_limit  INT  DEFAULT 10
+)
+RETURNS TABLE (
+  id               UUID,
+  customer_id      UUID,
+  paypal_order_id  TEXT,
+  paypal_capture_id TEXT,
+  plan_type        public.plan_type,
+  amount           NUMERIC,
+  currency         TEXT,
+  status           public.payment_status,
+  created_at       TIMESTAMPTZ,
+  updated_at       TIMESTAMPTZ,
+  customer_name    TEXT,
+  customer_email   TEXT,
+  total_count      BIGINT
+)
+LANGUAGE plpgsql
+SECURITY INVOKER
+STABLE
+SET search_path = ''
+AS $$
+DECLARE
+  v_offset INT := (p_page - 1) * p_limit;
+  v_search TEXT := TRIM(p_search);
+BEGIN
+  RETURN QUERY
+  SELECT
+    p.id,
+    p.customer_id,
+    p.paypal_order_id,
+    p.paypal_capture_id,
+    p.plan_type,
+    p.amount,
+    p.currency,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    c.name    AS customer_name,
+    c.email   AS customer_email,
+    COUNT(*) OVER() AS total_count
+  FROM public.purchases p
+  INNER JOIN public.customers c ON c.id = p.customer_id
+  WHERE
+    v_search = ''
+    OR c.email ILIKE '%' || v_search || '%'
+    OR c.name  ILIKE '%' || v_search || '%'
+  ORDER BY p.created_at DESC
+  LIMIT  p_limit
+  OFFSET v_offset;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.search_bookings(
+  p_search TEXT DEFAULT '',
+  p_page   INT  DEFAULT 1,
+  p_limit  INT  DEFAULT 10
+)
+RETURNS TABLE (
+  id               UUID,
+  purchase_id      UUID,
+  cal_booking_id   TEXT,
+  scheduled_date   TIMESTAMPTZ,
+  status           public.booking_status,
+  rustdesk_id      TEXT,
+  notes            TEXT,
+  created_at       TIMESTAMPTZ,
+  updated_at       TIMESTAMPTZ,
+  purchase_plan_type  public.plan_type,
+  purchase_amount     NUMERIC,
+  customer_name    TEXT,
+  customer_email   TEXT,
+  total_count      BIGINT
+)
+LANGUAGE plpgsql
+SECURITY INVOKER
+STABLE
+SET search_path = ''
+AS $$
+DECLARE
+  v_offset INT := (p_page - 1) * p_limit;
+  v_search TEXT := TRIM(p_search);
+BEGIN
+  RETURN QUERY
+  SELECT
+    b.id,
+    b.purchase_id,
+    b.cal_booking_id,
+    b.scheduled_date,
+    b.status,
+    b.rustdesk_id,
+    b.notes,
+    b.created_at,
+    b.updated_at,
+    p.plan_type  AS purchase_plan_type,
+    p.amount     AS purchase_amount,
+    c.name       AS customer_name,
+    c.email      AS customer_email,
+    COUNT(*) OVER() AS total_count
+  FROM public.bookings b
+  INNER JOIN public.purchases p ON p.id = b.purchase_id
+  INNER JOIN public.customers c ON c.id = p.customer_id
+  WHERE
+    v_search = ''
+    OR c.email ILIKE '%' || v_search || '%'
+    OR c.name  ILIKE '%' || v_search || '%'
+  ORDER BY b.created_at DESC
+  LIMIT  p_limit
+  OFFSET v_offset;
+END;
+$$;
+
+-- Permisos de ejecución de las RPCs
+GRANT EXECUTE ON FUNCTION public.search_purchases(TEXT, INT, INT) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.search_bookings(TEXT, INT, INT)  TO authenticated, service_role;
+
+-- ===========================================
+-- Notas de seguridad adicionales
+-- ===========================================
+-- Leaked Password Protection: habilitar manualmente en el dashboard de Supabase
+-- en Authentication > Settings > Password Security.
+-- Esto verifica las contraseñas contra HaveIBeenPwned.org al autenticar.
