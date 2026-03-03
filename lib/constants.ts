@@ -182,6 +182,20 @@ export const FAQ_ITEMS = [
   },
 ] as const;
 
+// Nombres de planes en español — fuente única de verdad para todo el dashboard
+export const PLAN_NAMES: Record<string, string> = {
+  basic: "Básico",
+  gamer: "Gamer",
+  premium: "Premium",
+};
+
+// Colores de planes para gráficas (CSS vars de shadcn chart)
+export const PLAN_COLORS: Record<string, string> = {
+  basic: "var(--color-chart-1)",
+  gamer: "var(--color-chart-2)",
+  premium: "var(--color-chart-3)",
+};
+
 export const NAV_LINKS = [
   { href: "#servicios", label: "Servicios" },
   { href: "#proceso", label: "Proceso" },
