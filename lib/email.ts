@@ -6,8 +6,20 @@ import { BrevoClient } from "@getbrevo/brevo";
 import type { PlanId } from "@/lib/types";
 import { PLAN_NAMES } from "@/lib/paypal";
 
-// Link de Cal.com para agendar sesiones
-const CAL_COM_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
+// Link base de Cal.com para agendar sesiones
+const CAL_COM_BASE_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
+
+/**
+ * Construye el link de Cal.com con email y nombre pre-llenados.
+ * Cal.com acepta ?email=...&name=... para pre-rellenar el formulario de booking.
+ * Si no se proporcionan datos, retorna la URL base genérica.
+ */
+export function buildCalComUrl(email?: string | null, name?: string | null): string {
+  if (!email) return CAL_COM_BASE_URL;
+  const params = new URLSearchParams({ email });
+  if (name) params.set("name", name);
+  return `${CAL_COM_BASE_URL}?${params.toString()}`;
+}
 
 // ============================================================
 // Inicialización diferida del cliente Brevo
@@ -30,6 +42,7 @@ function getBrevoClient(): BrevoClient {
 export interface ConfirmationEmailData {
   toEmail: string;
   customerName: string | null;
+  customerEmail?: string;   // Para construir el link de Cal.com pre-llenado
   planId: PlanId;
   amount: number;
   orderId: string;
@@ -47,9 +60,9 @@ export interface BookingConfirmationEmailData {
 // ============================================================
 
 function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
-  const { customerName, planId, amount, orderId } = data;
+  const { customerName, customerEmail, planId, amount, orderId } = data;
   const planName = PLAN_NAMES[planId] ?? "PCOptimize";
-  const calUrl = CAL_COM_URL;
+  const calUrl = buildCalComUrl(customerEmail ?? data.toEmail, customerName);
   const greeting = customerName ? `Hola ${customerName.split(" ")[0]}` : "Hola";
 
   return `

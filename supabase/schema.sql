@@ -316,12 +316,13 @@ BEGIN
     c.email      AS customer_email,
     COUNT(*) OVER() AS total_count
   FROM public.bookings b
-  INNER JOIN public.purchases p ON p.id = b.purchase_id
-  INNER JOIN public.customers c ON c.id = p.customer_id
+  LEFT JOIN public.purchases p ON p.id = b.purchase_id
+  LEFT JOIN public.customers c ON c.id = p.customer_id
   WHERE
     v_search = ''
     OR c.email ILIKE '%' || v_search || '%'
     OR c.name  ILIKE '%' || v_search || '%'
+    OR b.cal_booking_id ILIKE '%' || v_search || '%'
   ORDER BY b.created_at DESC
   LIMIT  p_limit
   OFFSET v_offset;

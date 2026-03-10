@@ -35,7 +35,7 @@ export type DbPurchase = {
 
 export type DbBooking = {
   id: string;
-  purchase_id: string;
+  purchase_id: string | null;
   cal_booking_id: string | null;
   scheduled_date: string | null;
   status: BookingStatus;
@@ -83,6 +83,7 @@ export type Database = {
           id?: string;
           created_at?: string;
           updated_at?: string;
+          purchase_id?: string | null;
           rustdesk_id?: string | null;
           notes?: string | null;
         };
@@ -122,7 +123,7 @@ export type Database = {
         Args: { p_search?: string; p_page?: number; p_limit?: number };
         Returns: {
           id: string;
-          purchase_id: string;
+          purchase_id: string | null;
           cal_booking_id: string | null;
           scheduled_date: string | null;
           status: BookingStatus;
@@ -130,10 +131,10 @@ export type Database = {
           notes: string | null;
           created_at: string;
           updated_at: string;
-          purchase_plan_type: PlanType;
-          purchase_amount: number;
+          purchase_plan_type: PlanType | null;
+          purchase_amount: number | null;
           customer_name: string | null;
-          customer_email: string;
+          customer_email: string | null;
           total_count: number;
         }[];
       };

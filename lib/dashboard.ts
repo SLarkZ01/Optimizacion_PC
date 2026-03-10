@@ -310,13 +310,16 @@ export const getBookings = cache(
       notes: r.notes,
       created_at: r.created_at,
       updated_at: r.updated_at,
-      purchases: {
-        plan_type: r.purchase_plan_type,
-        amount: r.purchase_amount,
-        customers: r.customer_email
-          ? { name: r.customer_name, email: r.customer_email }
+      purchases:
+        r.purchase_plan_type != null && r.purchase_amount != null
+          ? {
+              plan_type: r.purchase_plan_type,
+              amount: r.purchase_amount,
+              customers: r.customer_email
+                ? { name: r.customer_name, email: r.customer_email }
+                : null,
+            }
           : null,
-      },
     }));
 
     return { data: bookings, total, page, totalPages };

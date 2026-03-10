@@ -4,10 +4,10 @@ import { CheckCircle, Calendar, Mail, Home, Loader2, ArrowRight, MessageCircle }
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createAdminClient } from "@/lib/supabase";
+import { buildCalComUrl } from "@/lib/email";
 import type { PlanType } from "@/lib/database.types";
 
-// URL de Cal.com para agendar la sesión
-const CAL_COM_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
+// URL de WhatsApp para contacto
 const WHATSAPP_URL = `https://wa.me/573126081990`;
 
 // Nombres de planes legibles
@@ -20,6 +20,7 @@ const PLAN_LABELS: Record<PlanType, string> = {
 // Datos del pago obtenidos desde Supabase
 interface PurchaseData {
   customerName: string | null;
+  customerEmail: string | null;
   planType: PlanType;
   amount: number;
 }
@@ -30,7 +31,7 @@ async function getPurchaseData(orderId: string): Promise<PurchaseData | null> {
     const supabase = createAdminClient();
     const { data } = await supabase
       .from("purchases")
-      .select("plan_type, amount, customers(name)")
+      .select("plan_type, amount, customers(name, email)")
       .eq("paypal_order_id", orderId)
       .eq("status", "completed")
       .single();
@@ -41,10 +42,12 @@ async function getPurchaseData(orderId: string): Promise<PurchaseData | null> {
     const customerRow = Array.isArray(data.customers)
       ? data.customers[0]
       : data.customers;
-    const customerName = (customerRow as { name: string | null } | null)?.name ?? null;
+    const customerName = (customerRow as { name: string | null; email: string } | null)?.name ?? null;
+    const customerEmail = (customerRow as { name: string | null; email: string } | null)?.email ?? null;
 
     return {
       customerName,
+      customerEmail,
       planType: data.plan_type as PlanType,
       amount: Number(data.amount),
     };
@@ -67,8 +70,12 @@ async function ExitoContent({
   const firstName = purchase?.customerName
     ? purchase.customerName.split(" ")[0]
     : null;
-    const planLabel = purchase ? (PLAN_LABELS[purchase.planType] ?? purchase.planType) : null;
+  const planLabel = purchase ? (PLAN_LABELS[purchase.planType] ?? purchase.planType) : null;
   const amount = purchase?.amount ?? null;
+
+  // Link de Cal.com pre-llenado con email y nombre del cliente (Opción C)
+  // Graceful degradation: si no hay datos, usa la URL base genérica
+  const calComUrl = buildCalComUrl(purchase?.customerEmail, purchase?.customerName);
 
   return (
     <Card className="relative z-10 max-w-lg w-full bg-card border-accent/30">
@@ -124,7 +131,7 @@ async function ExitoContent({
           className="w-full mb-3 bg-accent hover:bg-accent/90 text-accent-foreground text-base py-6"
           asChild
         >
-          <a href={CAL_COM_URL} target="_blank" rel="noopener noreferrer">
+          <a href={calComUrl} target="_blank" rel="noopener noreferrer">
             <Calendar className="mr-2 w-5 h-5" />
             Agendar mi sesión ahora
             <ArrowRight className="ml-2 w-4 h-4" />

@@ -151,6 +151,7 @@ export async function POST(request: Request) {
       await sendPaymentConfirmationEmail({
         toEmail: email,
         customerName: name,
+        customerEmail: email,   // Para construir el link de Cal.com pre-llenado
         planId: activePlanId,
         amount,
         orderId: orderID,

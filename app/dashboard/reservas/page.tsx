@@ -116,7 +116,7 @@ async function ReservasContent({
                             <span className="text-sm">
                               {format(
                                 new Date(booking.scheduled_date),
-                                "d MMM yyyy, HH:mm",
+                                "d MMM yyyy, h:mm a",
                                 { locale: es },
                               )}
                             </span>
