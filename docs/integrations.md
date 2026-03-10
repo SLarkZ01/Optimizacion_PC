@@ -51,23 +51,33 @@ Dos funciones de envío, cada una con su template HTML inline. Ambas capturan er
 
 - **Cuándo**: Se llama desde `POST /api/paypal/capture-order` tras capturar el pago
 - **Contenido**: Plan contratado, monto, ID de orden, CTA para agendar en Cal.com
+- El link de Cal.com se construye con `buildCalComUrl(email, name)` — pre-llena email y nombre del cliente en el formulario de agendamiento
 
 ### `sendBookingConfirmationEmail()`
 
 - **Cuándo**: Se llama desde `POST /api/webhooks/calcom` al confirmar un booking
 - **Contenido**: Fecha agendada, instrucciones paso a paso de RustDesk, CTA de WhatsApp
 
+### `buildCalComUrl(email, name)`
+
+Función auxiliar exportada que construye el link de Cal.com con query params `?email=...&name=...` pre-llenados. Se usa en el email de confirmación de pago y en la página `/exito` (Server Component) para que el cliente no tenga que escribir su email al agendar.
+
+```typescript
+buildCalComUrl("cliente@email.com", "Juan Pérez")
+// → "https://cal.com/usuario?email=cliente%40email.com&name=Juan+P%C3%A9rez"
+```
+
 ---
 
 ## Cal.com — Agendamiento (`app/api/webhooks/calcom/route.ts`)
 
-El cliente agenda su sesión desde el link de Cal.com recibido en el email de confirmación de pago.
+El cliente agenda su sesión desde el link de Cal.com recibido en el email de confirmación de pago. El link está pre-llenado con su email y nombre (via `buildCalComUrl`) para garantizar que agende con el mismo email con el que realizó su compra en PayPal.
 
 ### Flujo del webhook
 
 1. Cal.com envía `BOOKING_CREATED` al webhook
-2. Se verifica el secret via header `x-cal-signature-256` o `x-webhook-secret` (si `CALCOM_WEBHOOK_SECRET` está definida)
-3. Se busca el cliente en Supabase por email y se relaciona el booking con su `purchase_id`
+2. Se verifica el secret via HMAC-SHA256 con `crypto.subtle` (header `x-cal-signature-256`)
+3. Se busca el cliente en Supabase por email y se relaciona el booking con su `purchase_id` (nullable — un booking puede no tener compra asociada)
 4. Se guarda el booking en la tabla `bookings` (idempotente — duplicados ignorados con código `23505`)
 5. Se envía email de confirmación con instrucciones de RustDesk
 
@@ -92,3 +102,23 @@ Tres clientes según el contexto de uso:
 | `createAdminClient()` | Operaciones privilegiadas (webhooks, dashboard) | `SERVICE_ROLE_KEY` (bypassa RLS) |
 
 El esquema de la base de datos está en `supabase/schema.sql` con las tablas `customers`, `purchases` y `bookings`.
+
+### RLS (Row Level Security)
+
+- RLS habilitado en las 3 tablas con `FORCE ROW LEVEL SECURITY` (impide bypass por el propietario)
+- `service_role`: 1 política `FOR ALL` por tabla (en lugar de 4 separadas por operación)
+- `authenticated`: política `SELECT` de solo lectura para el dashboard admin
+- Escritura solo desde API routes del servidor via `createAdminClient()`
+
+### Índices activos
+
+| Índice | Tabla | Columna | Notas |
+|--------|-------|---------|-------|
+| `customers_email_key` | customers | email | Implícito por UNIQUE constraint |
+| `idx_customers_name` | customers | name | Para búsquedas ILIKE por nombre |
+| `purchases_paypal_order_id_key` | purchases | paypal_order_id | Implícito por UNIQUE constraint |
+| `purchases_paypal_capture_id_key` | purchases | paypal_capture_id | Implícito por UNIQUE constraint |
+| `idx_purchases_created_at` | purchases | created_at DESC | ORDER BY en `search_purchases` |
+| `bookings_cal_booking_id_key` | bookings | cal_booking_id | Implícito por UNIQUE constraint |
+| `idx_bookings_purchase_id` | bookings | purchase_id | JOIN en `search_bookings` |
+| `idx_bookings_created_at` | bookings | created_at DESC | ORDER BY en `search_bookings` |

@@ -27,7 +27,7 @@ Panel de administración protegido para gestionar clientes, compras y reservas d
 | `/dashboard` | Resumen: 4 KPIs + gráfica de ingresos + distribución de planes + compras recientes | `getDashboardKPIs()` + `getDashboardChartData()` |
 | `/dashboard/clientes` | Tabla paginada de clientes con conteo de compras | `getCustomers(page, search)` |
 | `/dashboard/compras` | Tabla paginada de compras con plan, monto y estado | `getPurchases(page, search)` |
-| `/dashboard/reservas` | Tabla paginada de reservas con fecha, estado y cliente | `getBookings(page, search)` |
+| `/dashboard/reservas` | Tabla paginada de reservas con fecha (formato 12h AM/PM), estado y cliente | `getBookings(page, search)` |
 
 ---
 
@@ -125,7 +125,7 @@ Lista clientes paginados. Filtra con `.or()` nativo del SDK (email + nombre).
 Lista compras paginadas. Usa la RPC `search_purchases` porque el SDK no soporta `.or()` sobre relaciones con `!inner join`.
 
 ### `getBookings(page?, search?): Promise<PaginatedResult<BookingWithPurchase>>`
-Lista reservas paginadas. Usa la RPC `search_bookings` por la misma razón (relación anidada `bookings → purchases → customers`).
+Lista reservas paginadas. Usa la RPC `search_bookings` que hace `LEFT JOIN` con `purchases` y `customers` — un booking puede existir sin compra asociada (`purchase_id` nullable). Filtra por nombre, email del cliente o `cal_booking_id`.
 
 ### Constante `PAGE_SIZE`
 ```typescript
@@ -140,6 +140,7 @@ export const PAGE_SIZE = 10; // registros por página
 // Entidades con relaciones
 type CustomerWithPurchaseCount = DbCustomer & { purchase_count: number }
 type PurchaseWithCustomer      = DbPurchase & { customers: Pick<DbCustomer, "name" | "email"> | null }
+// purchases es null cuando el booking no tiene compra asociada (purchase_id nullable)
 type BookingWithPurchase       = DbBooking  & { purchases: (Pick<DbPurchase, "plan_type" | "amount"> & { customers: ... }) | null }
 type ComprasRecientesRow       = Pick<DbPurchase, "id" | "status" | "plan_type" | "amount" | "created_at"> & { customers: ... }
 

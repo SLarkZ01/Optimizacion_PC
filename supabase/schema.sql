@@ -3,7 +3,7 @@
 -- ===========================================
 -- Referencia del estado actual de la DB en Supabase.
 -- Para aplicar desde cero, ejecutar en orden en el Editor SQL de Supabase.
--- Ultima actualizacion: Marzo 2026 (limpieza de grants, indices y funciones)
+-- Ultima actualizacion: Marzo 2026 (indices, RLS consolidado, FORCE ROW LEVEL SECURITY)
 
 -- Habilitar extension UUID (generalmente ya esta habilitada)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -81,23 +81,21 @@ COMMENT ON COLUMN bookings.notes IS 'Notas internas sobre la reserva/servicio';
 -- Indices para rendimiento
 -- ===========================================
 
--- Indices de FK (necesarios para JOINs eficientes)
-CREATE INDEX idx_purchases_customer_id ON purchases(customer_id);
+-- Indice de FK en bookings (necesario para el JOIN eficiente en search_bookings)
 CREATE INDEX idx_bookings_purchase_id ON bookings(purchase_id);
 
--- Indices parciales: solo indexan filas activas (mas pequeños y rapidos)
--- Reemplazan full indexes en columnas status
-CREATE INDEX idx_purchases_pending ON purchases(created_at DESC) WHERE status = 'pending';
-CREATE INDEX idx_bookings_scheduled ON bookings(scheduled_date) WHERE status = 'scheduled';
-
--- Indice en purchases.created_at para consultas admin (ordenar por fecha)
+-- Indices en created_at DESC para ORDER BY en RPCs de búsqueda paginada
 CREATE INDEX idx_purchases_created_at ON purchases(created_at DESC);
+CREATE INDEX idx_bookings_created_at  ON bookings(created_at DESC);
 
+-- NOTA: Los siguientes indices fueron eliminados en Marzo 2026 por no tener uso real:
+--   idx_purchases_customer_id  — el JOIN en search_purchases no lo activa (usa PK)
+--   idx_purchases_pending      — índice parcial para status='pending', sin consultas directas
+--   idx_bookings_scheduled     — índice parcial para status='scheduled', sin consultas directas
+--
 -- NOTA: idx_customers_email e idx_purchases_paypal_order NO se crean porque
 -- ya estan cubiertos por los UNIQUE constraints (customers_email_key y
 -- purchases_paypal_order_id_key) que generan indices implicitos.
--- NOTA: idx_bookings_scheduled_date (full index) fue eliminado en Marzo 2026
--- porque idx_bookings_scheduled (partial index) lo cubre de forma mas eficiente.
 
 -- Indice en customers.name para busqueda de texto en el dashboard admin
 -- (.ilike() sobre name sin este indice haria seq scan en tabla completa)
@@ -160,40 +158,26 @@ GRANT SELECT ON public.bookings  TO authenticated;
 
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
-ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bookings  ENABLE ROW LEVEL SECURITY;
 
--- Politicas por operacion con rol service_role explicito
--- (evita advertencias del advisor de seguridad de Supabase)
+-- FORCE ROW LEVEL SECURITY: impide que el propietario de la tabla bypassee RLS
+ALTER TABLE customers FORCE ROW LEVEL SECURITY;
+ALTER TABLE purchases FORCE ROW LEVEL SECURITY;
+ALTER TABLE bookings  FORCE ROW LEVEL SECURITY;
+
+-- Política única ALL para service_role (4 políticas separadas → 1, reduce overhead de evaluación)
 
 -- customers
-CREATE POLICY "service_role puede leer customers"
-  ON customers FOR SELECT TO service_role USING (true);
-CREATE POLICY "service_role puede insertar customers"
-  ON customers FOR INSERT TO service_role WITH CHECK (true);
-CREATE POLICY "service_role puede actualizar customers"
-  ON customers FOR UPDATE TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "service_role puede eliminar customers"
-  ON customers FOR DELETE TO service_role USING (true);
+CREATE POLICY "service_role_all_customers"
+  ON customers FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- purchases
-CREATE POLICY "service_role puede leer purchases"
-  ON purchases FOR SELECT TO service_role USING (true);
-CREATE POLICY "service_role puede insertar purchases"
-  ON purchases FOR INSERT TO service_role WITH CHECK (true);
-CREATE POLICY "service_role puede actualizar purchases"
-  ON purchases FOR UPDATE TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "service_role puede eliminar purchases"
-  ON purchases FOR DELETE TO service_role USING (true);
+CREATE POLICY "service_role_all_purchases"
+  ON purchases FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- bookings
-CREATE POLICY "service_role puede leer bookings"
-  ON bookings FOR SELECT TO service_role USING (true);
-CREATE POLICY "service_role puede insertar bookings"
-  ON bookings FOR INSERT TO service_role WITH CHECK (true);
-CREATE POLICY "service_role puede actualizar bookings"
-  ON bookings FOR UPDATE TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "service_role puede eliminar bookings"
-  ON bookings FOR DELETE TO service_role USING (true);
+CREATE POLICY "service_role_all_bookings"
+  ON bookings FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- Politicas de lectura para el dashboard admin (rol authenticated via Supabase Auth)
 CREATE POLICY "authenticated_read_customers"

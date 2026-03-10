@@ -54,7 +54,7 @@
 │   ├── icons.ts            # ICON_MAP centralizado (Lucide icons por nombre)
 │   ├── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
 │   ├── paypal.ts           # PAYPAL_PRICES, PLAN_NAMES, getPrice(), getPayPalAccessToken(), getBaseUrl()
-│   ├── email.ts            # sendPaymentConfirmationEmail() + sendBookingConfirmationEmail() via Brevo
+│   ├── email.ts            # sendPaymentConfirmationEmail() + sendBookingConfirmationEmail() + buildCalComUrl() via Brevo
 │   ├── supabase.ts         # Clientes Supabase (browser, server, admin)
 │   ├── dashboard.ts        # Funciones de data fetching para el dashboard
 │   └── database.types.ts   # Tipos TypeScript del esquema de DB (usar `type`, no `interface`)

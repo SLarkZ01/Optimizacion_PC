@@ -188,7 +188,7 @@ No duplicar datos — siempre importar desde la fuente canónica:
 | Datos estáticos | `lib/constants.ts` | `PRICING_PLANS`, `FEATURES`, `TESTIMONIALS`, etc. |
 | Tipos compartidos | `lib/types.ts` | `PlanId`, `PricingPlan`, `Feature`, etc. |
 | Precios PayPal | `lib/paypal.ts` | `PAYPAL_PRICES`, `getPrice()` |
-| Emails | `lib/email.ts` | `sendPaymentConfirmationEmail()`, `sendBookingConfirmationEmail()` |
+| Emails | `lib/email.ts` | `sendPaymentConfirmationEmail()`, `sendBookingConfirmationEmail()`, `buildCalComUrl()` |
 | Región / moneda | `hooks/useCurrency.ts` | `useRegion()` |
 | Data dashboard | `lib/dashboard.ts` | `getDashboardKPIs()`, `getCustomers()`, etc. |
 
