@@ -1,6 +1,6 @@
 // API Route: Crear orden de PayPal
 // POST /api/paypal/create-order
-// Recibe { planId, region } y retorna el orderID de PayPal
+// Recibe { planId, region, countryCode? } y retorna el orderID de PayPal
 
 import { NextResponse } from "next/server";
 import {
@@ -19,9 +19,10 @@ const VALID_REGIONS: PricingRegion[] = ["latam", "international"];
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { planId, region } = body as {
+    const { planId, region, countryCode } = body as {
       planId: PlanId;
       region: PricingRegion;
+      countryCode?: string;
     };
 
     // Validar parámetros requeridos
@@ -71,8 +72,8 @@ export async function POST(request: Request) {
               currency_code: "USD",
               value: price.toFixed(2),
             },
-            // Metadata personalizada para identificar el plan después del pago
-            custom_id: JSON.stringify({ plan_id: planId, region }),
+            // Metadata personalizada para identificar el plan y país después del pago
+            custom_id: JSON.stringify({ plan_id: planId, region, country_code: countryCode ?? null }),
           },
         ],
       }),

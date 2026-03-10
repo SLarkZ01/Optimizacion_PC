@@ -24,13 +24,13 @@ CREATE TYPE booking_status AS ENUM ('scheduled', 'completed', 'cancelled', 'no_s
 CREATE TABLE customers (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
-  phone TEXT,
   name TEXT,
+  country_code TEXT CHECK (char_length(country_code) = 2),
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 COMMENT ON TABLE customers IS 'Registros de clientes creados durante el checkout de PayPal';
-COMMENT ON COLUMN customers.phone IS 'Numero de WhatsApp/telefono para contacto';
+COMMENT ON COLUMN customers.country_code IS 'Código de país ISO 3166-1 alpha-2 detectado al momento del checkout (ej: CO, MX, US). Fuente: ipapi.co con fallback a payer.address.country_code de PayPal';
 
 -- ===========================================
 -- Tabla: purchases

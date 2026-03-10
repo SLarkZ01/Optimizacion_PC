@@ -55,7 +55,7 @@ const PricingCardSkeleton = ({ popular = false }: { popular?: boolean }) => (
 // ============================================================
 
 const PricingSection = () => {
-  const { region, loading } = useRegion();
+  const { region, countryCode, loading } = useRegion();
 
   return (
     <section id="precios" className="py-20 md:py-32 bg-card/30">
@@ -86,6 +86,7 @@ const PricingSection = () => {
                 plan={plan}
                 priceUSD={PAYPAL_PRICES[plan.id as PlanId][region]}
                 region={region}
+                countryCode={countryCode}
               />
             ))
           )}

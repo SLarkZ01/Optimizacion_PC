@@ -65,15 +65,23 @@ export async function POST(request: Request) {
     // Parsear metadata del plan
     let planId: PlanType = "basic";
     let region = "latam";
+    let countryCodeFromMetadata: string | null = null;
     try {
       if (customId) {
         const metadata = JSON.parse(customId);
         planId = metadata.plan_id || "basic";
         region = metadata.region || "latam";
+        countryCodeFromMetadata = metadata.country_code || null;
       }
     } catch {
       console.warn("No se pudo parsear custom_id de PayPal:", customId);
     }
+
+    // Código de país: fuente primaria = custom_id (ipapi.co), fallback = payer.address de PayPal
+    const countryCode: string | null =
+      countryCodeFromMetadata ||
+      payer?.address?.country_code ||
+      null;
 
     // Validar que el plan es uno de los planes activos (por si llega un valor legacy de DB)
     const activePlanId = (planId === "gamer" ? "gamer" : "basic") as import("@/lib/types").PlanId;
@@ -107,7 +115,7 @@ export async function POST(request: Request) {
           .insert({
             email,
             name: name || null,
-            phone: null,
+            country_code: countryCode,
           })
           .select("id")
           .single();

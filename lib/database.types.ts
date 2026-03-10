@@ -15,8 +15,8 @@ export type BookingStatus = "scheduled" | "completed" | "cancelled" | "no_show";
 export type DbCustomer = {
   id: string;
   email: string;
-  phone: string | null;
   name: string | null;
+  country_code: string | null;
   created_at: string;
 };
 
@@ -55,6 +55,7 @@ export type Database = {
         Insert: Omit<DbCustomer, "id" | "created_at"> & {
           id?: string;
           created_at?: string;
+          country_code?: string | null;
         };
         Update: Partial<Omit<DbCustomer, "id">>;
         Relationships: [];

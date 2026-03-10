@@ -122,3 +122,12 @@ El esquema de la base de datos está en `supabase/schema.sql` con las tablas `cu
 | `bookings_cal_booking_id_key` | bookings | cal_booking_id | Implícito por UNIQUE constraint |
 | `idx_bookings_purchase_id` | bookings | purchase_id | JOIN en `search_bookings` |
 | `idx_bookings_created_at` | bookings | created_at DESC | ORDER BY en `search_bookings` |
+
+### País del cliente (`country_code`)
+
+La columna `customers.country_code` (ISO 3166-1 alpha-2, ej: `"CO"`, `"US"`) se captura con dos fuentes:
+
+1. **Fuente primaria**: `countryCode` enviado desde el frontend via `useRegion()` (`ipapi.co`) — se incluye en el `custom_id` de la orden de PayPal al llamar `POST /api/paypal/create-order`.
+2. **Fallback**: `payer.address.country_code` de la respuesta de captura de PayPal — disponible cuando el perfil del pagador está completo.
+
+El valor se almacena en `customers.country_code` al crear un cliente nuevo en `POST /api/paypal/capture-order`. Clientes existentes no se actualizan (para no sobrescribir datos ya guardados). El campo es nullable — clientes creados antes de esta funcionalidad tendrán `null`.

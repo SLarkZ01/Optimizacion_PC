@@ -11,11 +11,20 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Mail, Phone } from "lucide-react";
+import { Users, Mail, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import SearchInput from "@/components/dashboard/SearchInput";
 import Pagination from "@/components/dashboard/Pagination";
+
+/** Convierte un código de país ISO a su bandera emoji (ej: "CO" → "🇨🇴") */
+function countryCodeToFlag(code: string): string {
+  return code
+    .toUpperCase()
+    .split("")
+    .map((char) => String.fromCodePoint(0x1f1e0 - 65 + char.charCodeAt(0)))
+    .join("");
+}
 
 interface ClientesPageProps {
   searchParams: Promise<{ page?: string; q?: string }>;
@@ -63,7 +72,7 @@ async function ClientesContent({
                   <TableRow>
                     <TableHead>Nombre</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Teléfono</TableHead>
+                    <TableHead>País</TableHead>
                     <TableHead>Compras</TableHead>
                     <TableHead>Registrado</TableHead>
                   </TableRow>
@@ -81,13 +90,18 @@ async function ClientesContent({
                         </div>
                       </TableCell>
                       <TableCell>
-                        {customer.phone ? (
+                        {customer.country_code ? (
                           <div className="flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="text-sm">{customer.phone}</span>
+                            <span className="text-base leading-none">
+                              {countryCodeToFlag(customer.country_code)}
+                            </span>
+                            <span className="text-sm font-mono">{customer.country_code}</span>
                           </div>
                         ) : (
-                          <span className="text-sm text-muted-foreground">—</span>
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Globe className="h-3.5 w-3.5" />
+                            <span className="text-sm">—</span>
+                          </div>
                         )}
                       </TableCell>
                       <TableCell>
