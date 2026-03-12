@@ -76,7 +76,7 @@ const PricingCard = memo(function PricingCard({ plan, priceUSD, region, countryC
   return (
     <Card
       className={cn(
-        "relative overflow-hidden transition-all duration-300 hover:scale-105",
+        "relative z-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl",
         plan.popular
           ? "border-primary glow-primary bg-card"
           : "border-border bg-card/50 hover:border-primary/50"
