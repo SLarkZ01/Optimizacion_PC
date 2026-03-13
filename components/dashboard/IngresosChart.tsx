@@ -82,6 +82,11 @@ const IngresosChart = ({ data }: IngresosChartProps) => {
           </div>
         ) : (
           <>
+            {/* Resumen textual para lectores de pantalla */}
+            <p className="sr-only">
+              Gráfico de barras: ingresos mensuales.{" "}
+              {chartData.map((d) => `${d.mesLabel}: $${d.ingresos} USD`).join(", ")}.
+            </p>
             {/* Versión móvil: etiquetas cortas, sin eje Y, altura reducida */}
             <div className="sm:hidden">
               <ChartContainer config={chartConfig} className="h-[220px] w-full">

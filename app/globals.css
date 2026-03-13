@@ -261,11 +261,33 @@
   animation: fade-in 0.3s ease-out;
 }
 
+/* Accesibilidad: desactivar animaciones para usuarios con movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-shimmer::before {
+    animation: none;
+  }
+
+  /* Detener el bounce del scroll indicator del hero */
+  .animate-bounce {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Shimmer — ola de luz que barre de izquierda a derecha, estilo HeroUI */
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
   }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
 }
 
 .animate-shimmer::before {

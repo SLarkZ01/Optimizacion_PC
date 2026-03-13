@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Zap, Shield, CreditCard } from "lucide-react";
+import { ArrowRight, Zap, Shield, CreditCard, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { STATS } from "@/lib/constants";
@@ -37,9 +37,10 @@ const TrustBadges = (
 );
 
 // Indicador de scroll hoisted (rendering-hoist-jsx)
+// motion-reduce:animate-none respeta prefers-reduced-motion sin JS adicional
 const ScrollIndicator = (
   <div
-    className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
+    className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce motion-reduce:animate-none"
     aria-hidden="true"
   >
     <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
@@ -61,7 +62,8 @@ const HeroSection = () => {
             variant="outline"
             className="mb-6 px-4 py-2 border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           >
-            🚀 +100 PCs optimizadas
+            <Rocket className="w-4 h-4 mr-1.5" aria-hidden="true" />
+            +100 PCs optimizadas
           </Badge>
 
           {/* Título principal */}

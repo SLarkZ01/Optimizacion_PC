@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -52,13 +53,13 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
             <CardTitle>Compras Recientes</CardTitle>
             <CardDescription>Últimas transacciones registradas</CardDescription>
           </div>
-          <a
+          <Link
             href="/dashboard/compras"
             className="flex items-center gap-1 text-sm text-primary hover:underline"
           >
             Ver todas
             <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
       </CardHeader>
       <CardContent>

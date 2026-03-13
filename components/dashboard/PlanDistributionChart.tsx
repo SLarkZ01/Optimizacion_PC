@@ -69,6 +69,11 @@ const PlanDistributionChart = ({ data }: PlanDistributionChartProps) => {
           </div>
         ) : (
           <div className="flex flex-col items-center">
+            {/* Resumen textual para lectores de pantalla */}
+            <p className="sr-only">
+              Gráfico circular: distribución de compras por plan.{" "}
+              {chartData.map((d) => `${d.name}: ${d.value} compras (${totalCompras > 0 ? Math.round((d.value / totalCompras) * 100) : 0}%)`).join(", ")}.
+            </p>
             {/* Versión móvil: radios reducidos, altura menor */}
             <div className="sm:hidden">
               <ChartContainer config={chartConfig} className="h-[200px] w-full">

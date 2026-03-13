@@ -5,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createAdminClient } from "@/lib/supabase";
 import { buildCalComUrl } from "@/lib/email";
+import { WHATSAPP_URL } from "@/lib/whatsapp";
 import type { PlanType } from "@/lib/database.types";
-
-// URL de WhatsApp para contacto
-const WHATSAPP_URL = `https://wa.me/573126081990`;
 
 // Nombres de planes legibles
 const PLAN_LABELS: Record<PlanType, string> = {
