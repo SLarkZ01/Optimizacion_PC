@@ -1,15 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import {
-  Bar,
-  CartesianGrid,
-  Line,
-  ComposedChart,
-  LabelList,
-  XAxis,
-  YAxis,
-} from "recharts";
+// Gráfica de Ingresos por Mes — implementada con Chart.js (canvas).
+// Chart.js renderiza en <canvas>, por lo que los cambios de tamaño del
+// contenedor (sidebar expand/collapse) son manejados por CSS sin ningún
+// re-render de React — elimina el lag que causaba ResponsiveContainer de Recharts.
+
+import { memo, useMemo } from "react";
+import { Chart } from "react-chartjs-2";
+import type { ChartOptions } from "chart.js";
 import {
   Card,
   CardContent,
@@ -17,34 +15,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+  usdFormatter,
+  tickUSD,
+  buildDualAxisScales,
+} from "@/lib/chart-utils";
+
+// Importar el registro centralizado (efecto de módulo — se ejecuta una sola vez)
+import "@/lib/chart-utils";
 
 interface IngresosChartProps {
   data: { mes: string; total: number; ingresos: number }[];
 }
 
-const chartConfig = {
-  ingresos: {
-    label: "Ingresos (USD)",
-    color: "var(--color-chart-1)",
-  },
-  total: {
-    label: "Compras",
-    color: "var(--color-chart-2)",
-  },
-} satisfies ChartConfig;
-
-// Singleton de Intl.NumberFormat para el tooltip — instanciado una sola vez (js-cache-function-results)
-const tooltipUsdFormatter = new Intl.NumberFormat("en-US");
-
-// Array de nombres de meses hoisted a nivel de módulo — evita re-allocación en cada llamada (js-cache-function-results)
+// Array de nombres de meses hoisted — sin re-allocación por render
 const MESES = [
   "Ene", "Feb", "Mar", "Abr", "May", "Jun",
   "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
@@ -56,44 +41,94 @@ function formatMes(mesKey: string, short = false): string {
   return short ? mes : `${mes} ${year}`;
 }
 
-function tickFormatterUSD(value: number): string {
-  if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
-  return `$${value}`;
+function buildOptions(isMobile: boolean): ChartOptions<"bar"> {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    // Chart.js maneja el resize del canvas internamente con su propio ResizeObserver
+    // que NO pasa por React — por eso no hay lag al cambiar el sidebar.
+    animation: { duration: 400 },
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: {
+        display: !isMobile,
+        position: "bottom",
+        labels: {
+          boxWidth: 12,
+          boxHeight: 12,
+          borderRadius: 3,
+          useBorderRadius: true,
+          padding: 16,
+          font: { size: 12 },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label(ctx) {
+            if (ctx.dataset.label === "Ingresos (USD)") {
+              return ` Ingresos: $${usdFormatter.format(Number(ctx.parsed.y))}`;
+            }
+            return ` Compras: ${ctx.parsed.y}`;
+          },
+        },
+      },
+    },
+    scales: buildDualAxisScales(isMobile),
+  };
 }
 
-function tickFormatterCount(value: number): string {
-  return String(value);
-}
+const IngresosChart = memo(function IngresosChart({ data }: IngresosChartProps) {
+  // Hook reactivo — no accede a window directamente durante render (rerender-dependencies)
+  const isMobile = useIsMobile();
 
-// Formatea el label sobre la barra en móvil: valor compacto
-function labelFormatterBar(value: unknown): string {
-  const n = Number(value);
-  if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`;
-  return `$${n}`;
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chartData = useMemo<any>(() => {
+    // Leer CSS vars de color del documento (solo disponibles en cliente)
+    const style =
+      typeof window !== "undefined"
+        ? getComputedStyle(document.documentElement)
+        : null;
 
-// Formateador del tooltip hoisted a nivel de módulo — sin dependencias de props/estado (rerender-memo)
-function tooltipFormatter(
-  value: unknown,
-  name: string | number,
-): [string, string] {
-  if (name === "ingresos")
-    return [`$${tooltipUsdFormatter.format(Number(value))}`, "Ingresos (USD)"];
-  return [String(value), "Compras"];
-}
+    const color1 = style?.getPropertyValue("--color-chart-1").trim() || "hsl(142 71% 45%)";
+    const color2 = style?.getPropertyValue("--color-chart-2").trim() || "hsl(213 94% 68%)";
 
-const IngresosChart = ({ data }: IngresosChartProps) => {
-  const chartData = useMemo(
-    () =>
-      data.map((d) => ({
-        ...d,
-        mesLabel: formatMes(d.mes),
-        mesCorto: formatMes(d.mes, true),
-      })),
-    [data],
-  );
+    const labels = data.map((d) =>
+      isMobile ? formatMes(d.mes, true) : formatMes(d.mes),
+    );
 
-  if (chartData.length === 0) {
+    return {
+      labels,
+      datasets: [
+        {
+          type: "bar" as const,
+          label: "Ingresos (USD)",
+          data: data.map((d) => d.ingresos),
+          backgroundColor: color1,
+          borderRadius: 5,
+          borderSkipped: false,
+          yAxisID: "yIngresos",
+          order: 2,
+        },
+        {
+          type: "line" as const,
+          label: "Compras",
+          data: data.map((d) => d.total),
+          borderColor: color2,
+          backgroundColor: color2,
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0,
+          yAxisID: "yTotal",
+          order: 1,
+        },
+      ],
+    };
+  }, [data, isMobile]);
+
+  const options = useMemo(() => buildOptions(isMobile), [isMobile]);
+
+  if (data.length === 0) {
     return (
       <Card className="min-w-0 overflow-hidden border-border/50 bg-card/80">
         <CardHeader>
@@ -117,126 +152,27 @@ const IngresosChart = ({ data }: IngresosChartProps) => {
           Ingresos (USD) y cantidad de ventas por mes
         </CardDescription>
       </CardHeader>
-      <CardContent className="px-1 pb-4 sm:px-6">
+      <CardContent className="px-2 pb-4 sm:px-6">
         {/* Accesibilidad */}
         <p className="sr-only">
           Gráfico combinado: ingresos y compras mensuales.{" "}
-          {chartData
-            .map((d) => `${d.mesLabel}: $${d.ingresos} USD, ${d.total} compras`)
+          {data
+            .map((d) => `${formatMes(d.mes)}: $${d.ingresos} USD, ${d.total} compras`)
             .join(", ")}.
         </p>
 
-        {/* ── MÓVIL: sin ejes Y, labels sobre las barras, tooltip ── */}
-        <div className="sm:hidden">
-          <ChartContainer config={chartConfig} className="h-[200px] w-full">
-            <ComposedChart
-              data={chartData}
-              accessibilityLayer
-              margin={{ top: 20, right: 8, left: 8, bottom: 0 }}
-            >
-              <CartesianGrid vertical={false} strokeDasharray="3 3" />
-              <XAxis
-                dataKey="mesCorto"
-                tickLine={false}
-                tickMargin={6}
-                axisLine={false}
-                tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-              />
-              {/* Eje Y oculto — los valores van como label sobre la barra */}
-              <YAxis hide />
-              <ChartTooltip
-                content={<ChartTooltipContent formatter={tooltipFormatter} />}
-              />
-              <Bar
-                dataKey="ingresos"
-                fill="var(--color-chart-1)"
-                radius={[5, 5, 0, 0]}
-              >
-                <LabelList
-                  dataKey="ingresos"
-                  position="top"
-                  formatter={labelFormatterBar}
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    fill: "var(--color-chart-1)",
-                  }}
-                />
-              </Bar>
-            </ComposedChart>
-          </ChartContainer>
-          {/* Mini leyenda de color para móvil */}
-          <div className="flex justify-center gap-4 pt-1">
-            <div className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-2 w-3 rounded-sm"
-                style={{ background: "var(--color-chart-1)" }}
-              />
-              <span className="text-xs text-muted-foreground">Ingresos USD</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── DESKTOP: combo chart con dos ejes Y ── */}
-        <div className="hidden sm:block">
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
-            <ComposedChart
-              data={chartData}
-              accessibilityLayer
-              margin={{ top: 4, right: 20, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="mesLabel"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <YAxis
-                yAxisId="ingresos"
-                orientation="left"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={tickFormatterUSD}
-                width={58}
-              />
-              <YAxis
-                yAxisId="total"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={tickFormatterCount}
-                width={32}
-                allowDecimals={false}
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent formatter={tooltipFormatter} />
-                }
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar
-                yAxisId="ingresos"
-                dataKey="ingresos"
-                fill="var(--color-chart-1)"
-                radius={[5, 5, 0, 0]}
-                maxBarSize={52}
-              />
-              <Line
-                yAxisId="total"
-                type="monotone"
-                dataKey="total"
-                stroke="var(--color-chart-2)"
-                strokeWidth={2.5}
-                dot={{ r: 4, fill: "var(--color-chart-2)", strokeWidth: 0 }}
-                activeDot={{ r: 6 }}
-              />
-            </ComposedChart>
-          </ChartContainer>
+        {/* Canvas — Chart.js gestiona el resize internamente sin pasar por React */}
+        <div className="h-[200px] w-full sm:h-[300px]">
+          <Chart
+            type="bar"
+            data={chartData}
+            options={options}
+            aria-label="Gráfico de ingresos por mes"
+          />
         </div>
       </CardContent>
     </Card>
   );
-};
+});
 
 export default IngresosChart;

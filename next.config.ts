@@ -39,7 +39,6 @@ const nextConfig: NextConfig = {
       "class-variance-authority",
       "clsx",
       "date-fns",
-      "recharts",
     ],
   },
 };
