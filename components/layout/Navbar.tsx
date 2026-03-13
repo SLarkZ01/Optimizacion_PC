@@ -44,7 +44,9 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-[100] isolate transition-all duration-300 ${
-        isScrolled ? "glass border-b border-border/50" : "bg-transparent"
+        isScrolled
+          ? "glass border-b border-border/50"
+          : "max-md:glass bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">

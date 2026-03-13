@@ -99,9 +99,9 @@ const DashboardSidebar = () => {
                     <Link href={item.href}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                      {isActive(item.href) && (
+                      {isActive(item.href) ? (
                         <ChevronRight className="ml-auto h-4 w-4" />
-                      )}
+                      ) : null}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

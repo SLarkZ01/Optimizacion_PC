@@ -14,31 +14,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CreditCard } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { PaymentStatus } from "@/lib/database.types";
 import type { PurchaseWithCustomer } from "@/lib/dashboard";
-import { PLAN_NAMES } from "@/lib/constants";
+import { PLAN_NAMES, PAYMENT_STATUS_CONFIG } from "@/lib/constants";
 import SearchInput from "@/components/dashboard/SearchInput";
 import Pagination from "@/components/dashboard/Pagination";
 
-// Mapeo de estados de pago a variantes de badge y texto en español
-const STATUS_CONFIG: Record<
-  PaymentStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
-> = {
-  completed: { label: "Completado", variant: "default" },
-  pending: { label: "Pendiente", variant: "secondary" },
-  failed: { label: "Fallido", variant: "destructive" },
-  refunded: { label: "Reembolsado", variant: "outline" },
-};
-
 // Nombres de planes en español — importado de lib/constants (fuente única)
 
+// Singleton de Intl.NumberFormat — instanciado una sola vez a nivel de módulo (js-cache-function-results)
+const usdFormatter = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
+
 function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(amount);
+  return usdFormatter.format(amount);
 }
 
 interface ComprasPageProps {
@@ -95,7 +86,7 @@ async function ComprasContent({
                 </TableHeader>
                 <TableBody>
                   {purchases.map((purchase: PurchaseWithCustomer) => {
-                    const statusConfig = STATUS_CONFIG[purchase.status];
+                    const statusConfig = PAYMENT_STATUS_CONFIG[purchase.status];
                     return (
                       <TableRow key={purchase.id}>
                         <TableCell>

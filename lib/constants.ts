@@ -209,3 +209,14 @@ export const STATS = [
   { value: "4.9★", label: "Calificación" },
   { value: "30min", label: "Tiempo Promedio" },
 ] as const;
+
+// Mapeo de estados de pago a variantes de badge y texto en español — fuente única de verdad
+export const PAYMENT_STATUS_CONFIG: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
+  completed: { label: "Completado", variant: "default" },
+  pending: { label: "Pendiente", variant: "secondary" },
+  failed: { label: "Fallido", variant: "destructive" },
+  refunded: { label: "Reembolsado", variant: "outline" },
+};

@@ -2,6 +2,7 @@
 // POST /api/paypal/capture-order
 // Recibe { orderID } y captura el pago, luego guarda en Supabase
 
+import { after } from "next/server";
 import { NextResponse } from "next/server";
 import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/paypal";
 import { createAdminClient } from "@/lib/supabase";
@@ -155,15 +156,17 @@ export async function POST(request: Request) {
         );
       }
 
-      // Enviar email de confirmación via Brevo (no bloquea si falla)
-      await sendPaymentConfirmationEmail({
-        toEmail: email,
-        customerName: name,
-        customerEmail: email,   // Para construir el link de Cal.com pre-llenado
-        planId: activePlanId,
-        amount,
-        orderId: orderID,
-      });
+      // Enviar email de confirmación via Brevo — no bloquea la respuesta (server-after-nonblocking)
+      after(() =>
+        sendPaymentConfirmationEmail({
+          toEmail: email,
+          customerName: name,
+          customerEmail: email,   // Para construir el link de Cal.com pre-llenado
+          planId: activePlanId,
+          amount,
+          orderId: orderID,
+        })
+      );
     } else {
       console.warn("PayPal Capture: No se recibió email del pagador");
     }
