@@ -60,7 +60,7 @@ const HeroSection = () => {
             className="mb-6 px-4 py-2 border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           >
             <Rocket className="w-4 h-4 mr-1.5" aria-hidden="true" />
-            +100 PCs optimizadas
+            Maximo rendimiento
           </Badge>
 
           {/* Título principal */}
