@@ -29,7 +29,7 @@ const AboutSection = () => {
               <CardContent className="p-4 flex items-center gap-3">
                 <Award className="w-8 h-8 text-primary" />
                 <div>
-                  <div className="font-bold text-lg">4+ años</div>
+                  <div className="font-bold text-lg">5+ años</div>
                   <div className="text-xs text-muted-foreground">de experiencia</div>
                 </div>
               </CardContent>

@@ -66,7 +66,7 @@ const HeroSection = () => {
           {/* Título principal */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white">
             Tu PC como nueva{" "}
-            <span className="gradient-text">en 30 minutos</span>
+            <span className="gradient-text">en 60 minutos</span>
           </h1>
 
           {/* Subtítulo */}
