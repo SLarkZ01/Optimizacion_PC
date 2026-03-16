@@ -96,9 +96,9 @@ function DetailsSkeleton() {
   return (
     <div className="flex flex-col px-5 py-5 gap-5">
       {/* Identidad */}
-      <div className="flex items-start gap-3.5">
-        <Skeleton className="h-11 w-11 shrink-0 rounded-full" />
-        <div className="flex flex-1 flex-col gap-2 pt-0.5">
+      <div className="flex items-start gap-3">
+        <Skeleton className="h-11 w-10 shrink-0 rounded-full" />
+          <div className="flex flex-1 flex-col gap-2 pt-1">
           <Skeleton className="h-4 w-40" />
           <Skeleton className="h-3 w-52" />
           <Skeleton className="h-3 w-32" />
@@ -118,7 +118,7 @@ function DetailsSkeleton() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className={`flex items-center justify-between gap-3 px-3.5 py-3 ${
+              className={`flex items-center justify-between gap-3 px-4 py-3 ${
                 i < 2 ? "border-b border-border/60" : ""
               }`}
             >
@@ -149,7 +149,7 @@ function DetailsSkeleton() {
           {Array.from({ length: 2 }).map((_, i) => (
             <div
               key={i}
-              className={`flex flex-col gap-2 px-3.5 py-3 ${
+              className={`flex flex-col gap-2 px-4 py-3 ${
                 i < 1 ? "border-b border-border/60" : ""
               }`}
             >
@@ -182,7 +182,7 @@ function SectionHeader({
       <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
-      <span className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+      <span className="ml-auto rounded bg-muted px-2 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
         {count}
       </span>
     </div>
@@ -196,10 +196,10 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
   return (
     <div className="flex flex-col pb-2">
       {/* ── Identidad ── */}
-      <div className="flex items-start gap-3.5 px-5 py-5">
+      <div className="flex items-start gap-3 px-5 py-5">
         <div
           aria-hidden="true"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary"
+          className="flex h-11 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary"
         >
           {getInitials(customer.name, customer.email)}
         </div>
@@ -211,7 +211,7 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
             <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
             <span className="truncate">{customer.email}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
             {customer.country_code ? (
               <span className="flex items-center gap-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -245,7 +245,7 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
       {/* ── Compras ── */}
       <SectionHeader icon={CreditCard} label="Compras" count={purchases.length} />
 
-      <div className="px-5 pb-4 pt-1.5">
+      <div className="px-5 pb-4 pt-2">
         {purchases.length === 0 ? (
           <p className="rounded-lg border border-dashed border-border py-5 text-center text-xs text-muted-foreground">
             Sin compras registradas
@@ -259,19 +259,19 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
               return (
                 <div
                   key={purchase.id}
-                  className={`flex items-center gap-2 px-3.5 py-3 ${
+                  className={`flex items-center gap-2 px-4 py-3 ${
                     index < purchases.length - 1 ? "border-b border-border/60" : ""
                   }`}
                 >
                   {/* Columna izquierda */}
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-medium text-foreground">
                         {PLAN_NAMES[purchase.plan_type] ?? purchase.plan_type}
                       </span>
                       <Badge
                         variant={statusCfg.variant}
-                        className="h-5 shrink-0 rounded px-1.5 text-[11px] font-medium"
+                        className="h-5 shrink-0 rounded px-2 text-[11px] font-medium"
                       >
                         {statusCfg.label}
                       </Badge>
@@ -295,7 +295,7 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
                   {/* Precio */}
                   <span className="shrink-0 whitespace-nowrap text-right text-sm font-semibold tabular-nums text-foreground">
                     ${purchase.amount}
-                    <span className="ml-0.5 text-xs font-normal text-muted-foreground">
+                    <span className="ml-1 text-xs font-normal text-muted-foreground">
                       {purchase.currency}
                     </span>
                   </span>
@@ -311,7 +311,7 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
       {/* ── Reservas ── */}
       <SectionHeader icon={CalendarCheck} label="Reservas" count={bookings.length} />
 
-      <div className="px-5 pb-5 pt-1.5">
+      <div className="px-5 pb-6 pt-2">
         {bookings.length === 0 ? (
           <p className="rounded-lg border border-dashed border-border py-5 text-center text-xs text-muted-foreground">
             Sin reservas agendadas
@@ -323,14 +323,14 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
               return (
                 <div
                   key={booking.id}
-                  className={`flex flex-col gap-1.5 px-3.5 py-3 ${
+                  className={`flex flex-col gap-2 px-4 py-3 ${
                     index < bookings.length - 1 ? "border-b border-border/60" : ""
                   }`}
                 >
                   <div className="flex flex-wrap items-center gap-1.5">
                     <Badge
                       variant={statusCfg.variant}
-                      className="h-5 rounded px-1.5 text-[11px] font-medium"
+                      className="h-5 rounded px-2 text-[11px] font-medium"
                     >
                       {statusCfg.label}
                     </Badge>
@@ -362,7 +362,7 @@ function SheetDetailsContent({ details }: { details: CustomerDetails }) {
                     </span>
                   )}
                   {booking.notes && (
-                    <p className="break-words border-t border-border/40 pt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    <p className="break-words border-t border-border/40 pt-2 text-xs leading-relaxed text-muted-foreground">
                       {booking.notes}
                     </p>
                   )}
