@@ -524,9 +524,6 @@ export function MyComponent({ prop }: MyComponentProps) {
 |-------|-------------|
 | 📧 **Email** | [tmontoyamagon11@gmail.com](mailto:tmontoyamagon11@gmail.com) |
 | 💬 **WhatsApp** | [+57 312 608 1990](https://wa.me/573126081990) |
-| 🐦 **Twitter/X** | [@pcoptimize](https://twitter.com/pcoptimize) |
-| 📸 **Instagram** | [@pcoptimize](https://instagram.com/pcoptimize) |
-| 📺 **YouTube** | [@pcoptimize](https://youtube.com/@pcoptimize) |
 
 ---
 
