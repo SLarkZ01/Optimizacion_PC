@@ -5,7 +5,7 @@
 // Flujo BOOKING_RESCHEDULED: Cal.com → update scheduled_date en bookings
 // Flujo BOOKING_CANCELLED:   Cal.com → update status = 'cancelled' en bookings
 
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase";
 import { sendBookingConfirmationEmail } from "@/lib/email";
 
@@ -206,8 +206,8 @@ async function handleBookingCreated(
     );
   }
 
-  // Enviar email con instrucciones de RustDesk (no bloquea si falla)
-  await sendBookingConfirmationEmail({ toEmail: email, customerName: name, scheduledDate, calBookingId });
+  // Enviar email con instrucciones de RustDesk — no bloquea la respuesta (server-after-nonblocking)
+  after(() => sendBookingConfirmationEmail({ toEmail: email, customerName: name, scheduledDate, calBookingId }));
 
   return NextResponse.json({ received: true, processed: true });
 }
@@ -312,24 +312,18 @@ async function handleBookingCancelled(
 // Utilidades
 // ============================================================
 
-/** Busca la compra completada más reciente del cliente por email. */
+/** Busca la compra completada más reciente del cliente por email.
+ *  Una sola query con JOIN — evita el waterfall de 2 queries secuenciales (async-parallel).
+ */
 async function findLatestCompletedPurchase(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
   email: string,
 ): Promise<string | null> {
-  const { data: customer } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("email", email)
-    .single();
-
-  if (!customer) return null;
-
   const { data: purchase } = await supabase
     .from("purchases")
-    .select("id")
-    .eq("customer_id", customer.id)
+    .select("id, customers!inner(email)")
+    .eq("customers.email", email)
     .eq("status", "completed")
     .order("created_at", { ascending: false })
     .limit(1)

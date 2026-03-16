@@ -101,8 +101,10 @@ function setCache(region: PricingRegion, countryCode: string): void {
  * `region: "international"` para el resto (USA, Europa, etc.).
  */
 export function useRegion(): UseRegionResult {
-  const [region, setRegion] = useState<PricingRegion>("international");
-  const [countryCode, setCountryCode] = useState<string>("US");
+  // Fallback a "latam" para que un fallo de ipapi.co nunca muestre precios
+  // más altos a usuarios latinoamericanos.
+  const [region, setRegion] = useState<PricingRegion>("latam");
+  const [countryCode, setCountryCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -144,10 +146,12 @@ export function useRegion(): UseRegionResult {
           setCache(detectedRegion, detected);
         }
       } catch {
-        // Fallback silencioso a international
+        // Fallback silencioso a latam — precio más bajo por defecto para
+        // no perjudicar a usuarios latinoamericanos si ipapi.co falla.
+        // countryCode vacío para no grabar un país ficticio en la base de datos.
         if (!cancelled) {
-          setRegion("international");
-          setCountryCode("US");
+          setRegion("latam");
+          setCountryCode("");
         }
       } finally {
         if (!cancelled) setLoading(false);

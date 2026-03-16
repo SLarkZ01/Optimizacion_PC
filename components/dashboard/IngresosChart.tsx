@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
+// Gráfica de Ingresos por Mes — implementada con Chart.js (canvas).
+// Chart.js renderiza en <canvas>, por lo que los cambios de tamaño del
+// contenedor (sidebar expand/collapse) son manejados por CSS sin ningún
+// re-render de React — elimina el lag que causaba ResponsiveContainer de Recharts.
+
+import { memo, useMemo } from "react";
+import { Chart } from "react-chartjs-2";
+import type { ChartOptions } from "chart.js";
 import {
   Card,
   CardContent,
@@ -15,145 +15,164 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+  usdFormatter,
+  tickUSD,
+  buildDualAxisScales,
+} from "@/lib/chart-utils";
+
+// Importar el registro centralizado (efecto de módulo — se ejecuta una sola vez)
+import "@/lib/chart-utils";
 
 interface IngresosChartProps {
   data: { mes: string; total: number; ingresos: number }[];
 }
 
-const chartConfig = {
-  ingresos: {
-    label: "Ingresos (USD)",
-    color: "var(--color-chart-1)",
-  },
-  total: {
-    label: "Compras",
-    color: "var(--color-chart-2)",
-  },
-} satisfies ChartConfig;
+// Array de nombres de meses hoisted — sin re-allocación por render
+const MESES = [
+  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+];
 
-// Formatea "2026-01" → "Ene 2026" (completo) o "Ene" (corto para móvil)
 function formatMes(mesKey: string, short = false): string {
   const [year, month] = mesKey.split("-");
-  const meses = [
-    "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
-  ];
-  const mes = meses[parseInt(month, 10) - 1];
+  const mes = MESES[parseInt(month, 10) - 1];
   return short ? mes : `${mes} ${year}`;
 }
 
-// Hoisted fuera del componente — referencia estable, sin re-creación en cada render (P8)
-function tickFormatter(value: number): string {
-  // Formato compacto: $1.2k en lugar de $1200 para ahorrar espacio horizontal
-  if (value >= 1000) return `$${(value / 1000).toFixed(1)}k`;
-  return `$${value}`;
+function buildOptions(isMobile: boolean): ChartOptions<"bar"> {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    // Chart.js maneja el resize del canvas internamente con su propio ResizeObserver
+    // que NO pasa por React — por eso no hay lag al cambiar el sidebar.
+    animation: { duration: 400 },
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: {
+        display: !isMobile,
+        position: "bottom",
+        labels: {
+          boxWidth: 12,
+          boxHeight: 12,
+          borderRadius: 3,
+          useBorderRadius: true,
+          padding: 16,
+          font: { size: 12 },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label(ctx) {
+            if (ctx.dataset.label === "Ingresos (USD)") {
+              return ` Ingresos: $${usdFormatter.format(Number(ctx.parsed.y))}`;
+            }
+            return ` Compras: ${ctx.parsed.y}`;
+          },
+        },
+      },
+    },
+    scales: buildDualAxisScales(isMobile),
+  };
 }
 
-const IngresosChart = ({ data }: IngresosChartProps) => {
-  // Datos para pantalla normal y etiquetas cortas para móvil
-  const chartData = useMemo(
-    () =>
-      data.map((d) => ({
-        ...d,
-        mesLabel: formatMes(d.mes),
-        mesCorto: formatMes(d.mes, true),
-      })),
-    [data],
-  );
+const IngresosChart = memo(function IngresosChart({ data }: IngresosChartProps) {
+  // Hook reactivo — no accede a window directamente durante render (rerender-dependencies)
+  const isMobile = useIsMobile();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const chartData = useMemo<any>(() => {
+    // Leer CSS vars de color del documento (solo disponibles en cliente)
+    const style =
+      typeof window !== "undefined"
+        ? getComputedStyle(document.documentElement)
+        : null;
+
+    const color1 = style?.getPropertyValue("--color-chart-1").trim() || "hsl(142 71% 45%)";
+    const color2 = style?.getPropertyValue("--color-chart-2").trim() || "hsl(213 94% 68%)";
+
+    const labels = data.map((d) =>
+      isMobile ? formatMes(d.mes, true) : formatMes(d.mes),
+    );
+
+    return {
+      labels,
+      datasets: [
+        {
+          type: "bar" as const,
+          label: "Ingresos (USD)",
+          data: data.map((d) => d.ingresos),
+          backgroundColor: color1,
+          borderRadius: 5,
+          borderSkipped: false,
+          yAxisID: "yIngresos",
+          order: 2,
+        },
+        {
+          type: "line" as const,
+          label: "Compras",
+          data: data.map((d) => d.total),
+          borderColor: color2,
+          backgroundColor: color2,
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0,
+          yAxisID: "yTotal",
+          order: 1,
+        },
+      ],
+    };
+  }, [data, isMobile]);
+
+  const options = useMemo(() => buildOptions(isMobile), [isMobile]);
+
+  if (data.length === 0) {
+    return (
+      <Card className="min-w-0 overflow-hidden border-border/50 bg-card/80">
+        <CardHeader>
+          <CardTitle>Ingresos por Mes</CardTitle>
+          <CardDescription>Evolución de ingresos y ventas mensuales</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-[200px] items-center justify-center text-center text-sm text-muted-foreground">
+            No hay datos suficientes para mostrar el gráfico
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="min-w-0 overflow-hidden border-border/50 bg-card/80">
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle>Ingresos por Mes</CardTitle>
         <CardDescription>
-          Evolución de ingresos en los últimos meses
+          Ingresos (USD) y cantidad de ventas por mes
         </CardDescription>
       </CardHeader>
-      <CardContent className="px-2 sm:px-6">
-        {chartData.length === 0 ? (
-          <div className="flex h-[220px] items-center justify-center text-center text-sm text-muted-foreground sm:h-[300px]">
-            No hay datos suficientes para mostrar el gráfico
-          </div>
-        ) : (
-          <>
-            {/* Versión móvil: etiquetas cortas, sin eje Y, altura reducida */}
-            <div className="sm:hidden">
-              <ChartContainer config={chartConfig} className="h-[220px] w-full">
-                <BarChart
-                  data={chartData}
-                  accessibilityLayer
-                  margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="mesCorto"
-                    tickLine={false}
-                    tickMargin={6}
-                    axisLine={false}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={tickFormatter}
-                    width={45}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                  />
-                  <Bar
-                    dataKey="ingresos"
-                    fill="var(--color-chart-1)"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </div>
+      <CardContent className="px-2 pb-4 sm:px-6">
+        {/* Accesibilidad */}
+        <p className="sr-only">
+          Gráfico combinado: ingresos y compras mensuales.{" "}
+          {data
+            .map((d) => `${formatMes(d.mes)}: $${d.ingresos} USD, ${d.total} compras`)
+            .join(", ")}.
+        </p>
 
-            {/* Versión desktop: etiquetas completas, con eje Y, altura normal */}
-            <div className="hidden sm:block">
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <BarChart
-                  data={chartData}
-                  accessibilityLayer
-                  margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="mesLabel"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={tickFormatter}
-                    width={55}
-                  />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                  />
-                  <Bar
-                    dataKey="ingresos"
-                    fill="var(--color-chart-1)"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </div>
-          </>
-        )}
+        {/* Canvas — Chart.js gestiona el resize internamente sin pasar por React */}
+        <div className="h-[200px] w-full sm:h-[300px]">
+          <Chart
+            type="bar"
+            data={chartData}
+            options={options}
+            aria-label="Gráfico de ingresos por mes"
+          />
+        </div>
       </CardContent>
     </Card>
   );
-};
+});
 
 export default IngresosChart;

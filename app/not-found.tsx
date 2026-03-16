@@ -19,12 +19,12 @@ export default function NotFound() {
 
         {/* Título */}
         <h2 className="text-2xl md:text-3xl font-bold mb-4">
-          Pagina no encontrada
+          Página no encontrada
         </h2>
 
         {/* Mensaje */}
         <p className="text-muted-foreground mb-8">
-          Lo sentimos, la pagina que buscas no existe o ha sido movida. No te
+          Lo sentimos, la página que buscas no existe o ha sido movida. No te
           preocupes, puedes volver al inicio.
         </p>
 

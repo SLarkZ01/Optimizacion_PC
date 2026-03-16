@@ -55,19 +55,22 @@ export default function SearchInput({
     [router, pathname, searchParams],
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
 
-    // Cancelar el debounce anterior
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => pushSearch(newValue), debounceMs);
-  };
+      // Cancelar el debounce anterior
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => pushSearch(newValue), debounceMs);
+    },
+    [pushSearch, debounceMs],
+  );
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     if (inputRef.current) inputRef.current.value = "";
     if (timerRef.current) clearTimeout(timerRef.current);
     pushSearch("");
-  };
+  }, [pushSearch]);
 
   // Limpiar el timer al desmontar
   useEffect(() => {
@@ -77,7 +80,7 @@ export default function SearchInput({
   }, []);
 
   return (
-    <div className="relative w-full max-w-sm">
+    <div role="search" className="relative w-full max-w-sm">
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         ref={inputRef}
@@ -87,7 +90,7 @@ export default function SearchInput({
         className="pl-9 pr-8"
         aria-label="Buscar"
       />
-      {urlQuery && (
+      {urlQuery ? (
         <Button
           variant="ghost"
           size="icon"
@@ -97,7 +100,7 @@ export default function SearchInput({
         >
           <X className="h-3.5 w-3.5" />
         </Button>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -18,29 +19,21 @@ import { ArrowUpRight } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import type { ComprasRecientesRow } from "@/lib/dashboard";
-import type { PaymentStatus } from "@/lib/database.types";
-import { PLAN_NAMES } from "@/lib/constants";
+import { PLAN_NAMES, PAYMENT_STATUS_CONFIG } from "@/lib/constants";
 
 interface ComprasRecientesTableProps {
   compras: ComprasRecientesRow[];
 }
 
-const STATUS_CONFIG: Record<
-  PaymentStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
-> = {
-  completed: { label: "Completado", variant: "default" },
-  pending: { label: "Pendiente", variant: "secondary" },
-  failed: { label: "Fallido", variant: "destructive" },
-  refunded: { label: "Reembolsado", variant: "outline" },
-};
+// Singleton de Intl.NumberFormat — instanciado una sola vez a nivel de módulo (js-cache-function-results)
+const usdFormatter = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
 
 function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(amount);
+  return usdFormatter.format(amount);
 }
 
 const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
@@ -52,13 +45,13 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
             <CardTitle>Compras Recientes</CardTitle>
             <CardDescription>Últimas transacciones registradas</CardDescription>
           </div>
-          <a
+          <Link
             href="/dashboard/compras"
             className="flex items-center gap-1 text-sm text-primary hover:underline"
           >
             Ver todas
             <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
       </CardHeader>
       <CardContent>
@@ -80,7 +73,7 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
               </TableHeader>
               <TableBody>
                 {compras.map((purchase) => {
-                  const statusConfig = STATUS_CONFIG[purchase.status];
+                  const statusConfig = PAYMENT_STATUS_CONFIG[purchase.status];
                   return (
                     <TableRow key={purchase.id}>
                       <TableCell>

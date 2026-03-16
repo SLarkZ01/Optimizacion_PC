@@ -2,6 +2,7 @@
 // POST /api/paypal/capture-order
 // Recibe { orderID } y captura el pago, luego guarda en Supabase
 
+import { after } from "next/server";
 import { NextResponse } from "next/server";
 import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/paypal";
 import { createAdminClient } from "@/lib/supabase";
@@ -102,13 +103,28 @@ export async function POST(request: Request) {
     if (email) {
       const { data: existingCustomer } = await supabase
         .from("customers")
-        .select("id")
+        .select("id, country_code")
         .eq("email", email)
         .single();
 
       if (existingCustomer) {
         customerId = existingCustomer.id;
         console.log(`PayPal Capture: Cliente existente encontrado: ${customerId}`);
+
+        // Si el cliente no tenía país registrado y ahora lo tenemos, actualizarlo.
+        // Aplica a clientes anteriores a la implementación de country_code y a
+        // casos donde ipapi.co falló en la compra original.
+        if (!existingCustomer.country_code && countryCode) {
+          const { error: updateError } = await supabase
+            .from("customers")
+            .update({ country_code: countryCode })
+            .eq("id", customerId);
+          if (updateError) {
+            console.warn(`PayPal Capture: No se pudo actualizar country_code del cliente ${customerId}:`, updateError);
+          } else {
+            console.log(`PayPal Capture: country_code actualizado a "${countryCode}" para cliente ${customerId}`);
+          }
+        }
       } else {
         const { data: newCustomer, error: customerError } = await supabase
           .from("customers")
@@ -155,15 +171,17 @@ export async function POST(request: Request) {
         );
       }
 
-      // Enviar email de confirmación via Brevo (no bloquea si falla)
-      await sendPaymentConfirmationEmail({
-        toEmail: email,
-        customerName: name,
-        customerEmail: email,   // Para construir el link de Cal.com pre-llenado
-        planId: activePlanId,
-        amount,
-        orderId: orderID,
-      });
+      // Enviar email de confirmación via Brevo — no bloquea la respuesta (server-after-nonblocking)
+      after(() =>
+        sendPaymentConfirmationEmail({
+          toEmail: email,
+          customerName: name,
+          customerEmail: email,   // Para construir el link de Cal.com pre-llenado
+          planId: activePlanId,
+          amount,
+          orderId: orderID,
+        })
+      );
     } else {
       console.warn("PayPal Capture: No se recibió email del pagador");
     }

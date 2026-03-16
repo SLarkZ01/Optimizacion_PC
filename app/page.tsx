@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import AboutSection from "@/components/sections/AboutSection";
+import PayPalProvider from "@/components/shared/PayPalProvider";
 
 // Imports dinámicos para secciones debajo del fold (mejora tamaño del bundle inicial)
 const ProcessSection = dynamic(
@@ -30,22 +31,25 @@ const CTASection = dynamic(
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main>
-        <HeroSection />
-        <FeaturesSection />
-        <AboutSection />
-        <Suspense fallback={<div className="py-20 md:py-32" />}>
-          <ProcessSection />
-          <PricingSection />
-          <TestimonialsSection />
-          <FAQSection />
-          <CTASection />
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
+    // PayPalProvider scoped a la landing page — no carga el SDK en dashboard, login ni otras rutas (bundle-conditional)
+    <PayPalProvider>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main>
+          <HeroSection />
+          <FeaturesSection />
+          <AboutSection />
+          <Suspense fallback={<div className="py-20 md:py-32" />}>
+            <ProcessSection />
+            <PricingSection />
+            <TestimonialsSection />
+            <FAQSection />
+            <CTASection />
+          </Suspense>
+        </main>
+        <Footer />
+      </div>
+    </PayPalProvider>
   );
 }
   

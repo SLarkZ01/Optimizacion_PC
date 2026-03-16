@@ -15,13 +15,16 @@ import {
   PlanDistributionChartDynamic,
 } from "@/components/dashboard/ChartsClientLoader";
 
+// Singleton de Intl.NumberFormat — instanciado una sola vez a nivel de módulo (js-cache-function-results)
+const usdFormatter = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
+
 // Formato de moneda USD
 function formatUSD(amount: number): string {
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(amount);
+  return usdFormatter.format(amount);
 }
 
 // Componente de tarjeta de KPI

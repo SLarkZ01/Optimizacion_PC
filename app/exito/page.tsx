@@ -5,17 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createAdminClient } from "@/lib/supabase";
 import { buildCalComUrl } from "@/lib/email";
+import { WHATSAPP_URL } from "@/lib/whatsapp";
+import { PLAN_NAMES } from "@/lib/constants";
 import type { PlanType } from "@/lib/database.types";
-
-// URL de WhatsApp para contacto
-const WHATSAPP_URL = `https://wa.me/573126081990`;
-
-// Nombres de planes legibles
-const PLAN_LABELS: Record<PlanType, string> = {
-  basic: "Basic",
-  gamer: "Gamer",
-  premium: "Premium",
-};
 
 // Datos del pago obtenidos desde Supabase
 interface PurchaseData {
@@ -70,10 +62,10 @@ async function ExitoContent({
   const firstName = purchase?.customerName
     ? purchase.customerName.split(" ")[0]
     : null;
-  const planLabel = purchase ? (PLAN_LABELS[purchase.planType] ?? purchase.planType) : null;
+  const planLabel = purchase ? (PLAN_NAMES[purchase.planType] ?? purchase.planType) : null;
   const amount = purchase?.amount ?? null;
 
-  // Link de Cal.com pre-llenado con email y nombre del cliente (Opción C)
+  // Link de Cal.com pre-llenado con email y nombre del cliente
   // Graceful degradation: si no hay datos, usa la URL base genérica
   const calComUrl = buildCalComUrl(purchase?.customerEmail, purchase?.customerName);
 

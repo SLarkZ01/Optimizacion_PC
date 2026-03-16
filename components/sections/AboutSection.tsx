@@ -1,4 +1,4 @@
-import { CheckCircle, Award, Users } from "lucide-react";
+import { CheckCircle, Award, Users, Cpu } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const AboutSection = () => {
@@ -11,13 +11,14 @@ const AboutSection = () => {
             <div className="aspect-square max-w-md mx-auto rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 p-1">
               <div className="w-full h-full rounded-2xl bg-card flex items-center justify-center">
                 <div className="text-center p-8">
-                  <div className="w-32 h-32 rounded-full gradient-primary mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-5xl font-bold text-primary-foreground">
-                      [N]
-                    </span>
+                  <div className="w-36 h-36 rounded-full gradient-primary mx-auto mb-6 flex items-center justify-center shadow-lg ring-4 ring-primary/20">
+                    <Cpu className="w-16 h-16 text-primary-foreground" aria-hidden="true" />
                   </div>
-                  <p className="text-muted-foreground text-sm">
-                    [Tu foto aquí]
+                  <p className="text-sm font-semibold text-foreground tracking-wide">
+                    Thomas Montoya
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Técnico en Optimización de PCs
                   </p>
                 </div>
               </div>
@@ -28,7 +29,7 @@ const AboutSection = () => {
               <CardContent className="p-4 flex items-center gap-3">
                 <Award className="w-8 h-8 text-primary" />
                 <div>
-                  <div className="font-bold text-lg">4+ años</div>
+                  <div className="font-bold text-lg">5+ años</div>
                   <div className="text-xs text-muted-foreground">de experiencia</div>
                 </div>
               </CardContent>

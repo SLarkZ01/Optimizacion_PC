@@ -60,108 +60,113 @@
 }
 
 /* Tema oscuro como predeterminado para landing tech */
+/* Paleta "System Active": Verde #22C55E + Azul #60A5FA + Naranja #FB923C */
 :root {
   --radius: 0.75rem;
 
-  /* Fondo y texto - Tema tech oscuro */
-  --background: 222 47% 7%;
-  --foreground: 210 40% 98%;
+  /* Fondo y texto - Negro carbono zinc-950 */
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
 
-  /* Tarjeta */
-  --card: 222 47% 11%;
-  --card-foreground: 210 40% 98%;
+  /* Tarjeta - zinc-900 */
+  --card: 240 6% 10%;
+  --card-foreground: 0 0% 98%;
 
   /* Popover (emergente) */
-  --popover: 222 47% 11%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 240 6% 10%;
+  --popover-foreground: 0 0% 98%;
 
-  /* Primario - Azul #3B82F6 */
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 7%;
+  /* Primario - Verde lima #22C55E (Green-500) — evoca "sistema activo/sano" */
+  --primary: 142 71% 45%;
+  --primary-foreground: 0 0% 4%;
 
-  /* Secundario - Morado #8B5CF6 */
-  --secondary: 258 90% 66%;
-  --secondary-foreground: 210 40% 98%;
+  /* Secundario - Azul eléctrico #60A5FA (Blue-400) — confianza y tecnología */
+  --secondary: 213 94% 68%;
+  --secondary-foreground: 0 0% 4%;
 
-  /* Atenuado */
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20% 65%;
+  /* Atenuado - zinc-800 */
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
 
-  /* Acento - Verde #10B981 */
-  --accent: 160 84% 39%;
-  --accent-foreground: 222 47% 7%;
+  /* Acento - Naranja ámbar #FB923C (Orange-400) — energía y rendimiento */
+  --accent: 25 95% 60%;
+  --accent-foreground: 0 0% 4%;
 
   /* Destructivo */
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 0 0% 98%;
 
   /* Borde, Input, Anillo */
-  --border: 217 33% 17%;
-  --input: 217 33% 17%;
-  --ring: 217 91% 60%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 142 71% 45%;
 
-  /* Colores de gráficos */
-  --chart-1: 217 91% 60%;
-  --chart-2: 258 90% 66%;
-  --chart-3: 160 84% 39%;
-  --chart-4: 43 96% 56%;
-  --chart-5: 0 84% 60%;
+  /* Colores de gráficos — paleta accesible sin depender de solo rojo/verde */
+  --chart-1: 142 71% 45%;   /* Verde primario */
+  --chart-2: 213 94% 68%;   /* Azul secundario */
+  --chart-3: 25 95% 60%;    /* Naranja acento */
+  --chart-4: 270 95% 75%;   /* Violeta suave — chart 4 */
+  --chart-5: 0 84% 60%;     /* Rojo — para errores/alertas */
 
   /* Barra lateral */
-  --sidebar: 222 47% 7%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 217 91% 60%;
-  --sidebar-primary-foreground: 222 47% 7%;
-  --sidebar-accent: 217 33% 17%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-border: 217 33% 17%;
-  --sidebar-ring: 217 91% 60%;
+  --sidebar: 240 10% 4%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 142 71% 45%;
+  --sidebar-primary-foreground: 0 0% 4%;
+  --sidebar-accent: 240 4% 16%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 142 71% 45%;
 
   /* Tokens personalizados para PCOptimize */
-  --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(258 90% 66%));
-  --gradient-accent: linear-gradient(135deg, hsl(160 84% 39%), hsl(217 91% 60%));
-  --shadow-glow: 0 0 40px hsl(217 91% 60% / 0.3);
-  --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
+  --gradient-primary: linear-gradient(135deg, hsl(142 71% 45%), hsl(213 94% 68%));
+  --gradient-accent: linear-gradient(135deg, hsl(213 94% 68%), hsl(25 95% 60%));
+  --shadow-glow: 0 0 40px hsl(142 71% 45% / 0.3);
+  --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.4);
 }
 
 /* Tema claro */
+/* En modo claro, se usan variantes más oscuras/saturadas para mantener contraste */
 .light {
   --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
+  --foreground: 240 10% 4%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 240 10% 4%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 240 10% 4%;
 
-  --primary: 217 91% 60%;
+  /* Verde más oscuro (Green-600 #16A34A) para contraste sobre blanco */
+  --primary: 142 72% 29%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 258 90% 66%;
+  /* Azul más oscuro (Blue-600 #2563EB) para contraste sobre blanco */
+  --secondary: 221 83% 53%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
 
-  --accent: 160 84% 39%;
+  /* Naranja más oscuro (Orange-600 #EA580C) para contraste sobre blanco */
+  --accent: 21 90% 48%;
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 217 91% 60%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 142 72% 29%;
 
   --sidebar: 0 0% 98%;
-  --sidebar-foreground: 240 5% 26%;
-  --sidebar-primary: 217 91% 60%;
+  --sidebar-foreground: 240 6% 10%;
+  --sidebar-primary: 142 72% 29%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 240 5% 96%;
   --sidebar-accent-foreground: 240 6% 10%;
-  --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 217 91% 60%;
+  --sidebar-border: 240 6% 90%;
+  --sidebar-ring: 142 72% 29%;
 }
 
 @layer base {
@@ -261,11 +266,33 @@
   animation: fade-in 0.3s ease-out;
 }
 
+/* Accesibilidad: desactivar animaciones para usuarios con movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-shimmer::before {
+    animation: none;
+  }
+
+  /* Detener el bounce del scroll indicator del hero */
+  .animate-bounce {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Shimmer — ola de luz que barre de izquierda a derecha, estilo HeroUI */
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
   }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
 }
 
 .animate-shimmer::before {

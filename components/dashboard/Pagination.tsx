@@ -4,6 +4,7 @@
 // Lee la página actual desde los searchParams de la URL y navega
 // actualizando el parámetro ?page= sin perder el término de búsqueda (?q=).
 
+import { useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,15 +28,18 @@ export default function Pagination({
 
   if (totalPages <= 1) return null;
 
-  const goToPage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (newPage === 1) {
-      params.delete("page");
-    } else {
-      params.set("page", String(newPage));
-    }
-    router.push(`${pathname}?${params.toString()}`);
-  };
+  const goToPage = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (newPage === 1) {
+        params.delete("page");
+      } else {
+        params.set("page", String(newPage));
+      }
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
+  );
 
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);

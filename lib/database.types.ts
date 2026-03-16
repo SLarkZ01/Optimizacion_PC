@@ -7,7 +7,7 @@
 // que GenericTable (Record<string, unknown>) no sea compatible y el schema
 // se resuelva a `never`. Esto es una limitación conocida de TypeScript.
 
-export type PlanType = "basic" | "gamer" | "premium";
+export type PlanType = "basic" | "gamer";
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
 export type BookingStatus = "scheduled" | "completed" | "cancelled" | "no_show";
 
@@ -138,6 +138,14 @@ export type Database = {
           customer_email: string | null;
           total_count: number;
         }[];
+      };
+      get_customer_details: {
+        Args: { p_customer_id: string };
+        Returns: {
+          customer: DbCustomer;
+          purchases: DbPurchase[];
+          bookings: DbBooking[];
+        } | null;
       };
     };
     Enums: {

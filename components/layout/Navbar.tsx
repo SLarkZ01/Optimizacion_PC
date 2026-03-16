@@ -44,7 +44,9 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-[100] isolate transition-all duration-300 ${
-        isScrolled ? "glass border-b border-border/50" : "bg-transparent"
+        isScrolled
+          ? "glass border-b border-border/50"
+          : "max-md:glass bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -90,6 +92,7 @@ const Navbar = () => {
             onClick={toggleMenu}
             aria-label="Toggle menu"
             aria-expanded={isOpen}
+            aria-controls="mobile-menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -97,7 +100,7 @@ const Navbar = () => {
 
         {/* Menú móvil - Ternario explícito (rendering-conditional-render) */}
         {isOpen ? (
-          <div className="md:hidden glass border-t border-border/50 py-4 animate-fade-in">
+          <div id="mobile-menu" className="md:hidden glass border-t border-border/50 py-4 animate-fade-in">
             <div className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => (
                 <button

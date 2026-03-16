@@ -2,10 +2,10 @@
 
 export const SITE_CONFIG = {
   name: "PCOptimize",
-  tagline: "Tu PC como nueva en 30 minutos",
+  tagline: "Tu PC como nueva en 60 minutos",
   description: "Servicio profesional de optimización remota de computadoras. Limpieza, velocidad y seguridad garantizada.",
   contact: {
-    email: "contacto@pcoptimize.com",
+    email: "pcoptimizce@gmail.com",
     whatsapp: "+573126081990",
     whatsappMessage: "Hola! Me interesa optimizar mi PC",
   },
@@ -162,11 +162,11 @@ export const FAQ_ITEMS = [
   },
   {
     question: "¿Cuánto tiempo toma la optimización?",
-    answer: "El plan Básico toma entre 30-45 minutos, el Gamer entre 1-1.5 horas, y el Premium incluye el mismo tiempo más soporte continuo. Te mantenemos informado durante todo el proceso.",
+    answer: "El plan Básico toma entre 30-45 minutos, el Gamer entre 1-1.5 horas, Te mantenemos informado durante todo el proceso.",
   },
   {
     question: "¿Qué pasa si no quedo satisfecho con el servicio?",
-    answer: "Ofrecemos garantía de satisfacción. Si no notas mejoras significativas en tu PC, te devolvemos el 100% de tu dinero sin preguntas.",
+    answer: "Ofrecemos garantía de satisfacción. Si no notas mejoras significativas en tu PC, te devolvemos el 100% de tu dinero.",
   },
   {
     question: "¿Funcionará con mi computadora vieja?",
@@ -185,15 +185,13 @@ export const FAQ_ITEMS = [
 // Nombres de planes en español — fuente única de verdad para todo el dashboard
 export const PLAN_NAMES: Record<string, string> = {
   basic: "Básico",
-  gamer: "Gamer",
-  premium: "Premium",
+  gamer: "Gamer"
 };
 
 // Colores de planes para gráficas (CSS vars de shadcn chart)
 export const PLAN_COLORS: Record<string, string> = {
   basic: "var(--color-chart-1)",
-  gamer: "var(--color-chart-2)",
-  premium: "var(--color-chart-3)",
+  gamer: "var(--color-chart-2)"
 };
 
 export const NAV_LINKS = [
@@ -207,5 +205,16 @@ export const NAV_LINKS = [
 export const STATS = [
   { value: "100+", label: "PCs Optimizadas" },
   { value: "4.9★", label: "Calificación" },
-  { value: "30min", label: "Tiempo Promedio" },
+  { value: "60min", label: "Tiempo Promedio" },
 ] as const;
+
+// Mapeo de estados de pago a variantes de badge y texto en español — fuente única de verdad
+export const PAYMENT_STATUS_CONFIG: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
+  completed: { label: "Completado", variant: "default" },
+  pending: { label: "Pendiente", variant: "secondary" },
+  failed: { label: "Fallido", variant: "destructive" },
+  refunded: { label: "Reembolsado", variant: "outline" },
+};

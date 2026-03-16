@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import PayPalProvider from "@/components/shared/PayPalProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,14 +40,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <PayPalProvider>
-          <TooltipProvider>
-            {children}
-            <Suspense fallback={null}>
-              <Sonner />
-            </Suspense>
-          </TooltipProvider>
-        </PayPalProvider>
+        <TooltipProvider>
+          {children}
+          <Suspense fallback={null}>
+            <Sonner />
+          </Suspense>
+        </TooltipProvider>
       </body>
     </html>
   );

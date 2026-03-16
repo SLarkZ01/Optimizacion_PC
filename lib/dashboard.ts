@@ -46,6 +46,16 @@ export type ComprasRecientesRow = Pick<
   customers: Pick<DbCustomer, "name" | "email"> | null;
 };
 
+/**
+ * Detalles completos de un cliente: sus datos, compras y reservas.
+ * Retornado por la RPC get_customer_details — una sola roundtrip a Postgres.
+ */
+export type CustomerDetails = {
+  customer: DbCustomer;
+  purchases: DbPurchase[];
+  bookings: DbBooking[];
+};
+
 /** Resultado paginado genérico */
 export interface PaginatedResult<T> {
   data: T[];
@@ -323,5 +333,33 @@ export const getBookings = cache(
     }));
 
     return { data: bookings, total, page, totalPages };
+  },
+);
+
+/**
+ * Detalles completos de un cliente: sus datos, compras y reservas.
+ * Llama a la RPC get_customer_details que ejecuta todo en una sola query SQL,
+ * evitando múltiples roundtrips a Postgres (regla async-parallel).
+ * React.cache() deduplica llamadas idénticas en el mismo ciclo de render
+ * (regla server-cache-react).
+ */
+export const getCustomerDetails = cache(
+  async (customerId: string): Promise<CustomerDetails | null> => {
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase.rpc("get_customer_details", {
+      p_customer_id: customerId,
+    });
+
+    if (error) {
+      console.error("Error al obtener detalles del cliente:", error);
+      return null;
+    }
+
+    if (!data) return null;
+
+    // La RPC retorna JSON — casteamos con los tipos correctos
+    const result = data as unknown as CustomerDetails;
+    return result;
   },
 );
