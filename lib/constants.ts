@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   tagline: "Tu PC como nueva en 60 minutos",
   description: "Servicio profesional de optimización remota de computadoras. Limpieza, velocidad y seguridad garantizada.",
   contact: {
-    email: "pcoptimizce@gmail.com",
+    email: "tmontoyamagon11@gmail.com",
     whatsapp: "+573126081990",
     whatsappMessage: "Hola! Me interesa optimizar mi PC",
   },
