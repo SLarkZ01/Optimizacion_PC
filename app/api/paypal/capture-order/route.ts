@@ -103,13 +103,28 @@ export async function POST(request: Request) {
     if (email) {
       const { data: existingCustomer } = await supabase
         .from("customers")
-        .select("id")
+        .select("id, country_code")
         .eq("email", email)
         .single();
 
       if (existingCustomer) {
         customerId = existingCustomer.id;
         console.log(`PayPal Capture: Cliente existente encontrado: ${customerId}`);
+
+        // Si el cliente no tenía país registrado y ahora lo tenemos, actualizarlo.
+        // Aplica a clientes anteriores a la implementación de country_code y a
+        // casos donde ipapi.co falló en la compra original.
+        if (!existingCustomer.country_code && countryCode) {
+          const { error: updateError } = await supabase
+            .from("customers")
+            .update({ country_code: countryCode })
+            .eq("id", customerId);
+          if (updateError) {
+            console.warn(`PayPal Capture: No se pudo actualizar country_code del cliente ${customerId}:`, updateError);
+          } else {
+            console.log(`PayPal Capture: country_code actualizado a "${countryCode}" para cliente ${customerId}`);
+          }
+        }
       } else {
         const { data: newCustomer, error: customerError } = await supabase
           .from("customers")

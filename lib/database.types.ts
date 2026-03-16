@@ -139,6 +139,14 @@ export type Database = {
           total_count: number;
         }[];
       };
+      get_customer_details: {
+        Args: { p_customer_id: string };
+        Returns: {
+          customer: DbCustomer;
+          purchases: DbPurchase[];
+          bookings: DbBooking[];
+        } | null;
+      };
     };
     Enums: {
       plan_type: PlanType;

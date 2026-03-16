@@ -65,7 +65,7 @@ async function ExitoContent({
   const planLabel = purchase ? (PLAN_NAMES[purchase.planType] ?? purchase.planType) : null;
   const amount = purchase?.amount ?? null;
 
-  // Link de Cal.com pre-llenado con email y nombre del cliente (Opción C)
+  // Link de Cal.com pre-llenado con email y nombre del cliente
   // Graceful degradation: si no hay datos, usa la URL base genérica
   const calComUrl = buildCalComUrl(purchase?.customerEmail, purchase?.customerName);
 

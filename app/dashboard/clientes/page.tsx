@@ -16,14 +16,38 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import SearchInput from "@/components/dashboard/SearchInput";
 import Pagination from "@/components/dashboard/Pagination";
+import ClienteDetailSheet from "@/components/dashboard/ClienteDetailSheet";
 
-/** Convierte un código de país ISO a su bandera emoji (ej: "CO" → "🇨🇴") */
-function countryCodeToFlag(code: string): string {
-  return code
+/**
+ * Genera la URL del SVG de bandera en Twemoji CDN para un código ISO 3166-1 alpha-2.
+ * Los emojis de bandera son dos Regional Indicator Symbols consecutivos.
+ * Twemoji los sirve como "{codepoint1}-{codepoint2}.svg" en jsDelivr.
+ * Ej: "CO" → U+1F1E8 U+1F1F4 → "1f1e8-1f1f4.svg"
+ *
+ * Se usa jsDelivr como CDN de Twemoji porque es la fuente oficial y gratuita.
+ * La función es pura — hoistada al nivel de módulo (regla server-hoist-static-io).
+ */
+function countryCodeToFlagUrl(code: string): string {
+  const points = code
     .toUpperCase()
     .split("")
-    .map((char) => String.fromCodePoint(0x1f1e0 - 65 + char.charCodeAt(0)))
-    .join("");
+    .map((char) => (0x1f1e6 + char.charCodeAt(0) - 65).toString(16));
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${points.join("-")}.svg`;
+}
+
+/**
+ * Resuelve el nombre completo del país en español usando Intl.DisplayNames.
+ * Se ejecuta en el Server Component — cero impacto en el bundle del cliente.
+ * La instancia se hoista al módulo para crearse una sola vez (server-hoist-static-io).
+ * Ej: "CO" → "Colombia", "US" → "Estados Unidos"
+ */
+const countryDisplayNames = new Intl.DisplayNames(["es"], { type: "region" });
+function countryCodeToName(code: string): string {
+  try {
+    return countryDisplayNames.of(code.toUpperCase()) ?? code.toUpperCase();
+  } catch {
+    return code.toUpperCase();
+  }
 }
 
 interface ClientesPageProps {
@@ -75,6 +99,7 @@ async function ClientesContent({
                     <TableHead>País</TableHead>
                     <TableHead>Compras</TableHead>
                     <TableHead>Registrado</TableHead>
+                    <TableHead className="w-10" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -90,20 +115,28 @@ async function ClientesContent({
                         </div>
                       </TableCell>
                       <TableCell>
-                        {customer.country_code ? (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-base leading-none">
-                              {countryCodeToFlag(customer.country_code)}
-                            </span>
-                            <span className="text-sm font-mono">{customer.country_code}</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <Globe className="h-3.5 w-3.5" />
-                            <span className="text-sm">—</span>
-                          </div>
-                        )}
-                      </TableCell>
+                         {customer.country_code ? (
+                           <div className="flex items-center gap-2">
+                             {/* eslint-disable-next-line @next/next/no-img-element */}
+                             <img
+                               src={countryCodeToFlagUrl(customer.country_code)}
+                               alt={`Bandera de ${countryCodeToName(customer.country_code)}`}
+                               width={20}
+                               height={15}
+                               className="rounded-sm object-cover"
+                               style={{ width: 20, height: 15 }}
+                             />
+                             <span className="text-sm">
+                               {countryCodeToName(customer.country_code)}
+                             </span>
+                           </div>
+                         ) : (
+                           <div className="flex items-center gap-1.5 text-muted-foreground">
+                             <Globe className="h-3.5 w-3.5" />
+                             <span className="text-sm">—</span>
+                           </div>
+                         )}
+                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
                           {customer.purchase_count}
@@ -113,6 +146,9 @@ async function ClientesContent({
                         {format(new Date(customer.created_at), "d MMM yyyy", {
                           locale: es,
                         })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ClienteDetailSheet customer={customer} />
                       </TableCell>
                     </TableRow>
                   ))}
