@@ -7,7 +7,7 @@ const PROTECTED_ROUTES = ["/dashboard"];
 // Rutas de autenticación (no proteger, pero redirigir si ya hay sesión)
 const AUTH_ROUTES = ["/login"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
