@@ -1,5 +1,6 @@
 -- ===========================================
--- PCOptimize - Esquema de Base de Datos
+-- PCOptimize - Esquema de Base de Datos desactualizado. 
+-- Hay que actualizarlo a la version de Marzo 2026 desde supabase.
 -- ===========================================
 -- Referencia del estado actual de la DB en Supabase.
 -- Para aplicar desde cero, ejecutar en orden en el Editor SQL de Supabase.
