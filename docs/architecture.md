@@ -2,18 +2,19 @@
 
 ## Providers Globales (`app/layout.tsx`)
 
-El layout raíz envuelve toda la app con tres providers en este orden:
+El layout raíz envuelve toda la app con `TooltipProvider`, `Sonner` y `Analytics`:
 
 ```tsx
-<PayPalProvider>          // Inicializa @paypal/react-paypal-js con clientId y currency: "USD"
-  <TooltipProvider>       // Radix UI — necesario para tooltips en cualquier parte del árbol
-    {children}
-    <Suspense fallback={null}>
-      <Sonner />          // Toasts globales
-    </Suspense>
-  </TooltipProvider>
-</PayPalProvider>
+<TooltipProvider>
+  {children}
+  <Suspense fallback={null}>
+    <Sonner />
+  </Suspense>
+</TooltipProvider>
+<Analytics />
 ```
+
+`PayPalProvider` no es global: está scopeado a `app/page.tsx` para cargar el SDK solo en la landing y evitar costo de bundle en dashboard/login.
 
 **Font**: Inter (`next/font/google`) con variable CSS `--font-inter`, aplicada en `<body>` como `font-sans`.
 
@@ -38,6 +39,10 @@ El layout raíz envuelve toda la app con tres providers en este orden:
 `getDashboardKPIs()` resuelve antes (solo conteos con `head:true`) y `getDashboardChartData()` resuelve después (agrega filas). Esto permite que los KPIs aparezcan antes en pantalla mientras las gráficas cargan.
 
 Todas las funciones de `lib/dashboard.ts` usan `React.cache()` para deduplicar llamadas idénticas dentro del mismo ciclo de render.
+
+Las utilidades compartidas de dashboard viven en `lib/dashboard/*`:
+- `constants.ts` (estado de reservas)
+- `formatters.ts` (banderas y nombres de país)
 
 ### Paginación y búsqueda
 

@@ -14,9 +14,9 @@ Panel de administración protegido para gestionar clientes, compras y reservas d
 
 ### Seguridad en doble capa
 
-1. **Middleware** (`middleware.ts`): Intercepta todas las rutas `/dashboard/*`. Si no hay sesión válida, redirige a `/login?redirectTo=<ruta>`. También redirige `/login` → `/dashboard` si ya hay sesión activa.
+1. **Proxy** (`proxy.ts`): Intercepta todas las rutas `/dashboard/*`. Si no hay sesión válida, redirige a `/login?redirectTo=<ruta>`. También redirige `/login` → `/dashboard` si ya hay sesión activa.
    - Usa `getUser()` (valida JWT con el servidor) — nunca `getSession()` (solo lee el JWT localmente, inseguro).
-2. **Defense-in-depth** (`app/dashboard/layout.tsx`): El layout del dashboard verifica la sesión con `supabase.auth.getUser()` server-side. Si falla, redirige a `/login`. Esta capa protege en caso de que el middleware sea bypassado.
+2. **Defense-in-depth** (`app/dashboard/layout.tsx`): El layout del dashboard verifica la sesión con `supabase.auth.getUser()` server-side. Si falla, redirige a `/login`. Esta capa protege en caso de que el proxy sea bypassado.
 
 ---
 
@@ -108,6 +108,11 @@ Todas las funciones:
 - Usan `createAdminClient()` (service_role key) — bypasea RLS para acceso completo.
 - Están envueltas en `React.cache()` para deduplicar llamadas dentro del mismo ciclo de render.
 - Retornan valores vacíos/cero en caso de error (sin lanzar excepción).
+
+### Módulos compartidos (`lib/dashboard/*`)
+
+- `lib/dashboard/constants.ts` centraliza `BOOKING_STATUS_CONFIG` para evitar duplicación entre tablas y sheets.
+- `lib/dashboard/formatters.ts` centraliza `countryCodeToFlagUrl()` y `countryCodeToName()`.
 
 ### `getDashboardKPIs(): Promise<DashboardKPIs>`
 3 conteos rápidos con `head: true` (no descarga filas). Corre en paralelo con `getDashboardChartData()` en la página de resumen, permitiendo streaming.

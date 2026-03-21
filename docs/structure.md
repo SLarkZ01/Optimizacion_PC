@@ -4,7 +4,7 @@
 
 ```
 ├── app/                    # App Router de Next.js
-│   ├── layout.tsx          # Layout raíz con 3 providers globales: PayPalProvider, TooltipProvider, Sonner
+│   ├── layout.tsx          # Layout raíz con TooltipProvider, Sonner y Vercel Analytics
 │   ├── page.tsx            # Página principal (landing)
 │   ├── globals.css         # Estilos globales, variables CSS y clases utilitarias custom
 │   ├── not-found.tsx       # Página 404 personalizada
@@ -16,7 +16,7 @@
 │   │   └── actions.ts      # Server actions: login(), logout()
 │   ├── auth/
 │   │   └── callback/       # GET /auth/callback — intercambio de código OAuth para Supabase Auth
-│   ├── dashboard/          # Panel de administración (rutas protegidas por middleware)
+│   ├── dashboard/          # Panel de administración (rutas protegidas por proxy)
 │   │   ├── layout.tsx      # Layout con SidebarProvider + verificación de auth defense-in-depth
 │   │   ├── page.tsx        # /dashboard — Resumen: KPIs, gráficas de ingresos y distribución de planes
 │   │   ├── clientes/       # /dashboard/clientes — Tabla de clientes
@@ -63,9 +63,12 @@
 │   ├── paypal.ts           # PAYPAL_PRICES, PLAN_NAMES, getPrice(), getPayPalAccessToken(), getBaseUrl()
 │   ├── email.ts            # sendPaymentConfirmationEmail() + sendBookingConfirmationEmail() + buildCalComUrl() via Brevo
 │   ├── supabase.ts         # Clientes Supabase (browser, server, admin)
-│   ├── dashboard.ts        # Funciones de data fetching para el dashboard
+│   ├── dashboard.ts        # Funciones de data fetching para el dashboard (KPIs, tablas, RPCs)
+│   ├── dashboard/          # Módulos compartidos de dashboard
+│   │   ├── constants.ts    # BOOKING_STATUS_CONFIG centralizado
+│   │   └── formatters.ts   # countryCodeToFlagUrl() + countryCodeToName()
 │   └── database.types.ts   # Tipos TypeScript del esquema de DB (usar `type`, no `interface`)
-├── middleware.ts            # Protege /dashboard/* (redirige a /login si no autenticado)
+├── proxy.ts                 # Protege /dashboard/* y redirige /login cuando ya hay sesión
 ├── supabase/
 │   └── schema.sql          # SQL para crear tablas (customers, purchases, bookings)
 ├── docs/                   # Documentación del proyecto

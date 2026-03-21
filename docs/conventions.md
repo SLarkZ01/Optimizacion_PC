@@ -191,6 +191,8 @@ No duplicar datos — siempre importar desde la fuente canónica:
 | Emails | `lib/email.ts` | `sendPaymentConfirmationEmail()`, `sendBookingConfirmationEmail()`, `buildCalComUrl()` |
 | Región / moneda | `hooks/useCurrency.ts` | `useRegion()` |
 | Data dashboard | `lib/dashboard.ts` | `getDashboardKPIs()`, `getCustomers()`, etc. |
+| Formateadores dashboard | `lib/dashboard/formatters.ts` | `countryCodeToFlagUrl()`, `countryCodeToName()` |
+| Constantes dashboard | `lib/dashboard/constants.ts` | `BOOKING_STATUS_CONFIG` |
 
 ---
 
