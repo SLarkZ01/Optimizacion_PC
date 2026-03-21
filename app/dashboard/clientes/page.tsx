@@ -14,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Users, Mail, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import SearchInput from "@/components/dashboard/SearchInput";
-import Pagination from "@/components/dashboard/Pagination";
+import SearchInput from "@/components/dashboard/common/SearchInput";
+import Pagination from "@/components/dashboard/common/Pagination";
 import ClienteDetailSheet from "@/components/dashboard/clientes/ClienteDetailSheet";
 import { countryCodeToFlagUrl, countryCodeToName } from "@/lib/dashboard/formatters";
 

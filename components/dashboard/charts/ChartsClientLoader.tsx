@@ -27,11 +27,11 @@ function ChartSkeleton() {
 }
 
 export const IngresosChartDynamic = dynamic(
-  () => import("@/components/dashboard/IngresosChart"),
+  () => import("@/components/dashboard/charts/IngresosChart"),
   { ssr: false, loading: () => <ChartSkeleton /> },
 );
 
 export const PlanDistributionChartDynamic = dynamic(
-  () => import("@/components/dashboard/PlanDistributionChart"),
+  () => import("@/components/dashboard/charts/PlanDistributionChart"),
   { ssr: false, loading: () => <ChartSkeleton /> },
 );

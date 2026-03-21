@@ -35,14 +35,18 @@
 │   ├── cards/              # Cards de dominio (FeatureCard, PricingCard, ProcessCard, TestimonialCard)
 │   ├── shared/             # BackButton.tsx, ScrollLink.tsx, PayPalProvider.tsx
 │   ├── dashboard/          # Componentes del panel de administración
-│   │   ├── DashboardSidebar.tsx          # Sidebar con navegación (Resumen, Clientes, Compras, Reservas) + logout
-│   │   ├── DashboardHeader.tsx           # Header con breadcrumbs dinámicos
-│   │   ├── IngresosChart.tsx             # Gráfica de barras de ingresos mensuales (recharts)
-│   │   ├── PlanDistributionChart.tsx     # Gráfica donut de distribución de planes (recharts)
-│   │   ├── ComprasRecientesTable.tsx     # Tabla de compras recientes para el resumen
-│   │   ├── ChartsClientLoader.tsx        # Wrapper client-side para carga dinámica (ssr:false) de las gráficas
-│   │   ├── SearchInput.tsx               # Input de búsqueda con debounce, actualiza ?q= en la URL
-│   │   ├── Pagination.tsx                # Controles de paginación, actualiza ?page= en la URL
+│   │   ├── layout/                       # Estructura del dashboard (header + sidebar)
+│   │   │   ├── DashboardSidebar.tsx      # Sidebar con navegación + logout
+│   │   │   └── DashboardHeader.tsx       # Header con breadcrumbs dinámicos
+│   │   ├── charts/                       # Gráficas del resumen (Chart.js)
+│   │   │   ├── IngresosChart.tsx         # Gráfica combinada ingresos/compras por mes
+│   │   │   ├── PlanDistributionChart.tsx # Distribución por plan
+│   │   │   └── ChartsClientLoader.tsx    # dynamic(..., { ssr:false }) para charts
+│   │   ├── common/                       # Controles reutilizables de tablas
+│   │   │   ├── SearchInput.tsx           # Búsqueda con debounce y URL params
+│   │   │   └── Pagination.tsx            # Controles de paginación por URL params
+│   │   ├── compras/                      # Componentes de dominio de compras
+│   │   │   └── ComprasRecientesTable.tsx # Tabla de compras recientes del resumen
 │   │   ├── clientes/                     # Componentes de dominio para /dashboard/clientes
 │   │   │   └── ClienteDetailSheet.tsx    # Wrapper de detalles de cliente sobre un DetailSheet reusable
 │   │   └── detail-sheet/                 # Base reusable para paneles de detalle
@@ -86,18 +90,18 @@
 |----------------|---------------------------------------------------|
 | `accordion`    | `FAQSection.tsx`                                  |
 | `badge`        | Dashboard pages, `PricingCard`, `HeroSection`     |
-| `breadcrumb`   | `DashboardHeader.tsx`                             |
+| `breadcrumb`   | `layout/DashboardHeader.tsx`                      |
 | `button`       | Múltiples componentes de landing y dashboard      |
 | `card`         | Múltiples componentes de landing y dashboard      |
-| `chart`        | `IngresosChart.tsx`, `PlanDistributionChart.tsx`  |
-| `input`        | `LoginForm.tsx`, `SearchInput.tsx`, sidebar       |
+| `chart`        | `charts/IngresosChart.tsx`, `charts/PlanDistributionChart.tsx` |
+| `input`        | `LoginForm.tsx`, `common/SearchInput.tsx`, sidebar |
 | `label`        | `LoginForm.tsx`                                   |
-| `separator`    | `DashboardHeader.tsx`, sidebar                    |
+| `separator`    | `layout/DashboardHeader.tsx`, sidebar             |
 | `sheet`        | Usado internamente por `sidebar`                  |
-| `sidebar`      | `DashboardSidebar.tsx`, dashboard layout          |
-| `skeleton`     | Dashboard pages, `ChartsClientLoader.tsx`         |
+| `sidebar`      | `layout/DashboardSidebar.tsx`, dashboard layout   |
+| `skeleton`     | Dashboard pages, `charts/ChartsClientLoader.tsx`  |
 | `sonner`       | `app/layout.tsx`                                  |
-| `table`        | Dashboard pages, `ComprasRecientesTable.tsx`      |
+| `table`        | Dashboard pages, `compras/ComprasRecientesTable.tsx` |
 | `tooltip`      | `app/layout.tsx`, dashboard layout, sidebar       |
 
 > **Regla**: Evitar modificaciones extensivas a estos archivos. Para personalizar estilos, crear un wrapper o usar `cn()` con clases adicionales. Solo modificar si hay errores de lint/TypeScript.

@@ -33,7 +33,7 @@ Panel de administración protegido para gestionar clientes, compras y reservas d
 
 ## Componentes (`components/dashboard/`)
 
-### `DashboardSidebar.tsx`
+### `layout/DashboardSidebar.tsx`
 Client Component. Sidebar colapsable (modo `"icon"`) con:
 - Logo + nombre del panel en el header.
 - Navegación a 4 secciones (Resumen, Clientes, Compras, Reservas) con íconos Lucide.
@@ -41,38 +41,38 @@ Client Component. Sidebar colapsable (modo `"icon"`) con:
 - `isActive()` memoizada con `useCallback` para evitar re-renders innecesarios.
 - Usa `SidebarProvider` de shadcn/ui (`components/ui/sidebar`).
 
-### `DashboardHeader.tsx`
+### `layout/DashboardHeader.tsx`
 Client Component. Header con:
 - `SidebarTrigger` para colapsar/expandir el sidebar.
 - `Breadcrumb` dinámico generado a partir de `usePathname()`.
 
-### `IngresosChart.tsx`
-Client Component. Gráfica de barras (recharts) con ingresos mensuales de los últimos 6 meses.
-- Usa `ChartContainer` + `ChartTooltip` de shadcn/ui (`components/ui/chart`).
+### `charts/IngresosChart.tsx`
+Client Component. Gráfica combinada (Chart.js) con ingresos mensuales y total de compras.
+- Usa `react-chartjs-2` sobre canvas (sin `ResponsiveContainer` de Recharts).
 - Props: `data: { mes: string; ingresos: number; total: number }[]`.
-- **No importar directamente** desde Server Components — usar `IngresosChartDynamic` (ver `ChartsClientLoader`).
+- **No importar directamente** desde Server Components — usar `IngresosChartDynamic` (ver `charts/ChartsClientLoader`).
 
-### `PlanDistributionChart.tsx`
-Client Component. Gráfica de donut/pie (recharts) con distribución de ventas por plan.
-- Usa `ChartContainer` + `ChartLegend` de shadcn/ui.
+### `charts/PlanDistributionChart.tsx`
+Client Component. Gráfica de barras (Chart.js) con distribución de ingresos/compras por plan.
+- Usa `react-chartjs-2` y leyenda manual por color de plan.
 - Props: `data: { plan: string; total: number; ingresos: number }[]`.
-- **No importar directamente** — usar `PlanDistributionChartDynamic`.
+- **No importar directamente** — usar `PlanDistributionChartDynamic` de `charts/ChartsClientLoader`.
 
-### `ChartsClientLoader.tsx`
+### `charts/ChartsClientLoader.tsx`
 Client Component. Wrapper que exporta las gráficas con `dynamic(..., { ssr: false })`:
 ```typescript
-import { IngresosChartDynamic, PlanDistributionChartDynamic } from "@/components/dashboard/ChartsClientLoader";
+import { IngresosChartDynamic, PlanDistributionChartDynamic } from "@/components/dashboard/charts/ChartsClientLoader";
 ```
-- Evita errores de hidratación de recharts en SSR.
-- Muestra un `Skeleton` (`components/ui/skeleton`) mientras carga el bundle.
+- Evita problemas de hidratación con librerías de chart client-only.
+- Muestra un `Skeleton` (`components/ui/skeleton`) mientras carga el bundle de charts.
 - `ssr: false` solo es válido en Client Components — por eso existe este archivo separado.
 
-### `ComprasRecientesTable.tsx`
+### `compras/ComprasRecientesTable.tsx`
 Server Component. Tabla con las 5 compras más recientes.
 - Muestra: cliente (nombre + email), plan, monto, estado (badge), fecha.
 - Recibe `data: ComprasRecientesRow[]` como prop.
 
-### `SearchInput.tsx`
+### `common/SearchInput.tsx`
 Client Component. Input de búsqueda con debounce para las páginas del dashboard.
 - Actualiza `?q=` en la URL (sin recargar la página) — el Server Component padre re-ejecuta con los nuevos `searchParams`.
 - Resetea `?page=` a 1 al buscar.
@@ -80,7 +80,7 @@ Client Component. Input de búsqueda con debounce para las páginas del dashboar
 - Sincroniza el DOM cuando la URL cambia externamente (ej. botón atrás).
 - Props: `placeholder?: string`, `debounceMs?: number` (default: `350`).
 
-### `Pagination.tsx`
+### `common/Pagination.tsx`
 Client Component. Controles Anterior/Siguiente para las tablas paginadas.
 - Actualiza `?page=` en la URL preservando `?q=`.
 - Se oculta si `totalPages <= 1`.

@@ -82,11 +82,11 @@ const PricingCard = memo(function PricingCard({ plan, priceUSD, region, countryC
           : "border-border bg-card/50 hover:border-primary/50"
       )}
     >
-      {/* Badge "Más Popular" */}
+      {/* Badge "Recomendado" */}
       {plan.popular ? (
         <div className="absolute top-0 right-0">
           <Badge className="rounded-none rounded-bl-lg gradient-primary text-primary-foreground border-0">
-            Más Popular
+            Recomendado
           </Badge>
         </div>
       ) : null}

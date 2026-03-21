@@ -16,8 +16,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import type { PurchaseWithCustomer } from "@/lib/dashboard";
 import { PLAN_NAMES, PAYMENT_STATUS_CONFIG } from "@/lib/constants";
-import SearchInput from "@/components/dashboard/SearchInput";
-import Pagination from "@/components/dashboard/Pagination";
+import SearchInput from "@/components/dashboard/common/SearchInput";
+import Pagination from "@/components/dashboard/common/Pagination";
 
 // Nombres de planes en español — importado de lib/constants (fuente única)
 

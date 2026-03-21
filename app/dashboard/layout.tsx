@@ -1,6 +1,6 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import DashboardSidebar from "@/components/dashboard/layout/DashboardSidebar";
+import DashboardHeader from "@/components/dashboard/layout/DashboardHeader";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 

@@ -9,11 +9,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDashboardKPIs, getDashboardChartData } from "@/lib/dashboard";
-import ComprasRecientesTable from "@/components/dashboard/ComprasRecientesTable";
+import ComprasRecientesTable from "@/components/dashboard/compras/ComprasRecientesTable";
 import {
   IngresosChartDynamic,
   PlanDistributionChartDynamic,
-} from "@/components/dashboard/ChartsClientLoader";
+} from "@/components/dashboard/charts/ChartsClientLoader";
 
 // Singleton de Intl.NumberFormat — instanciado una sola vez a nivel de módulo (js-cache-function-results)
 const usdFormatter = new Intl.NumberFormat("es-CO", {

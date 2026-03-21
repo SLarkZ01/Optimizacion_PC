@@ -26,8 +26,6 @@ export default function Pagination({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (totalPages <= 1) return null;
-
   const goToPage = useCallback(
     (newPage: number) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -40,6 +38,8 @@ export default function Pagination({
     },
     [router, pathname, searchParams],
   );
+
+  if (totalPages <= 1) return null;
 
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
