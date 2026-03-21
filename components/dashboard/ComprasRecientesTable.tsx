@@ -66,7 +66,7 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
                 <TableRow>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Plan</TableHead>
-                  <TableHead>Monto</TableHead>
+                      <TableHead>Monto</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Fecha</TableHead>
                 </TableRow>
