@@ -18,7 +18,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   usdFormatter,
-  tickUSD,
   buildDualAxisScales,
 } from "@/lib/chart-utils";
 

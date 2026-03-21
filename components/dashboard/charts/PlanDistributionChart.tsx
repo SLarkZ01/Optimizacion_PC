@@ -18,7 +18,6 @@ import { PLAN_NAMES, PLAN_COLORS } from "@/lib/constants";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   usdFormatter,
-  tickUSD,
   buildDualAxisScales,
 } from "@/lib/chart-utils";
 

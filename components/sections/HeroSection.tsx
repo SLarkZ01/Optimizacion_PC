@@ -11,18 +11,6 @@ import { scrollToSection } from "@/lib/utils";
 // Handler estable para evitar recrear en cada render
 const handlePricingClick = () => scrollToSection("#precios");
 
-// Indicador de scroll hoisted (rendering-hoist-jsx)
-const ScrollIndicator = (
-  <div
-    className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce motion-reduce:animate-none z-20 pointer-events-none"
-    aria-hidden="true"
-  >
-    <div className="w-6 h-10 rounded-full border-2 border-white/20 flex justify-center pt-2">
-      <div className="w-1 h-2 rounded-full bg-white/40" />
-    </div>
-  </div>
-);
-
 // Detecta capacidad del dispositivo una sola vez al montar (rerender-lazy-state-init)
 // Sin re-render: la función se ejecuta solo en la inicialización del estado
 function getParticleCount(): number {
