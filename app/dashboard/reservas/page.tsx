@@ -14,22 +14,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarCheck } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { BookingStatus } from "@/lib/database.types";
 import type { BookingWithPurchase } from "@/lib/dashboard";
 import { PLAN_NAMES } from "@/lib/constants";
 import SearchInput from "@/components/dashboard/SearchInput";
 import Pagination from "@/components/dashboard/Pagination";
-
-// Mapeo de estados de reserva a variantes de badge y texto en español
-const STATUS_CONFIG: Record<
-  BookingStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
-> = {
-  scheduled: { label: "Agendada", variant: "default" },
-  completed: { label: "Completada", variant: "secondary" },
-  cancelled: { label: "Cancelada", variant: "destructive" },
-  no_show: { label: "No asistió", variant: "outline" },
-};
+import { BOOKING_STATUS_CONFIG } from "@/lib/dashboard/constants";
 
 // Nombres de planes en español — importado de lib/constants (fuente única)
 
@@ -88,7 +77,7 @@ async function ReservasContent({
                 </TableHeader>
                 <TableBody>
                   {bookings.map((booking: BookingWithPurchase) => {
-                    const statusConfig = STATUS_CONFIG[booking.status];
+                    const statusConfig = BOOKING_STATUS_CONFIG[booking.status];
                     return (
                       <TableRow key={booking.id}>
                         <TableCell>

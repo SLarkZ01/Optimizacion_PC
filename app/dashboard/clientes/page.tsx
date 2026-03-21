@@ -16,39 +16,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import SearchInput from "@/components/dashboard/SearchInput";
 import Pagination from "@/components/dashboard/Pagination";
-import ClienteDetailSheet from "@/components/dashboard/ClienteDetailSheet";
-
-/**
- * Genera la URL del SVG de bandera en Twemoji CDN para un código ISO 3166-1 alpha-2.
- * Los emojis de bandera son dos Regional Indicator Symbols consecutivos.
- * Twemoji los sirve como "{codepoint1}-{codepoint2}.svg" en jsDelivr.
- * Ej: "CO" → U+1F1E8 U+1F1F4 → "1f1e8-1f1f4.svg"
- *
- * Se usa jsDelivr como CDN de Twemoji porque es la fuente oficial y gratuita.
- * La función es pura — hoistada al nivel de módulo (regla server-hoist-static-io).
- */
-function countryCodeToFlagUrl(code: string): string {
-  const points = code
-    .toUpperCase()
-    .split("")
-    .map((char) => (0x1f1e6 + char.charCodeAt(0) - 65).toString(16));
-  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${points.join("-")}.svg`;
-}
-
-/**
- * Resuelve el nombre completo del país en español usando Intl.DisplayNames.
- * Se ejecuta en el Server Component — cero impacto en el bundle del cliente.
- * La instancia se hoista al módulo para crearse una sola vez (server-hoist-static-io).
- * Ej: "CO" → "Colombia", "US" → "Estados Unidos"
- */
-const countryDisplayNames = new Intl.DisplayNames(["es"], { type: "region" });
-function countryCodeToName(code: string): string {
-  try {
-    return countryDisplayNames.of(code.toUpperCase()) ?? code.toUpperCase();
-  } catch {
-    return code.toUpperCase();
-  }
-}
+import ClienteDetailSheet from "@/components/dashboard/clientes/ClienteDetailSheet";
+import { countryCodeToFlagUrl, countryCodeToName } from "@/lib/dashboard/formatters";
 
 interface ClientesPageProps {
   searchParams: Promise<{ page?: string; q?: string }>;

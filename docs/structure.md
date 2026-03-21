@@ -42,7 +42,14 @@
 │   │   ├── ComprasRecientesTable.tsx     # Tabla de compras recientes para el resumen
 │   │   ├── ChartsClientLoader.tsx        # Wrapper client-side para carga dinámica (ssr:false) de las gráficas
 │   │   ├── SearchInput.tsx               # Input de búsqueda con debounce, actualiza ?q= en la URL
-│   │   └── Pagination.tsx               # Controles de paginación, actualiza ?page= en la URL
+│   │   ├── Pagination.tsx                # Controles de paginación, actualiza ?page= en la URL
+│   │   ├── clientes/                     # Componentes de dominio para /dashboard/clientes
+│   │   │   └── ClienteDetailSheet.tsx    # Wrapper de detalles de cliente sobre un DetailSheet reusable
+│   │   └── detail-sheet/                 # Base reusable para paneles de detalle
+│   │       ├── DetailSheet.tsx
+│   │       ├── DetailSheetErrorState.tsx
+│   │       ├── DetailSheetSectionHeader.tsx
+│   │       └── useDetailSheet.ts
 │   └── ui/                 # 15 componentes shadcn/ui (ver sección abajo)
 ├── hooks/
 │   ├── useCurrency.ts      # useRegion() — detecta región latam/international por IP (ipapi.co)

@@ -87,6 +87,19 @@ Client Component. Controles Anterior/Siguiente para las tablas paginadas.
 - Muestra el rango actual (ej. "Mostrando 1–10 de 43").
 - Props: `page: number`, `totalPages: number`, `total: number`, `pageSize: number`.
 
+### `clientes/ClienteDetailSheet.tsx`
+Client Component. Wrapper de dominio para el detalle de cliente en un slide-over.
+- Usa `getCustomerDetailsAction()` para lazy fetch al abrir.
+- Renderiza identidad, compras y reservas del cliente.
+- Se apoya en la infraestructura reusable de `components/dashboard/detail-sheet/`.
+
+### `detail-sheet/*`
+Bloques reusables para paneles de detalle en dashboard.
+- `DetailSheet.tsx`: shell genérico (header fijo + scroll area + estados loading/error/content).
+- `useDetailSheet.ts`: hook reusable de estado (`open`, `isPending`, `error`, `data`) con lazy fetch y retry.
+- `DetailSheetErrorState.tsx`: UI de error con acción de reintento.
+- `DetailSheetSectionHeader.tsx`: encabezado de sección con icono, label y contador.
+
 ---
 
 ## Data Fetching (`lib/dashboard.ts`)
