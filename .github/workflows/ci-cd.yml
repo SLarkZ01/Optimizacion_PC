@@ -71,7 +71,6 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
     environment:
       name: preview
-      url: ${{ steps.vercel_deploy.outputs.preview_url }}
     env:
       NEXT_TELEMETRY_DISABLED: 1
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -114,7 +113,6 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: production
-      url: ${{ steps.vercel_deploy.outputs.production_url }}
     env:
       NEXT_TELEMETRY_DISABLED: 1
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
