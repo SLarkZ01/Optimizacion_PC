@@ -468,6 +468,31 @@ bun lint         # Análisis estático con ESLint
 - Las credenciales de PayPal deben ser de **producción** (no sandbox)
 - El esquema SQL debe estar aplicado en el proyecto Supabase de producción
 
+### CI/CD con GitHub Actions
+
+El proyecto incluye workflow en `.github/workflows/ci-cd.yml` con estrategia:
+
+- **CI (calidad)**: en cada PR y push a `main` ejecuta `lint`, `typecheck` y `build` con Bun
+- **CD preview**: en PRs internas (no forks) despliega preview en Vercel
+- **CD producción**: en push a `main` despliega producción en Vercel
+
+#### Secrets requeridos en GitHub
+
+Configurar en `Settings > Secrets and variables > Actions`:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+#### Recomendaciones críticas para pagos (PayPal)
+
+- No ejecutar cobros reales en CI; las pruebas de checkout/captura deben hacerse en **sandbox** y manual/E2E controlado
+- Mantener `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` y credenciales de producción solo en variables de entorno de Vercel (no en el repo)
+- Proteger `main` para permitir merge solo si pasa `Quality Checks`
+- Verificar que los webhooks en producción apunten a:
+  - `https://tu-dominio.com/api/webhooks/paypal`
+  - `https://tu-dominio.com/api/webhooks/calcom`
+
 ---
 
 ## 📐 Convenciones del código

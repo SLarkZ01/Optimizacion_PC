@@ -27,7 +27,7 @@ Construido con Next.js 16.1.6, React 19 y TypeScript usando el App Router.
 | Supabase         | ^2.97.0    | @supabase/supabase-js + @supabase/ssr          |
 | PayPal           | ^8.9.2     | @paypal/react-paypal-js (client) + REST API v2 (server) |
 | Brevo            | ^4.0.1     | @getbrevo/brevo — emails transaccionales       |
-| npm              | -          | Gestor de paquetes usado en scripts del proyecto |
+| Bun              | -          | Gestor de paquetes estándar del proyecto |
 
 ### Librerías Principales
 
@@ -48,14 +48,17 @@ Construido con Next.js 16.1.6, React 19 y TypeScript usando el App Router.
 
 ```bash
 # Desarrollo
-npm run dev                # Servidor de desarrollo en http://localhost:3000
+bun run dev                # Servidor de desarrollo en http://localhost:3000
 
 # Producción
-npm run build              # Build de producción
-npm run start              # Iniciar servidor de producción
+bun run build              # Build de producción
+bun run start              # Iniciar servidor de producción
 
 # Linting
-npm run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
+bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
+
+# Type checking
+bun run typecheck          # Verificación de tipos TypeScript
 
 # Tests (NO CONFIGURADOS ACTUALMENTE)
 # TODO: Agregar Vitest o Jest cuando se implementen tests
