@@ -104,7 +104,7 @@
 | `sonner`       | `app/layout.tsx`                                  |
 | `table`        | Dashboard pages, `compras/ComprasRecientesTable.tsx` |
 | `tooltip`      | `app/layout.tsx`, dashboard layout, sidebar       |
-| `vortex`       | Componente UI disponible (sin uso activo en rutas principales) |
+| `vortex`       | `HeroSection.tsx` (fondo animado de partículas en la landing) |
 
 > **Regla**: Evitar modificaciones extensivas a estos archivos. Para personalizar estilos, crear un wrapper o usar `cn()` con clases adicionales. Solo modificar si hay errores de lint/TypeScript.
 
