@@ -95,7 +95,6 @@
 | `breadcrumb`   | `layout/DashboardHeader.tsx`                      |
 | `button`       | Múltiples componentes de landing y dashboard      |
 | `card`         | Múltiples componentes de landing y dashboard      |
-| `chart`        | `charts/IngresosChart.tsx`, `charts/PlanDistributionChart.tsx` |
 | `input`        | `LoginForm.tsx`, `common/SearchInput.tsx`, sidebar |
 | `label`        | `LoginForm.tsx`                                   |
 | `separator`    | `layout/DashboardHeader.tsx`, sidebar             |
@@ -105,6 +104,7 @@
 | `sonner`       | `app/layout.tsx`                                  |
 | `table`        | Dashboard pages, `compras/ComprasRecientesTable.tsx` |
 | `tooltip`      | `app/layout.tsx`, dashboard layout, sidebar       |
+| `vortex`       | Componente UI disponible (sin uso activo en rutas principales) |
 
 > **Regla**: Evitar modificaciones extensivas a estos archivos. Para personalizar estilos, crear un wrapper o usar `cn()` con clases adicionales. Solo modificar si hay errores de lint/TypeScript.
 

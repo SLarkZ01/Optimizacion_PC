@@ -54,7 +54,7 @@ Los Server Components leen estos `searchParams` y pasan los resultados como prop
 
 ### Lazy loading de gráficas
 
-`ChartsClientLoader.tsx` exporta versiones `dynamic(..., { ssr: false })` de las gráficas de recharts. Recharts usa APIs del DOM que fallan en SSR. El Server Component `app/dashboard/page.tsx` importa desde `ChartsClientLoader` para evitar el error.
+`ChartsClientLoader.tsx` exporta versiones `dynamic(..., { ssr: false })` de las gráficas de Chart.js (`react-chartjs-2`). Chart.js depende de APIs del DOM/canvas que no deben renderizarse en SSR. El Server Component `app/dashboard/page.tsx` importa desde `ChartsClientLoader` para evitar errores de hidratación.
 
 ---
 
@@ -75,6 +75,7 @@ Los Server Components leen estos `searchParams` y pasan los resultados como prop
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
+| `GET`  | `/api/geo` | Resuelve `region` + `countryCode` desde `x-vercel-ip-country` |
 | `POST` | `/api/paypal/create-order` | Crea orden PayPal REST v2, devuelve `orderID` |
 | `POST` | `/api/paypal/capture-order` | Captura pago, guarda en Supabase, envía email Brevo |
 | `POST` | `/api/webhooks/paypal` | Webhook de seguridad PayPal con verificación HMAC |

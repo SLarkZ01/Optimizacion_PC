@@ -96,7 +96,7 @@ Solo cuando el componente necesita:
 - Event handlers (`onClick`, `onChange`, etc.)
 - APIs del navegador (`window`, `document`, `localStorage`)
 - Componentes de PayPal (`PayPalProvider`, `PayPalButtons`)
-- Recharts u otras librerías que no soportan SSR
+- Chart.js/Recharts u otras librerías que no soportan SSR
 
 ---
 
@@ -150,11 +150,11 @@ import { cn } from "@/lib/utils";
 
 | Clase | Descripción |
 |-------|-------------|
-| `gradient-primary` | Gradiente azul (#3B82F6) → morado (#8B5CF6) |
-| `gradient-accent` | Gradiente verde (#10B981) → azul (#3B82F6) |
-| `gradient-text` | Texto con gradiente azul/morado (`-webkit-background-clip: text`) |
-| `glow-primary` | Box shadow azul difuso |
-| `glow-accent` | Box shadow verde difuso |
+| `gradient-primary` | Gradiente verde (#22C55E) → azul (#60A5FA) |
+| `gradient-accent` | Gradiente naranja (#FB923C) → verde (#22C55E) |
+| `gradient-text` | Texto con gradiente verde/azul (`-webkit-background-clip: text`) |
+| `glow-primary` | Box shadow verde difuso |
+| `glow-accent` | Box shadow naranja difuso |
 | `glass` | Glassmorphism — fondo semitransparente con blur |
 | `glass-card` | Glassmorphism — fondo de card con borde |
 | `content-auto` | `content-visibility: auto` con `contain-intrinsic-size: auto 200px` (listas largas) |
@@ -166,9 +166,9 @@ import { cn } from "@/lib/utils";
 
 | Variable | Valor | Uso en Tailwind |
 |----------|-------|-----------------|
-| `--primary` | Azul `#3B82F6` | `text-primary`, `bg-primary/10`, `border-primary` |
-| `--secondary` | Morado `#8B5CF6` | `text-secondary`, `bg-secondary/10` |
-| `--accent` | Verde `#10B981` | `text-accent`, `bg-accent/10` |
+| `--primary` | Verde `#22C55E` | `text-primary`, `bg-primary/10`, `border-primary` |
+| `--secondary` | Azul `#60A5FA` | `text-secondary`, `bg-secondary/10` |
+| `--accent` | Naranja `#FB923C` | `text-accent`, `bg-accent/10` |
 | `--muted` | Gris azulado | `bg-muted`, `text-muted-foreground` |
 | `--destructive` | Rojo | `text-destructive`, `hover:bg-destructive/10` |
 | `--border` | Gris oscuro | `border-border`, `border-border/50` |

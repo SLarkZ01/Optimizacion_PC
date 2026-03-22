@@ -48,13 +48,13 @@ Client Component. Header con:
 
 ### `charts/IngresosChart.tsx`
 Client Component. Gráfica combinada (Chart.js) con ingresos mensuales y total de compras.
-- Usa `react-chartjs-2` sobre canvas (sin `ResponsiveContainer` de Recharts).
+- Usa `Chart` de `react-chartjs-2` sobre canvas (sin `ResponsiveContainer` de Recharts).
 - Props: `data: { mes: string; ingresos: number; total: number }[]`.
 - **No importar directamente** desde Server Components — usar `IngresosChartDynamic` (ver `charts/ChartsClientLoader`).
 
 ### `charts/PlanDistributionChart.tsx`
 Client Component. Gráfica de barras (Chart.js) con distribución de ingresos/compras por plan.
-- Usa `react-chartjs-2` y leyenda manual por color de plan.
+- Usa `Bar` de `react-chartjs-2` y leyenda manual por color de plan.
 - Props: `data: { plan: string; total: number; ingresos: number }[]`.
 - **No importar directamente** — usar `PlanDistributionChartDynamic` de `charts/ChartsClientLoader`.
 
@@ -105,7 +105,7 @@ Bloques reusables para paneles de detalle en dashboard.
 ## Data Fetching (`lib/dashboard.ts`)
 
 Todas las funciones:
-- Usan `createAdminClient()` (service_role key) — bypasea RLS para acceso completo.
+- Usan `createAdminClient()` (service_role key) — bypassea RLS para acceso completo.
 - Están envueltas en `React.cache()` para deduplicar llamadas dentro del mismo ciclo de render.
 - Retornan valores vacíos/cero en caso de error (sin lanzar excepción).
 

@@ -92,3 +92,13 @@ CALCOM_WEBHOOK_SECRET=...                             # Secret para verificar we
 # App
 NEXT_PUBLIC_APP_URL=https://tu-dominio.com       # URL base para redirecciones de PayPal
 ```
+
+## Endpoints API
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET`  | `/api/geo` | Devuelve `region` y `countryCode` desde `x-vercel-ip-country` |
+| `POST` | `/api/paypal/create-order` | Crea orden PayPal con precio resuelto en servidor |
+| `POST` | `/api/paypal/capture-order` | Captura pago, persiste compra/cliente y envía email |
+| `POST` | `/api/webhooks/paypal` | Webhook de respaldo para confirmar pagos |
+| `POST` | `/api/webhooks/calcom` | Registra booking y dispara email con instrucciones |

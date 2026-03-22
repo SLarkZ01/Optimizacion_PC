@@ -100,7 +100,7 @@ Tres clientes según el contexto de uso:
 |---------|----------|-------------|
 | `createBrowserClient()` | Client Components | `ANON_KEY` |
 | `createServerClient()` | Server Components / Route Handlers | `ANON_KEY` + cookies |
-| `createAdminClient()` | Operaciones privilegiadas (webhooks, dashboard) | `SERVICE_ROLE_KEY` (bypassa RLS) |
+| `createAdminClient()` | Operaciones privilegiadas (webhooks, dashboard) | `SERVICE_ROLE_KEY` (bypassea RLS) |
 
 El esquema de la base de datos está en `supabase/schema.sql` con las tablas `customers`, `purchases` y `bookings`.
 
