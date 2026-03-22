@@ -1,6 +1,6 @@
 // API Route: Crear orden de PayPal
 // POST /api/paypal/create-order
-// Recibe { planId, region, countryCode? } y retorna el orderID de PayPal
+// Recibe { planId } y retorna el orderID de PayPal
 
 import { NextResponse } from "next/server";
 import {
@@ -8,27 +8,24 @@ import {
   getPayPalApiBase,
   getPrice,
   PLAN_NAMES,
-  type PricingRegion,
 } from "@/lib/paypal";
+import { resolveGeoFromHeaders } from "@/lib/geo";
 import type { PlanId } from "@/lib/types";
 
-// Planes y regiones válidos para validación
+// Planes válidos para validación
 const VALID_PLANS: PlanId[] = ["basic", "gamer"];
-const VALID_REGIONS: PricingRegion[] = ["latam", "international"];
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { planId, region, countryCode } = body as {
+    const { planId } = body as {
       planId: PlanId;
-      region: PricingRegion;
-      countryCode?: string;
     };
 
     // Validar parámetros requeridos
-    if (!planId || !region) {
+    if (!planId) {
       return NextResponse.json(
-        { error: "Se requiere planId y region" },
+        { error: "Se requiere planId" },
         { status: 400 }
       );
     }
@@ -41,16 +38,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validar que la región sea válida
-    if (!VALID_REGIONS.includes(region)) {
-      return NextResponse.json(
-        { error: `Región inválida: ${region}. Regiones válidas: ${VALID_REGIONS.join(", ")}` },
-        { status: 400 }
-      );
-    }
+    // Resolver geo en servidor usando headers de Vercel
+    const geo = resolveGeoFromHeaders(request.headers);
 
     // Obtener precio y nombre del plan
-    const price = getPrice(planId, region);
+    const price = getPrice(planId, geo.region);
     const planName = PLAN_NAMES[planId];
 
     // Obtener access token de PayPal
@@ -72,8 +64,12 @@ export async function POST(request: Request) {
               currency_code: "USD",
               value: price.toFixed(2),
             },
-            // Metadata personalizada para identificar el plan y país después del pago
-            custom_id: JSON.stringify({ plan_id: planId, region, country_code: countryCode ?? null }),
+            custom_id: JSON.stringify({
+              plan_id: planId,
+              region: geo.region,
+              country_code: geo.countryCode,
+              country_source: geo.source,
+            }),
           },
         ],
       }),

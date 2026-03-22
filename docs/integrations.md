@@ -29,10 +29,11 @@
 
 ## Precios por Región
 
-Los precios son siempre en **USD**, sin conversión de monedas. La región se detecta en el cliente via `useRegion()` (`hooks/useCurrency.ts`) usando `ipapi.co/json/`.
+Los precios son siempre en **USD**, sin conversión de monedas. La región se detecta en servidor con el header `x-vercel-ip-country` y se usa como fuente autoritativa en `POST /api/paypal/create-order`.
 
-- Cache en `localStorage` por 24h con clave `pcoptimize_region`
-- Timeout de 4 segundos; fallback a `"international"` si la detección falla
+- Detección principal: `x-vercel-ip-country` (ISO 3166-1 alpha-2)
+- Fallback: `"latam"` si el header no está disponible (ej: local/dev)
+- La UI consulta `GET /api/geo` (cache CDN por país + `Vary: X-Vercel-IP-Country`) y guarda caché cliente en `localStorage` por 24h (`pcoptimize_region`)
 
 | Plan    | Latam (USD) | Internacional (USD) |
 |---------|-------------|----------------------|
@@ -127,7 +128,14 @@ El esquema de la base de datos está en `supabase/schema.sql` con las tablas `cu
 
 La columna `customers.country_code` (ISO 3166-1 alpha-2, ej: `"CO"`, `"US"`) se captura con dos fuentes:
 
-1. **Fuente primaria**: `countryCode` enviado desde el frontend via `useRegion()` (`ipapi.co`) — se incluye en el `custom_id` de la orden de PayPal al llamar `POST /api/paypal/create-order`.
+1. **Fuente primaria**: `country_code` resuelto en servidor desde `x-vercel-ip-country` al crear la orden (`POST /api/paypal/create-order`) — se incluye en `custom_id`.
 2. **Fallback**: `payer.address.country_code` de la respuesta de captura de PayPal — disponible cuando el perfil del pagador está completo.
 
-El valor se almacena en `customers.country_code` al crear un cliente nuevo en `POST /api/paypal/capture-order`. Clientes existentes no se actualizan (para no sobrescribir datos ya guardados). El campo es nullable — clientes creados antes de esta funcionalidad tendrán `null`.
+El valor se almacena en `customers.country_code` al crear un cliente nuevo en `POST /api/paypal/capture-order`.
+
+### Mismatch de país (seguridad)
+
+Si `country_code` de metadata (Vercel) difiere de `payer.address.country_code` (PayPal), se aplica política **flag and allow**:
+
+- Se permite el flujo de pago (no se bloquea conversión)
+- Se registra un warning con contexto para auditoría antifraude (posible VPN/proxy o geolocalización inconsistente)

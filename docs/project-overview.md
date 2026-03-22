@@ -38,7 +38,7 @@ Construido con Next.js 16.1.6, React 19 y TypeScript usando el App Router.
 - **Emails**: Brevo (`@getbrevo/brevo`) con templates HTML propios
 - **Agendamiento**: Cal.com (integración via webhook)
 - **Acceso remoto**: RustDesk (mencionado en emails e instrucciones al cliente)
-- **Geolocalización**: ipapi.co (detección de región para precios diferenciados)
+- **Geolocalización**: Vercel Request Headers (`x-vercel-ip-country`) para detección de región
 - **Base de Datos**: Supabase (PostgreSQL) con clientes browser/server/admin
 - **Utilidades**: clsx, tailwind-merge, class-variance-authority
 

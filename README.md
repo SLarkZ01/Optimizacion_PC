@@ -149,7 +149,7 @@ Limpieza, velocidad y seguridad garantizada — 100% remoto, sin desinstalar nad
 | **Emails** | [Brevo](https://brevo.com) | ^4.0.1 | `@getbrevo/brevo` — emails transaccionales |
 | **Agendamiento** | [Cal.com](https://cal.com) | — | Webhook + link pre-llenado con nombre y email |
 | **Acceso remoto** | [RustDesk](https://rustdesk.com) | — | Instrucciones enviadas por email tras agendar |
-| **Geolocalización** | [ipapi.co](https://ipapi.co) | — | Detección de región para precios diferenciados |
+| **Geolocalización** | Vercel Request Headers | — | `x-vercel-ip-country` para detectar región de precios |
 | **Gráficas** | [Recharts](https://recharts.org) | 2.15.4 | Con `dynamic(ssr:false)` para evitar SSR |
 | **Formularios** | [React Hook Form](https://react-hook-form.com) | ^7.71.2 | + Zod para validación de esquemas |
 | **Toasts** | [Sonner](https://sonner.emilkowal.ski) | ^1.7.4 | Provider global en root layout |
@@ -185,6 +185,7 @@ nextjs_optimizacion_pc/
 │   │   └── reservas/page.tsx        #   Tabla paginada de reservas
 │   │
 │   └── 📁 api/
+│       ├── geo/                # GET — detecta región (x-vercel-ip-country)
 │       ├── paypal/
 │       │   ├── create-order/        # POST — crea orden PayPal REST v2
 │       │   └── capture-order/       # POST — captura pago, guarda en DB, envía email
@@ -201,7 +202,7 @@ nextjs_optimizacion_pc/
 │   └── ui/                          # 15 componentes shadcn/ui
 │
 ├── 📁 hooks/
-│   ├── useCurrency.ts               # useRegion() — detecta latam/international vía IP
+│   ├── useCurrency.ts               # useRegion() — consulta /api/geo + cache local 24h
 │   └── use-mobile.ts                # useMobile() — detecta viewport móvil
 │
 ├── 📁 lib/
@@ -210,6 +211,7 @@ nextjs_optimizacion_pc/
 │   ├── constants.ts                 # SITE_CONFIG, PRICING_PLANS, FEATURES, FAQ, etc.
 │   ├── icons.ts                     # ICON_MAP centralizado (Lucide por nombre string)
 │   ├── paypal.ts                    # PAYPAL_PRICES, getPrice(), getPayPalAccessToken()
+│   ├── geo.ts                       # countryCodeToRegion(), resolveGeoFromHeaders()
 │   ├── email.ts                     # sendPaymentConfirmationEmail() + sendBookingConfirmationEmail()
 │   ├── supabase.ts                  # 3 clientes: browser, server, admin (service_role)
 │   ├── dashboard.ts                 # Data fetching con React.cache() para streaming
@@ -294,6 +296,7 @@ Dos funciones PostgreSQL optimizadas para evitar el doble query:
 |--------|------|--------------|-------------|
 | `POST` | `/api/paypal/create-order` | Pública | Crea orden PayPal REST v2, devuelve `orderID` |
 | `POST` | `/api/paypal/capture-order` | Pública | Captura pago, guarda en Supabase, envía email Brevo |
+| `GET` | `/api/geo` | Pública | Retorna región y país desde headers de Vercel |
 | `POST` | `/api/webhooks/paypal` | HMAC signature | Webhook de seguridad con verificación de firma |
 | `POST` | `/api/webhooks/calcom` | — | Webhook Cal.com: guarda booking, envía email RustDesk |
 | `GET` | `/auth/callback` | — | Intercambio de código OAuth para Supabase Auth |
@@ -302,7 +305,7 @@ Dos funciones PostgreSQL optimizadas para evitar el doble query:
 
 ## 💰 Precios por región
 
-La región se detecta automáticamente vía [`ipapi.co`](https://ipapi.co) con cache en `localStorage` por 24h. Timeout de 4 segundos con fallback a `"international"`.
+La región se detecta en servidor vía `x-vercel-ip-country` (Vercel). La UI consulta `GET /api/geo` y cachea el resultado en `localStorage` por 24h. Si el header no está disponible (ej. local/dev), fallback a `"latam"`.
 
 | Plan | 🌎 LATAM (USD) | 🌍 Internacional (USD) |
 |------|----------------|------------------------|

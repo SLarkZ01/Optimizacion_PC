@@ -15,12 +15,10 @@ interface PricingCardProps {
   /** Precio real en USD que se cobra a través de PayPal */
   priceUSD: number;
   region: PricingRegion;
-  /** Código de país ISO 3166-1 alpha-2 detectado por ipapi.co (ej: "CO", "US") */
-  countryCode: string;
 }
 
 // Memoizado para evitar re-renders cuando cambian otros planes (rerender-memo)
-const PricingCard = memo(function PricingCard({ plan, priceUSD, region, countryCode }: PricingCardProps) {
+const PricingCard = memo(function PricingCard({ plan, priceUSD, region }: PricingCardProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const isLatam = region === "latam";
 
@@ -29,7 +27,7 @@ const PricingCard = memo(function PricingCard({ plan, priceUSD, region, countryC
     const response = await fetch("/api/paypal/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planId: plan.id, region, countryCode }),
+      body: JSON.stringify({ planId: plan.id }),
     });
 
     const data = await response.json();
@@ -39,7 +37,7 @@ const PricingCard = memo(function PricingCard({ plan, priceUSD, region, countryC
     }
 
     return data.orderID;
-  }, [plan.id, region, countryCode]);
+  }, [plan.id]);
 
   // Capturar pago aprobado por el usuario
   const onApprove = useCallback(async (data: { orderID: string }) => {

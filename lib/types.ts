@@ -64,11 +64,6 @@ export interface ContactInfo {
 /** Cuerpo de la solicitud POST /api/paypal/create-order */
 export interface CreateOrderRequest {
   planId: PlanId;
-  region: string;
-  /** Código de país ISO 3166-1 alpha-2 detectado por ipapi.co (ej: "CO", "US").
-   *  Puede ser una cadena vacía si la detección falló — en ese caso el servidor
-   *  usa payer.address.country_code de PayPal como fallback. */
-  countryCode?: string;
 }
 
 /** Respuesta exitosa de POST /api/paypal/create-order */

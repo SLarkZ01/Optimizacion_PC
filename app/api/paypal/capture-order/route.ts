@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/paypal";
 import { createAdminClient } from "@/lib/supabase";
 import { sendPaymentConfirmationEmail } from "@/lib/email";
+import { normalizeCountryCode } from "@/lib/geo";
 import type { PlanType } from "@/lib/database.types";
 
 export async function POST(request: Request) {
@@ -67,22 +68,45 @@ export async function POST(request: Request) {
     let planId: PlanType = "basic";
     let region = "latam";
     let countryCodeFromMetadata: string | null = null;
+    let countrySourceFromMetadata: "vercel-header" | "fallback" | null = null;
     try {
       if (customId) {
         const metadata = JSON.parse(customId);
         planId = metadata.plan_id || "basic";
         region = metadata.region || "latam";
-        countryCodeFromMetadata = metadata.country_code || null;
+        countryCodeFromMetadata = normalizeCountryCode(metadata.country_code);
+        countrySourceFromMetadata = metadata.country_source === "vercel-header"
+          ? "vercel-header"
+          : metadata.country_source === "fallback"
+            ? "fallback"
+            : null;
       }
     } catch {
       console.warn("No se pudo parsear custom_id de PayPal:", customId);
     }
 
-    // Código de país: fuente primaria = custom_id (ipapi.co), fallback = payer.address de PayPal
+    // Código de país: fuente primaria = custom_id (header de Vercel), fallback = payer.address de PayPal
     const countryCode: string | null =
       countryCodeFromMetadata ||
-      payer?.address?.country_code ||
+      normalizeCountryCode(payer?.address?.country_code) ||
       null;
+
+    const payerCountryCode = normalizeCountryCode(payer?.address?.country_code);
+    const countryMismatch = Boolean(
+      countryCodeFromMetadata &&
+      payerCountryCode &&
+      countryCodeFromMetadata !== payerCountryCode
+    );
+
+    if (countryMismatch) {
+      console.warn("PayPal Capture: mismatch de geolocalización detectado", {
+        orderID,
+        metadataCountryCode: countryCodeFromMetadata,
+        metadataCountrySource: countrySourceFromMetadata,
+        payerCountryCode,
+        policy: "flag_and_allow",
+      });
+    }
 
     // Validar que el plan es uno de los planes activos (por si llega un valor legacy de DB)
     const activePlanId = (planId === "gamer" ? "gamer" : "basic") as import("@/lib/types").PlanId;

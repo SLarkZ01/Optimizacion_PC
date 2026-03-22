@@ -23,6 +23,7 @@
 │   │   ├── compras/        # /dashboard/compras — Tabla de compras con badges de estado
 │   │   └── reservas/       # /dashboard/reservas — Tabla de reservas
 │   └── api/
+│       ├── geo/            # GET /api/geo — región por header x-vercel-ip-country
 │       ├── paypal/
 │       │   ├── create-order/   # POST /api/paypal/create-order — Crea orden PayPal REST v2
 │       │   └── capture-order/  # POST /api/paypal/capture-order — Captura pago + envía email Brevo
@@ -56,7 +57,7 @@
 │   │       └── useDetailSheet.ts
 │   └── ui/                 # 15 componentes shadcn/ui (ver sección abajo)
 ├── hooks/
-│   ├── useCurrency.ts      # useRegion() — detecta región latam/international por IP (ipapi.co)
+│   ├── useCurrency.ts      # useRegion() — consulta /api/geo y cachea región 24h en cliente
 │   └── use-mobile.ts       # useMobile() — detecta viewport móvil (shadcn)
 ├── lib/
 │   ├── utils.ts            # cn() + scrollToSection()
@@ -65,6 +66,7 @@
 │   ├── icons.ts            # ICON_MAP centralizado (Lucide icons por nombre)
 │   ├── whatsapp.ts         # getWhatsAppUrl() + WHATSAPP_URL constante
 │   ├── paypal.ts           # PAYPAL_PRICES, PLAN_NAMES, getPrice(), getPayPalAccessToken(), getBaseUrl()
+│   ├── geo.ts              # Resolución de país/región desde headers de Vercel
 │   ├── email.ts            # sendPaymentConfirmationEmail() + sendBookingConfirmationEmail() + buildCalComUrl() via Brevo
 │   ├── supabase.ts         # Clientes Supabase (browser, server, admin)
 │   ├── dashboard.ts        # Funciones de data fetching para el dashboard (KPIs, tablas, RPCs)
@@ -145,4 +147,4 @@ Toda la data estática del sitio: `SITE_CONFIG`, `PRICING_PLANS`, `FEATURES`, `T
 - `WHATSAPP_URL` — URL pre-calculada sin mensaje
 
 ### `hooks/useCurrency.ts`
-`useRegion()` — devuelve `{ region, countryCode, loading }`. Detecta la región del usuario por IP para mostrar precios diferenciados.
+`useRegion()` — devuelve `{ region, countryCode, loading }`. Consulta `GET /api/geo` (header `x-vercel-ip-country`) y cachea resultado por 24h.

@@ -1,12 +1,8 @@
 "use client";
 
-// Hook para detectar automáticamente la región de precios del usuario por IP.
-// Solo determina si el visitante es de Latam o Internacional — el cobro es
-// siempre en USD, sin conversiones a monedas locales.
-//
-// API: ipapi.co (HTTPS, gratuita, 1000 req/día)
-// Caché: localStorage con TTL de 24h para evitar llamadas repetidas
-// Fallback: "international" si la API falla o excede el timeout
+// Hook para resolver región de precios usando detección server-side
+// (headers de Vercel). El cliente consulta /api/geo y cachea el resultado
+// por 24h en localStorage.
 
 import { useState, useEffect } from "react";
 import type { PricingRegion } from "@/lib/paypal";
@@ -17,30 +13,6 @@ import type { PricingRegion } from "@/lib/paypal";
 
 const CACHE_KEY = "pcoptimize_region";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
-const DETECT_TIMEOUT_MS = 4000;            // 4 segundos máximo
-
-/** Códigos de país ISO 3166-1 alpha-2 que reciben precio Latam */
-const LATAM_COUNTRIES = new Set([
-  "CO", // Colombia
-  "MX", // México
-  "AR", // Argentina
-  "CL", // Chile
-  "PE", // Perú
-  "VE", // Venezuela
-  "EC", // Ecuador
-  "BO", // Bolivia
-  "PY", // Paraguay
-  "UY", // Uruguay
-  "GT", // Guatemala
-  "HN", // Honduras
-  "SV", // El Salvador
-  "NI", // Nicaragua
-  "CR", // Costa Rica
-  "PA", // Panamá
-  "DO", // República Dominicana
-  "CU", // Cuba
-  "PR", // Puerto Rico
-]);
 
 // ============================================================
 // Tipos
@@ -55,9 +27,9 @@ interface CacheEntry {
 export interface UseRegionResult {
   /** Región de precios PayPal detectada */
   region: PricingRegion;
-  /** Código de país ISO detectado (ej: "CO", "US") */
+  /** Código de país ISO detectado (ej: "CO", "US"), si existe */
   countryCode: string;
-  /** true mientras se realiza la detección por IP */
+  /** true mientras se resuelve la región */
   loading: boolean;
 }
 
@@ -95,7 +67,7 @@ function setCache(region: PricingRegion, countryCode: string): void {
 
 /**
  * Detecta automáticamente si el visitante es de Latam o Internacional
- * consultando su IP via ipapi.co.
+ * consultando /api/geo (resuelto en servidor con headers de Vercel).
  *
  * Retorna `region: "latam"` para países de América Latina,
  * `region: "international"` para el resto (USA, Europa, etc.).
@@ -122,32 +94,33 @@ export function useRegion(): UseRegionResult {
         return;
       }
 
-      // 2. Llamar a la API con timeout
+      // 2. Consultar endpoint interno para resolver geo en servidor
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), DETECT_TIMEOUT_MS);
-
-        const response = await fetch("https://ipapi.co/json/", {
-          signal: controller.signal,
+        const response = await fetch("/api/geo", {
+          method: "GET",
+          cache: "no-store",
         });
-        clearTimeout(timeoutId);
 
-        if (!response.ok) throw new Error(`ipapi.co respondió ${response.status}`);
+        if (!response.ok) throw new Error(`/api/geo respondió ${response.status}`);
 
-        const data = await response.json();
-        const detected: string = data.country_code ?? "US";
-        const detectedRegion: PricingRegion = LATAM_COUNTRIES.has(detected)
-          ? "latam"
-          : "international";
+        const data = await response.json() as {
+          region?: PricingRegion;
+          countryCode?: string | null;
+        };
+
+        const detectedRegion: PricingRegion = data.region === "international"
+          ? "international"
+          : "latam";
+        const detectedCountryCode = data.countryCode ?? "";
 
         if (!cancelled) {
           setRegion(detectedRegion);
-          setCountryCode(detected);
-          setCache(detectedRegion, detected);
+          setCountryCode(detectedCountryCode);
+          setCache(detectedRegion, detectedCountryCode);
         }
       } catch {
         // Fallback silencioso a latam — precio más bajo por defecto para
-        // no perjudicar a usuarios latinoamericanos si ipapi.co falla.
+        // no perjudicar a usuarios latinoamericanos si falla /api/geo.
         // countryCode vacío para no grabar un país ficticio en la base de datos.
         if (!cancelled) {
           setRegion("latam");
