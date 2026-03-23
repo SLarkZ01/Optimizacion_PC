@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   quality:
@@ -68,10 +68,9 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
     environment:
       name: preview
-      url: ${{ steps.vercel_deploy.outputs.preview_url }}
     env:
       NEXT_TELEMETRY_DISABLED: 1
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -79,6 +78,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate Vercel secrets
+        run: |
+          test -n "${{ secrets.VERCEL_TOKEN }}" || { echo "Missing VERCEL_TOKEN"; exit 1; }
+          test -n "${{ secrets.VERCEL_ORG_ID }}" || { echo "Missing VERCEL_ORG_ID"; exit 1; }
+          test -n "${{ secrets.VERCEL_PROJECT_ID }}" || { echo "Missing VERCEL_PROJECT_ID"; exit 1; }
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -105,10 +110,9 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: production
-      url: ${{ steps.vercel_deploy.outputs.production_url }}
     env:
       NEXT_TELEMETRY_DISABLED: 1
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -116,6 +120,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate Vercel secrets
+        run: |
+          test -n "${{ secrets.VERCEL_TOKEN }}" || { echo "Missing VERCEL_TOKEN"; exit 1; }
+          test -n "${{ secrets.VERCEL_ORG_ID }}" || { echo "Missing VERCEL_ORG_ID"; exit 1; }
+          test -n "${{ secrets.VERCEL_PROJECT_ID }}" || { echo "Missing VERCEL_PROJECT_ID"; exit 1; }
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
