@@ -473,16 +473,11 @@ bun lint         # Análisis estático con ESLint
 El proyecto incluye workflow en `.github/workflows/ci-cd.yml` con estrategia:
 
 - **CI (calidad)**: en cada PR y push a `main` ejecuta `lint`, `typecheck` y `build` con Bun
-- **CD preview**: en PRs internas (no forks) despliega preview en Vercel
-- **CD producción**: en push a `main` despliega producción en Vercel
+- **CD (Vercel nativo)**: Vercel despliega automáticamente previews y producción usando la integración de Git
 
-#### Secrets requeridos en GitHub
+#### Secrets requeridos en GitHub Actions
 
-Configurar en `Settings > Secrets and variables > Actions`:
-
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
+No se requieren secrets de Vercel para el workflow de CI.
 
 #### Recomendaciones críticas para pagos (PayPal)
 
