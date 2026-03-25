@@ -9,6 +9,21 @@ import { PLAN_NAMES } from "@/lib/paypal";
 // Link base de Cal.com para agendar sesiones
 const CAL_COM_BASE_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
 
+// Paleta alineada con app/globals.css (tema principal)
+const EMAIL_COLORS = {
+  background: "#0a0a0b",
+  surface: "#18181b",
+  panel: "#111113",
+  text: "#fafafa",
+  mutedText: "#a1a1aa",
+  subtleText: "#71717a",
+  border: "#27272a",
+  primary: "#22c55e",
+  secondary: "#60a5fa",
+  accent: "#fb923c",
+  whatsapp: "#25d366",
+} as const;
+
 /**
  * Construye el link de Cal.com con email y nombre pre-llenados.
  * Cal.com acepta ?email=...&name=... para pre-rellenar el formulario de booking.
@@ -64,6 +79,7 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
   const planName = PLAN_NAMES[planId] ?? "PCOptimize";
   const calUrl = buildCalComUrl(customerEmail ?? data.toEmail, customerName);
   const greeting = customerName ? `Hola ${customerName.split(" ")[0]}` : "Hola";
+  const c = EMAIL_COLORS;
 
   return `
 <!DOCTYPE html>
@@ -73,19 +89,19 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pago recibido - PCOptimize</title>
 </head>
-<body style="margin:0;padding:0;background-color:#0f172a;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;padding:32px 16px;">
+<body style="margin:0;padding:0;background-color:${c.background};font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.background};padding:32px 16px;">
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#1e3a5f,#2d1b69);border-radius:12px 12px 0 0;padding:32px;text-align:center;">
-              <p style="margin:0 0 8px 0;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">
+            <td style="background:linear-gradient(135deg,${c.primary},${c.secondary});border-radius:12px 12px 0 0;padding:32px;text-align:center;">
+              <p style="margin:0 0 8px 0;font-size:28px;font-weight:700;color:${c.text};letter-spacing:-0.5px;">
                 &#x2705; ¡Pago recibido!
               </p>
-              <p style="margin:0;font-size:16px;color:#94a3b8;">
+              <p style="margin:0;font-size:16px;color:${c.text};">
                 Tu optimización está en camino
               </p>
             </td>
@@ -93,32 +109,32 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
 
           <!-- Body -->
           <tr>
-            <td style="background-color:#1e293b;padding:32px;">
+            <td style="background-color:${c.surface};padding:32px;">
 
-              <p style="margin:0 0 24px 0;font-size:18px;color:#e2e8f0;">
+              <p style="margin:0 0 24px 0;font-size:18px;color:${c.text};">
                 ${greeting} &#x1F44B;
               </p>
 
-              <p style="margin:0 0 24px 0;font-size:15px;color:#94a3b8;line-height:1.6;">
+              <p style="margin:0 0 24px 0;font-size:15px;color:${c.mutedText};line-height:1.6;">
                 Confirmamos que recibimos tu pago correctamente. A continuación los detalles:
               </p>
 
               <!-- Detalles del pago -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;border-radius:8px;margin-bottom:32px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.panel};border-radius:8px;margin-bottom:32px;">
                 <tr>
                   <td style="padding:20px 24px;">
                     <table width="100%" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td style="padding:8px 0;font-size:14px;color:#64748b;">Plan contratado</td>
-                        <td style="padding:8px 0;font-size:14px;color:#e2e8f0;text-align:right;font-weight:600;">${planName}</td>
+                        <td style="padding:8px 0;font-size:14px;color:${c.subtleText};">Plan contratado</td>
+                        <td style="padding:8px 0;font-size:14px;color:${c.text};text-align:right;font-weight:600;">${planName}</td>
                       </tr>
                       <tr>
-                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:14px;color:#64748b;">Monto pagado</td>
-                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:18px;color:#3b82f6;text-align:right;font-weight:700;">$${amount} USD</td>
+                        <td style="padding:8px 0;border-top:1px solid ${c.border};font-size:14px;color:${c.subtleText};">Monto pagado</td>
+                        <td style="padding:8px 0;border-top:1px solid ${c.border};font-size:18px;color:${c.primary};text-align:right;font-weight:700;">$${amount} USD</td>
                       </tr>
                       <tr>
-                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:14px;color:#64748b;">ID de orden</td>
-                        <td style="padding:8px 0;border-top:1px solid #334155;font-size:12px;color:#475569;text-align:right;font-family:monospace;">${orderId}</td>
+                        <td style="padding:8px 0;border-top:1px solid ${c.border};font-size:14px;color:${c.subtleText};">ID de orden</td>
+                        <td style="padding:8px 0;border-top:1px solid ${c.border};font-size:12px;color:${c.mutedText};text-align:right;font-family:monospace;">${orderId}</td>
                       </tr>
                     </table>
                   </td>
@@ -126,21 +142,21 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
               </table>
 
               <!-- Siguiente paso -->
-              <p style="margin:0 0 16px 0;font-size:17px;font-weight:600;color:#e2e8f0;">
+              <p style="margin:0 0 16px 0;font-size:17px;font-weight:600;color:${c.text};">
                 &#x1F4C5; Siguiente paso: agenda tu sesión
               </p>
 
-              <p style="margin:0 0 24px 0;font-size:15px;color:#94a3b8;line-height:1.6;">
+              <p style="margin:0 0 24px 0;font-size:15px;color:${c.mutedText};line-height:1.6;">
                 Elige el día y hora que más te convenga. La sesión se realiza de forma remota
-                y dura aproximadamente <strong style="color:#e2e8f0;">60-90 minutos</strong>.
+                y dura aproximadamente <strong style="color:${c.text};">60-90 minutos</strong>.
               </p>
 
               <!-- CTA Agendar -->
               <table cellpadding="0" cellspacing="0" style="margin:0 auto 32px auto;">
                 <tr>
-                  <td style="background:#3b82f6;border-radius:8px;">
+                  <td style="background:${c.secondary};border-radius:8px;">
                     <a href="${calUrl}" target="_blank"
-                       style="display:block;padding:14px 32px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;text-align:center;">
+                       style="display:block;padding:14px 32px;background:${c.secondary};border-radius:8px;font-size:16px;font-weight:600;color:${c.background};text-decoration:none;text-align:center;">
                       &#x1F4C5; Agendar mi sesión ahora
                     </a>
                   </td>
@@ -148,19 +164,19 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
               </table>
 
               <!-- Instrucciones -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;border-radius:8px;margin-bottom:24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.panel};border-radius:8px;margin-bottom:24px;">
                 <tr>
                   <td style="padding:20px 24px;">
-                    <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;color:#e2e8f0;">&#x1F4CB; Qué esperar en tu sesión:</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Conexión remota segura con RustDesk (te enviamos el link)</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Limpieza de archivos temporales y malware</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Optimización de inicio y rendimiento general</p>
-                    <p style="margin:0;font-size:13px;color:#94a3b8;">&#x2705; Soporte post-sesión por WhatsApp</p>
+                    <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;color:${c.text};">&#x1F4CB; Qué esperar en tu sesión:</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Conexión remota segura con RustDesk (te enviamos el link)</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Limpieza de archivos temporales y malware</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Optimización de inicio y rendimiento general</p>
+                    <p style="margin:0;font-size:13px;color:${c.mutedText};">&#x2705; Soporte post-sesión por WhatsApp</p>
                   </td>
                 </tr>
               </table>
 
-              <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">
+              <p style="margin:0;font-size:13px;color:${c.subtleText};line-height:1.6;">
                 ¿Tienes alguna pregunta? Responde a este email o escríbenos por WhatsApp.
               </p>
 
@@ -169,11 +185,11 @@ function buildConfirmationEmailHtml(data: ConfirmationEmailData): string {
 
           <!-- Footer -->
           <tr>
-            <td style="background-color:#0f172a;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid #1e293b;">
-              <p style="margin:0;font-size:12px;color:#334155;">
+            <td style="background-color:${c.background};border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid ${c.border};">
+              <p style="margin:0;font-size:12px;color:${c.subtleText};">
                 PCOptimize · Optimización remota de computadoras
               </p>
-              <p style="margin:4px 0 0 0;font-size:11px;color:#1e3a5f;">
+              <p style="margin:4px 0 0 0;font-size:11px;color:${c.mutedText};">
                 Este email fue generado automáticamente. ID de orden: ${orderId}
               </p>
             </td>
@@ -240,6 +256,7 @@ export async function sendPaymentConfirmationEmail(
 function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): string {
   const { customerName, scheduledDate, calBookingId } = data;
   const greeting = customerName ? `Hola ${customerName.split(" ")[0]}` : "Hola";
+  const c = EMAIL_COLORS;
 
   // Formatear fecha legible (ej: "Martes 25 de Febrero a las 3:00 PM")
   let fechaLegible = "la fecha y hora que agendaste";
@@ -262,7 +279,7 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
   }
 
   const refLine = calBookingId
-    ? `<p style="margin:4px 0 0 0;font-size:11px;color:#1e3a5f;">Referencia de sesión: ${calBookingId}</p>`
+    ? `<p style="margin:4px 0 0 0;font-size:11px;color:${c.mutedText};">Referencia de sesión: ${calBookingId}</p>`
     : "";
 
   return `
@@ -273,19 +290,19 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sesión confirmada - PCOptimize</title>
 </head>
-<body style="margin:0;padding:0;background-color:#0f172a;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;padding:32px 16px;">
+<body style="margin:0;padding:0;background-color:${c.background};font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.background};padding:32px 16px;">
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#1e3a5f,#2d1b69);border-radius:12px 12px 0 0;padding:32px;text-align:center;">
-              <p style="margin:0 0 8px 0;font-size:28px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">
+            <td style="background:linear-gradient(135deg,${c.secondary},${c.accent});border-radius:12px 12px 0 0;padding:32px;text-align:center;">
+              <p style="margin:0 0 8px 0;font-size:28px;font-weight:700;color:${c.background};letter-spacing:-0.5px;">
                 &#x1F4C5; ¡Sesión agendada!
               </p>
-              <p style="margin:0;font-size:16px;color:#94a3b8;">
+              <p style="margin:0;font-size:16px;color:${c.background};">
                 Tu sesión de optimización está confirmada
               </p>
             </td>
@@ -293,36 +310,36 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
 
           <!-- Body -->
           <tr>
-            <td style="background-color:#1e293b;padding:32px;">
+            <td style="background-color:${c.surface};padding:32px;">
 
-              <p style="margin:0 0 24px 0;font-size:18px;color:#e2e8f0;">
+              <p style="margin:0 0 24px 0;font-size:18px;color:${c.text};">
                 ${greeting} &#x1F44B;
               </p>
 
-              <p style="margin:0 0 24px 0;font-size:15px;color:#94a3b8;line-height:1.6;">
-                Tu sesión de optimización remota ha sido <strong style="color:#10b981;">confirmada</strong>
-                para <strong style="color:#e2e8f0;">${fechaLegible}</strong>.
+              <p style="margin:0 0 24px 0;font-size:15px;color:${c.mutedText};line-height:1.6;">
+                Tu sesión de optimización remota ha sido <strong style="color:${c.primary};">confirmada</strong>
+                para <strong style="color:${c.text};">${fechaLegible}</strong>.
               </p>
 
               <!-- Instrucciones RustDesk -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;border-radius:8px;margin-bottom:32px;border-left:3px solid #3b82f6;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.panel};border-radius:8px;margin-bottom:32px;border-left:3px solid ${c.secondary};">
                 <tr>
                   <td style="padding:20px 24px;">
-                    <p style="margin:0 0 16px 0;font-size:16px;font-weight:600;color:#e2e8f0;">
+                    <p style="margin:0 0 16px 0;font-size:16px;font-weight:600;color:${c.text};">
                       &#x1F4BB; Cómo conectarte (RustDesk)
                     </p>
-                    <p style="margin:0 0 12px 0;font-size:14px;color:#94a3b8;line-height:1.6;">
-                      <strong style="color:#e2e8f0;">Paso 1:</strong> Descarga RustDesk gratis desde
-                      <a href="https://rustdesk.com" style="color:#3b82f6;">rustdesk.com</a>
+                    <p style="margin:0 0 12px 0;font-size:14px;color:${c.mutedText};line-height:1.6;">
+                      <strong style="color:${c.text};">Paso 1:</strong> Descarga RustDesk gratis desde
+                      <a href="https://rustdesk.com" style="color:${c.secondary};">rustdesk.com</a>
                       e instálalo en tu computadora.
                     </p>
-                    <p style="margin:0 0 12px 0;font-size:14px;color:#94a3b8;line-height:1.6;">
-                      <strong style="color:#e2e8f0;">Paso 2:</strong> Abre RustDesk y copia tu
-                      <strong style="color:#e2e8f0;">ID y contraseña temporal</strong>.
+                    <p style="margin:0 0 12px 0;font-size:14px;color:${c.mutedText};line-height:1.6;">
+                      <strong style="color:${c.text};">Paso 2:</strong> Abre RustDesk y copia tu
+                      <strong style="color:${c.text};">ID y contraseña temporal</strong>.
                     </p>
-                    <p style="margin:0;font-size:14px;color:#94a3b8;line-height:1.6;">
-                      <strong style="color:#e2e8f0;">Paso 3:</strong> Envíanos tu ID por WhatsApp
-                      <strong style="color:#e2e8f0;">15 minutos antes</strong> de la sesión y nos
+                    <p style="margin:0;font-size:14px;color:${c.mutedText};line-height:1.6;">
+                      <strong style="color:${c.text};">Paso 3:</strong> Envíanos tu ID por WhatsApp
+                      <strong style="color:${c.text};">15 minutos antes</strong> de la sesión y nos
                       conectaremos puntualmente.
                     </p>
                   </td>
@@ -332,9 +349,9 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
               <!-- CTA WhatsApp -->
               <table cellpadding="0" cellspacing="0" style="margin:0 auto 32px auto;">
                 <tr>
-                  <td style="background:#25d366;border-radius:8px;">
+                  <td style="background:${c.whatsapp};border-radius:8px;">
                     <a href="https://wa.me/573126081990" target="_blank"
-                       style="display:block;padding:14px 32px;background:#25d366;border-radius:8px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;text-align:center;">
+                       style="display:block;padding:14px 32px;background:${c.whatsapp};border-radius:8px;font-size:16px;font-weight:600;color:${c.background};text-decoration:none;text-align:center;">
                       &#x1F4F1; Enviar ID de RustDesk por WhatsApp
                     </a>
                   </td>
@@ -342,20 +359,20 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
               </table>
 
               <!-- Qué incluye la sesión -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;border-radius:8px;margin-bottom:24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:${c.panel};border-radius:8px;margin-bottom:24px;">
                 <tr>
                   <td style="padding:20px 24px;">
-                    <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;color:#e2e8f0;">&#x1F527; Lo que haremos en tu sesión (~90 min):</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Limpieza de archivos temporales y caché</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Eliminación de malware y programas no deseados</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Optimización del inicio de Windows</p>
-                    <p style="margin:0 0 8px 0;font-size:13px;color:#94a3b8;">&#x2705; Ajuste de rendimiento general del sistema</p>
-                    <p style="margin:0;font-size:13px;color:#94a3b8;">&#x2705; Soporte post-sesión por WhatsApp (7 días)</p>
+                    <p style="margin:0 0 12px 0;font-size:14px;font-weight:600;color:${c.text};">&#x1F527; Lo que haremos en tu sesión (~90 min):</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Limpieza de archivos temporales y caché</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Eliminación de malware y programas no deseados</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Optimización del inicio de Windows</p>
+                    <p style="margin:0 0 8px 0;font-size:13px;color:${c.mutedText};">&#x2705; Ajuste de rendimiento general del sistema</p>
+                    <p style="margin:0;font-size:13px;color:${c.mutedText};">&#x2705; Soporte post-sesión por WhatsApp (7 días)</p>
                   </td>
                 </tr>
               </table>
 
-              <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">
+              <p style="margin:0;font-size:13px;color:${c.subtleText};line-height:1.6;">
                 ¿Necesitas reprogramar? Puedes hacerlo desde el link que te envió Cal.com.
                 ¿Tienes alguna duda? Escríbenos por WhatsApp.
               </p>
@@ -365,8 +382,8 @@ function buildBookingConfirmationEmailHtml(data: BookingConfirmationEmailData): 
 
           <!-- Footer -->
           <tr>
-            <td style="background-color:#0f172a;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid #1e293b;">
-              <p style="margin:0;font-size:12px;color:#334155;">
+            <td style="background-color:${c.background};border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid ${c.border};">
+              <p style="margin:0;font-size:12px;color:${c.subtleText};">
                 PCOptimize · Optimización remota de computadoras
               </p>
               ${refLine}
