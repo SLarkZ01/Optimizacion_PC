@@ -21,6 +21,8 @@ Construido con Next.js 16.1.6, React 19 y TypeScript usando el App Router.
 | Next.js          | 16.1.6     | App Router, Server Components por defecto      |
 | React            | 19.2.3     | React 19 con nuevas características            |
 | TypeScript       | ^5.9.3     | Strict mode habilitado                         |
+| Vitest           | ^4.1.1     | Runner de tests unitarios/integración ligera   |
+| Testing Library  | ^16.3.2    | Testing de componentes React (DOM behavior)    |
 | Tailwind CSS     | ^4.2.1     | v4 con PostCSS (sin tailwind.config.js)        |
 | tw-animate-css   | ^1.4.0     | Animaciones CSS importadas en globals.css      |
 | shadcn/ui        | new-york   | 15 componentes UI activos                      |
@@ -41,6 +43,7 @@ Construido con Next.js 16.1.6, React 19 y TypeScript usando el App Router.
 - **Geolocalización**: Vercel Request Headers (`x-vercel-ip-country`) para detección de región
 - **Base de Datos**: Supabase (PostgreSQL) con clientes browser/server/admin
 - **Utilidades**: clsx, tailwind-merge, class-variance-authority
+- **Testing**: Vitest + jsdom + Testing Library (`@testing-library/react`, `@testing-library/jest-dom`)
 
 ---
 
@@ -60,11 +63,12 @@ bun run lint               # Ejecutar ESLint (next/core-web-vitals + typescript)
 # Type checking
 bun run typecheck          # Verificación de tipos TypeScript
 
-# Tests (NO CONFIGURADOS ACTUALMENTE)
-# TODO: Agregar Vitest o Jest cuando se implementen tests
+# Tests
+bun run test               # Ejecuta Vitest en modo watch
+bun run test:run           # Ejecuta Vitest una vez (CI/local)
 ```
 
-> **Tests**: Actualmente no hay infraestructura de tests configurada. Cuando se agreguen, actualizar esta sección con comandos para ejecutar todos los tests, un test individual y tests en modo watch.
+> **Infra de tests**: Configurada con `vitest.config.ts` (entorno `jsdom`) y `vitest.setup.ts` (matchers de Testing Library).
 
 ---
 
