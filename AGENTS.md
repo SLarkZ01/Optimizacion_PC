@@ -10,12 +10,17 @@ Landing page + Panel de Administración para **PCOptimize**, un servicio de opti
 
 | Archivo | Contenido |
 |---------|-----------|
-| [`docs/project-overview.md`](docs/project-overview.md) | Descripción del negocio, flujo completo, stack tecnológico, comandos, variables de entorno |
-| [`docs/structure.md`](docs/structure.md) | Árbol de directorios, shadcn/ui components, path alias, utilidades y tipos |
-| [`docs/architecture.md`](docs/architecture.md) | Providers globales, Server vs Client components, data fetching, rutas API, prioridades de rendimiento |
-| [`docs/integrations.md`](docs/integrations.md) | PayPal REST v2, precios por región, Brevo emails, Cal.com webhook, RustDesk, Supabase clients |
-| [`docs/dashboard.md`](docs/dashboard.md) | Auth, seguridad en doble capa, rutas, 8 componentes del panel, data fetching y tipos exportados |
-| [`docs/conventions.md`](docs/conventions.md) | Orden de imports, nomenclatura, estructura de componentes, TypeScript, estilos, checklists |
+| [`docs/README.md`](docs/README.md) | Índice principal de documentación modular |
+| [`docs/product/overview.md`](docs/product/overview.md) | Contexto del producto y stack principal |
+| [`docs/product/business-flow.md`](docs/product/business-flow.md) | Flujo de negocio end-to-end |
+| [`docs/setup/commands.md`](docs/setup/commands.md) | Comandos de desarrollo, calidad y testing |
+| [`docs/setup/environment-variables.md`](docs/setup/environment-variables.md) | Variables de entorno y seguridad |
+| [`docs/architecture/app-architecture.md`](docs/architecture/app-architecture.md) | Providers, Server/Client, fetching y rendimiento |
+| [`docs/integrations/paypal.md`](docs/integrations/paypal.md) | Integración de pagos y precios por región |
+| [`docs/integrations/supabase.md`](docs/integrations/supabase.md) | Clientes, RLS y esquema |
+| [`docs/dashboard/overview.md`](docs/dashboard/overview.md) | Panorama general del panel admin |
+| [`docs/conventions/typescript.md`](docs/conventions/typescript.md) | Reglas de TypeScript y tipado |
+| [`docs/testing/vitest-setup.md`](docs/testing/vitest-setup.md) | Infra de testing con Vitest |
 
 ---
 

@@ -492,7 +492,7 @@ No se requieren secrets de Vercel para el workflow de CI.
 
 ## 📐 Convenciones del código
 
-Este proyecto sigue convenciones estrictas. Ver [`docs/conventions.md`](docs/conventions.md) para la guía completa.
+Este proyecto sigue convenciones estrictas. Ver `docs/README.md` para el indice y `docs/conventions/typescript.md` para reglas de tipado.
 
 ### Resumen de reglas clave
 
