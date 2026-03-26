@@ -78,6 +78,8 @@
 ├── supabase/
 │   └── schema.sql          # SQL para crear tablas (customers, purchases, bookings)
 ├── docs/                   # Documentación del proyecto
+├── vitest.config.ts        # Config global de Vitest (jsdom, globals, setupFiles)
+├── vitest.setup.ts         # Setup de tests: extiende expect con jest-dom
 └── public/
     └── images/             # Directorio para imágenes estáticas (actualmente vacío)
 ```

@@ -214,3 +214,26 @@ No duplicar datos — siempre importar desde la fuente canónica:
 - [ ] **Webhooks**: verificar firma/secret antes de procesar.
 - [ ] **Operaciones Supabase**: usar `createAdminClient()` (service_role) para escrituras desde el servidor.
 - [ ] Eventos no relevantes en webhooks → retornar HTTP 200 inmediatamente (evita reintentos).
+
+---
+
+## Testing (Vitest)
+
+Infra base de testing configurada con:
+- `vitest.config.ts` — entorno `jsdom`, `globals: true`, `setupFiles`
+- `vitest.setup.ts` — import de `@testing-library/jest-dom/vitest`
+- `tsconfig.json` — tipos `vitest/globals` y `vitest/jsdom`
+
+### Convenciones de tests
+
+- Ubicar tests junto al módulo probado con sufijo `.test.ts` o `.test.tsx`
+- Priorizar pruebas de comportamiento (qué ve/hace el usuario) sobre detalles internos
+- Para componentes React, usar `@testing-library/react`
+- Evitar acoplar tests a implementación interna o clases CSS no funcionales
+
+### Comandos de tests
+
+```bash
+bun run test       # watch mode
+bun run test:run   # ejecución única (útil para CI)
+```
