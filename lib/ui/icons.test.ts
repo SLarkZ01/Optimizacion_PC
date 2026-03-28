@@ -1,5 +1,5 @@
 import { Circle } from "lucide-react";
-import { DEFAULT_ICON, ICON_MAP } from "@/lib/icons";
+import { DEFAULT_ICON, ICON_MAP } from "@/lib/ui/icons";
 
 describe("lib/icons", () => {
   it("incluye iconos usados por constantes", () => {

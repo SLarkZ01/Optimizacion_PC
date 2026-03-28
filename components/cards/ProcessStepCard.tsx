@@ -1,6 +1,6 @@
 import { memo } from "react";
-import { ProcessStep } from "@/lib/types";
-import { ICON_MAP, DEFAULT_ICON } from "@/lib/icons";
+import { ProcessStep } from "@/lib/domain/types";
+import { ICON_MAP, DEFAULT_ICON } from "@/lib/ui/icons";
 
 interface ProcessStepCardProps {
   step: ProcessStep;

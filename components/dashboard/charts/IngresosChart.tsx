@@ -19,10 +19,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import {
   usdFormatter,
   buildDualAxisScales,
-} from "@/lib/chart-utils";
+} from "@/lib/dashboard/chart-utils";
 
 // Importar el registro centralizado (efecto de módulo — se ejecuta una sola vez)
-import "@/lib/chart-utils";
+import "@/lib/dashboard/chart-utils";
 
 interface IngresosChartProps {
   data: { mes: string; total: number; ingresos: number }[];

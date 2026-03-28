@@ -3,8 +3,8 @@
 // Esto garantiza que el cliente reciba su confirmación incluso si N8N falla
 
 import { BrevoClient } from "@getbrevo/brevo";
-import type { PlanId } from "@/lib/types";
-import { PLAN_NAMES } from "@/lib/paypal";
+import type { PlanId } from "@/lib/domain/types";
+import { PLAN_NAMES } from "@/lib/integrations/paypal";
 
 // Link base de Cal.com para agendar sesiones
 const CAL_COM_BASE_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";

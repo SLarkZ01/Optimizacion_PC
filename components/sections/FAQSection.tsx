@@ -1,4 +1,4 @@
-import { FAQ_ITEMS } from "@/lib/constants";
+import { FAQ_ITEMS } from "@/lib/config/site";
 import {
   Accordion,
   AccordionContent,

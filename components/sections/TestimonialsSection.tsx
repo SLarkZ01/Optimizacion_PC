@@ -1,4 +1,4 @@
-import { TESTIMONIALS } from "@/lib/constants";
+import { TESTIMONIALS } from "@/lib/config/site";
 import TestimonialCard from "@/components/cards/TestimonialCard";
 
 const TestimonialsSection = () => {

@@ -6,8 +6,8 @@
 // Flujo BOOKING_CANCELLED:   Cal.com → update status = 'cancelled' en bookings
 
 import { after, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase";
-import { sendBookingConfirmationEmail } from "@/lib/email";
+import { createAdminClient } from "@/lib/integrations/supabase";
+import { sendBookingConfirmationEmail } from "@/lib/integrations/email";
 
 // Tipos del payload de Cal.com webhook
 // Ref: https://cal.com/docs/core-features/webhooks

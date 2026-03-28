@@ -8,9 +8,9 @@ import {
   getPayPalApiBase,
   getPrice,
   PLAN_NAMES,
-} from "@/lib/paypal";
-import { resolveGeoFromHeaders } from "@/lib/geo";
-import type { PlanId } from "@/lib/types";
+} from "@/lib/integrations/paypal";
+import { resolveGeoFromHeaders } from "@/lib/domain/geo";
+import type { PlanId } from "@/lib/domain/types";
 
 // Planes válidos para validación
 const VALID_PLANS: PlanId[] = ["basic", "gamer"];

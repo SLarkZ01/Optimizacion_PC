@@ -18,17 +18,17 @@ vi.mock("next/server", async () => {
   };
 });
 
-vi.mock("@/lib/paypal", () => ({
+vi.mock("@/lib/integrations/paypal", () => ({
   getPayPalAccessToken,
   getPayPalApiBase,
   getBaseUrl,
 }));
 
-vi.mock("@/lib/email", () => ({
+vi.mock("@/lib/integrations/email", () => ({
   sendPaymentConfirmationEmail,
 }));
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createAdminClient,
 }));
 

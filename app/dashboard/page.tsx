@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getDashboardKPIs, getDashboardChartData } from "@/lib/dashboard";
+import { getDashboardKPIs, getDashboardChartData } from "@/lib/server/dashboard/queries";
 import ComprasRecientesTable from "@/components/dashboard/compras/ComprasRecientesTable";
 import {
   IngresosChartDynamic,

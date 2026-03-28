@@ -1,4 +1,4 @@
-import { WHATSAPP_URL, getWhatsAppUrl } from "@/lib/whatsapp";
+import { WHATSAPP_URL, getWhatsAppUrl } from "@/lib/utils/whatsapp";
 
 describe("lib/whatsapp", () => {
   it("genera URL con mensaje por defecto y telefono limpio", () => {

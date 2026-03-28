@@ -5,7 +5,7 @@ import type {
   CreateOrderRequest,
   CreateOrderResponse,
   PlanId,
-} from "@/lib/types";
+} from "@/lib/domain/types";
 
 describe("lib/types compile contracts", () => {
   it("conserva contratos de API esperados", () => {

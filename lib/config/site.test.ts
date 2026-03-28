@@ -10,7 +10,7 @@ import {
   SITE_CONFIG,
   STATS,
   TESTIMONIALS,
-} from "@/lib/constants";
+} from "@/lib/config/site";
 
 describe("lib/constants", () => {
   it("expone configuracion base del sitio", () => {

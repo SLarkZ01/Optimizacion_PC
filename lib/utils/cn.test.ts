@@ -1,4 +1,4 @@
-import { cn, scrollToSection } from "@/lib/utils";
+import { cn, scrollToSection } from "@/lib/utils/cn";
 
 describe("lib/utils", () => {
   it("cn combina y mergea clases tailwind", () => {

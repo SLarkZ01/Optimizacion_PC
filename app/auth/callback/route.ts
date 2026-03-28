@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/integrations/supabase";
 import { NextResponse } from "next/server";
 
 // Ruta de callback para manejar el intercambio de código de auth

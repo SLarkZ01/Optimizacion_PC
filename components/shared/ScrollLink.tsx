@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, scrollToSection } from "@/lib/utils";
+import { cn, scrollToSection } from "@/lib/utils/cn";
 
 interface ScrollLinkProps {
   href: string;

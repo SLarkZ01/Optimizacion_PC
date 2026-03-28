@@ -1,7 +1,7 @@
 // Configuración de PayPal para PCOptimize
 // Precios fijos en USD, helpers para autenticación y creación de órdenes
 
-import type { PlanId } from "@/lib/types";
+import type { PlanId } from "@/lib/domain/types";
 
 // ============================================================
 // Configuración del entorno

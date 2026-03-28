@@ -29,7 +29,7 @@ describe("lib/supabase", () => {
   });
 
   it("createClient usa browser client con anon key", async () => {
-    const mod = await import("@/lib/supabase");
+    const mod = await import("@/lib/integrations/supabase");
     mod.createClient();
 
     expect(createBrowserClient).toHaveBeenCalledWith(
@@ -39,7 +39,7 @@ describe("lib/supabase", () => {
   });
 
   it("createServerSupabaseClient crea cliente SSR con cookies", async () => {
-    const mod = await import("@/lib/supabase");
+    const mod = await import("@/lib/integrations/supabase");
     await mod.createServerSupabaseClient();
 
     expect(createServerClient).toHaveBeenCalledWith(
@@ -50,7 +50,7 @@ describe("lib/supabase", () => {
   });
 
   it("createAdminClient usa service role y sin persistir session", async () => {
-    const mod = await import("@/lib/supabase");
+    const mod = await import("@/lib/integrations/supabase");
     mod.createAdminClient();
 
     expect(createClient).toHaveBeenCalledWith(

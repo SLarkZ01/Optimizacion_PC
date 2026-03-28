@@ -11,7 +11,7 @@ vi.mock("next/navigation", () => ({
   redirect,
 }));
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createServerSupabaseClient,
 }));
 

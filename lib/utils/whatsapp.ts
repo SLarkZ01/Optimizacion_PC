@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/config/site";
 
 /**
  * Genera una URL de WhatsApp con mensaje pre-cargado.

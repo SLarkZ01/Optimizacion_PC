@@ -3,7 +3,7 @@
 const exchangeCodeForSession = vi.fn();
 const createServerSupabaseClient = vi.fn();
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createServerSupabaseClient,
 }));
 

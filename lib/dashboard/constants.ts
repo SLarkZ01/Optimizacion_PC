@@ -1,4 +1,4 @@
-import type { BookingStatus } from "@/lib/database.types";
+import type { BookingStatus } from "@/lib/domain/database.types";
 
 export const BOOKING_STATUS_CONFIG: Record<
   BookingStatus,

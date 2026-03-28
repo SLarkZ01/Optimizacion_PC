@@ -1,4 +1,4 @@
-import { FEATURES } from "@/lib/constants";
+import { FEATURES } from "@/lib/config/site";
 import FeatureCard from "@/components/cards/FeatureCard";
 
 const FeaturesSection = () => {

@@ -4,7 +4,7 @@ import { createSupabaseMock } from "@/tests/utils/supabase-mocks";
 
 const createAdminClient = vi.fn();
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createAdminClient,
 }));
 
@@ -21,7 +21,7 @@ describe("lib/dashboard", () => {
     supabase.queue.select("purchases", { count: 4 });
     supabase.queue.select("bookings", { count: null });
 
-    const { getDashboardKPIs } = await import("@/lib/dashboard");
+    const { getDashboardKPIs } = await import("@/lib/server/dashboard/queries");
     await expect(getDashboardKPIs()).resolves.toEqual({
       totalClientes: 12,
       totalCompras: 4,
@@ -55,7 +55,7 @@ describe("lib/dashboard", () => {
       error: null,
     });
 
-    const { getDashboardChartData } = await import("@/lib/dashboard");
+    const { getDashboardChartData } = await import("@/lib/server/dashboard/queries");
     const result = await getDashboardChartData();
 
     expect(result.ingresosTotales).toBe(70);
@@ -81,7 +81,7 @@ describe("lib/dashboard", () => {
       count: 0,
     });
 
-    const { getCustomers } = await import("@/lib/dashboard");
+    const { getCustomers } = await import("@/lib/server/dashboard/queries");
     await expect(getCustomers(2, "ana")).resolves.toEqual({
       data: [],
       total: 0,
@@ -114,7 +114,7 @@ describe("lib/dashboard", () => {
       error: null,
     });
 
-    const { getPurchases } = await import("@/lib/dashboard");
+    const { getPurchases } = await import("@/lib/server/dashboard/queries");
     const result = await getPurchases(1, "ana");
 
     expect(result.total).toBe(1);
@@ -147,7 +147,7 @@ describe("lib/dashboard", () => {
       error: null,
     });
 
-    const { getBookings } = await import("@/lib/dashboard");
+    const { getBookings } = await import("@/lib/server/dashboard/queries");
     const result = await getBookings(1, "ana");
 
     expect(result.total).toBe(1);
@@ -166,7 +166,7 @@ describe("lib/dashboard", () => {
       error: { message: "rpc error" },
     });
 
-    const { getCustomerDetails } = await import("@/lib/dashboard");
+    const { getCustomerDetails } = await import("@/lib/server/dashboard/queries");
     await expect(getCustomerDetails("123e4567-e89b-12d3-a456-426614174000")).resolves.toBeNull();
   });
 });

@@ -5,8 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Vortex } from "@/components/ui/vortex";
-import { STATS } from "@/lib/constants";
-import { scrollToSection } from "@/lib/utils";
+import { STATS } from "@/lib/config/site";
+import { scrollToSection } from "@/lib/utils/cn";
 
 // Handler estable para evitar recrear en cada render
 const handlePricingClick = () => scrollToSection("#precios");

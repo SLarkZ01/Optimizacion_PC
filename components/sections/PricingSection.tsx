@@ -1,10 +1,10 @@
 "use client";
 
-import { PRICING_PLANS } from "@/lib/constants";
-import { PAYPAL_PRICES } from "@/lib/paypal";
+import { PRICING_PLANS } from "@/lib/config/site";
+import { PAYPAL_PRICES } from "@/lib/integrations/paypal";
 import PricingCard from "@/components/cards/PricingCard";
 import { useRegion } from "@/hooks/useCurrency";
-import type { PlanId } from "@/lib/types";
+import type { PlanId } from "@/lib/domain/types";
 
 // ============================================================
 // Skeleton de una tarjeta de precios mientras carga

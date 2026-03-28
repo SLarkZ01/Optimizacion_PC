@@ -17,7 +17,7 @@ El layout raiz (`app/layout.tsx`) envuelve la app con `TooltipProvider`, `Sonner
 ## Patrones de data fetching
 
 - Dashboard separa KPIs y data de graficas para permitir streaming paralelo.
-- Las funciones de `lib/dashboard.ts` usan `React.cache()` para deduplicar lecturas por ciclo de render.
+- Las funciones de `lib/server/dashboard/queries.ts` usan `React.cache()` para deduplicar lecturas por ciclo de render.
 
 ## Rendimiento
 

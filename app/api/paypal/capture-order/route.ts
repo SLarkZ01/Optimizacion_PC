@@ -4,11 +4,11 @@
 
 import { after } from "next/server";
 import { NextResponse } from "next/server";
-import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/paypal";
-import { createAdminClient } from "@/lib/supabase";
-import { sendPaymentConfirmationEmail } from "@/lib/email";
-import { normalizeCountryCode } from "@/lib/geo";
-import type { PlanType } from "@/lib/database.types";
+import { getPayPalAccessToken, getPayPalApiBase, getBaseUrl } from "@/lib/integrations/paypal";
+import { createAdminClient } from "@/lib/integrations/supabase";
+import { sendPaymentConfirmationEmail } from "@/lib/integrations/email";
+import { normalizeCountryCode } from "@/lib/domain/geo";
+import type { PlanType } from "@/lib/domain/database.types";
 
 export async function POST(request: Request) {
   try {
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     }
 
     // Validar que el plan es uno de los planes activos (por si llega un valor legacy de DB)
-    const activePlanId = (planId === "gamer" ? "gamer" : "basic") as import("@/lib/types").PlanId;
+    const activePlanId = (planId === "gamer" ? "gamer" : "basic") as import("@/lib/domain/types").PlanId;
 
     const email = payer?.email_address;
     const name = payer?.name

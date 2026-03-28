@@ -1,4 +1,4 @@
-import { getBaseUrl, getPayPalAccessToken, getPrice } from "@/lib/paypal";
+import { getBaseUrl, getPayPalAccessToken, getPrice } from "@/lib/integrations/paypal";
 import { jsonResponse, textResponse } from "@/tests/utils/http";
 
 describe("lib/paypal", () => {
@@ -25,12 +25,12 @@ describe("lib/paypal", () => {
   it("retorna sandbox o production segun NODE_ENV", async () => {
     vi.resetModules();
     vi.stubEnv("NODE_ENV", "development");
-    const paypalDev = await import("@/lib/paypal");
+    const paypalDev = await import("@/lib/integrations/paypal");
     expect(paypalDev.getPayPalApiBase()).toContain("sandbox");
 
     vi.resetModules();
     vi.stubEnv("NODE_ENV", "production");
-    const paypalProd = await import("@/lib/paypal");
+    const paypalProd = await import("@/lib/integrations/paypal");
     expect(paypalProd.getPayPalApiBase()).toBe("https://api-m.paypal.com");
   });
 

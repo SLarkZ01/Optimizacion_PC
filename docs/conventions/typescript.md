@@ -4,6 +4,6 @@
 - Owner: Engineering
 
 - Strict mode habilitado, evitar `any`.
-- Tipos compartidos en `lib/types.ts`.
-- Tipos de DB en `lib/database.types.ts` usando `type`.
+- Tipos compartidos en `lib/domain/types.ts`.
+- Tipos de DB en `lib/domain/database.types.ts` usando `type`.
 - Usar `import type` cuando corresponda.

@@ -14,15 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PLAN_NAMES, PLAN_COLORS } from "@/lib/constants";
+import { PLAN_NAMES, PLAN_COLORS } from "@/lib/config/site";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   usdFormatter,
   buildDualAxisScales,
-} from "@/lib/chart-utils";
+} from "@/lib/dashboard/chart-utils";
 
 // Importar el registro centralizado (efecto de módulo — se ejecuta una sola vez)
-import "@/lib/chart-utils";
+import "@/lib/dashboard/chart-utils";
 
 interface PlanDistributionChartProps {
   data: { plan: string; total: number; ingresos: number }[];

@@ -7,7 +7,7 @@ const getPayPalApiBase = vi.fn();
 const getPrice = vi.fn();
 const resolveGeoFromHeaders = vi.fn();
 
-vi.mock("@/lib/paypal", () => ({
+vi.mock("@/lib/integrations/paypal", () => ({
   getPayPalAccessToken,
   getPayPalApiBase,
   getPrice,
@@ -17,7 +17,7 @@ vi.mock("@/lib/paypal", () => ({
   },
 }));
 
-vi.mock("@/lib/geo", () => ({
+vi.mock("@/lib/domain/geo", () => ({
   resolveGeoFromHeaders,
 }));
 

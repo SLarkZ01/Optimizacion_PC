@@ -1,7 +1,7 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/dashboard/layout/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/layout/DashboardHeader";
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/integrations/supabase";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({

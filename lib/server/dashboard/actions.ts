@@ -6,8 +6,8 @@
 // Se ejecutan en el servidor: tienen acceso al service_role de Supabase
 // y nunca exponen secretos al cliente.
 
-import { getCustomerDetails } from "@/lib/dashboard";
-import type { CustomerDetails } from "@/lib/dashboard";
+import { getCustomerDetails } from "@/lib/server/dashboard/queries";
+import type { CustomerDetails } from "@/lib/server/dashboard/queries";
 
 /**
  * Server Action: obtiene los detalles completos de un cliente.

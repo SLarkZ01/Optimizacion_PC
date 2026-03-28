@@ -5,7 +5,7 @@
 // por 24h en localStorage.
 
 import { useState, useEffect } from "react";
-import type { PricingRegion } from "@/lib/paypal";
+import type { PricingRegion } from "@/lib/integrations/paypal";
 
 // ============================================================
 // Constantes

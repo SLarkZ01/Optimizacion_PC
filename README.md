@@ -520,8 +520,8 @@ import { Button } from '@/components/ui/button'
 import { MyComponent } from '@/components/MyComponent'
 
 // 4. Utilidades y tipos
-import { cn } from '@/lib/utils'
-import type { MyType } from '@/lib/types'
+import { cn } from '@/lib/utils/cn'
+import type { MyType } from '@/lib/domain/types'
 ```
 
 ### Estructura de componentes

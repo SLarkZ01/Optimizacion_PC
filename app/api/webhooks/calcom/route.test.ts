@@ -15,11 +15,11 @@ vi.mock("next/server", async () => {
   };
 });
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createAdminClient,
 }));
 
-vi.mock("@/lib/email", () => ({
+vi.mock("@/lib/integrations/email", () => ({
   sendBookingConfirmationEmail,
 }));
 

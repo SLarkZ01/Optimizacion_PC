@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getCustomers, PAGE_SIZE } from "@/lib/dashboard";
+import { getCustomers, PAGE_SIZE } from "@/lib/server/dashboard/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,

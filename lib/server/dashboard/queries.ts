@@ -6,12 +6,12 @@
 // evitando consultas duplicadas cuando varios Server Components piden los mismos datos.
 
 import { cache } from "react";
-import { createAdminClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/integrations/supabase";
 import type {
   DbCustomer,
   DbPurchase,
   DbBooking,
-} from "@/lib/database.types";
+} from "@/lib/domain/database.types";
 
 // ============================================================
 // Constantes
