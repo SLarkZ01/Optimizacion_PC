@@ -4,7 +4,7 @@ import { ArrowRight, Zap, Shield, CreditCard, Rocket } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Vortex } from "@/components/ui/vortex";
+import { Vortex } from "@/components/ui/effects/vortex";
 import { STATS } from "@/lib/config/site";
 import { scrollToSection } from "@/lib/utils/cn";
 
