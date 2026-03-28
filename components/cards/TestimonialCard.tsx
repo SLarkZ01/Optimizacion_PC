@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
-import { Testimonial } from "@/lib/types";
+import { Testimonial } from "@/lib/domain/types";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;

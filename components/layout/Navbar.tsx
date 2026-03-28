@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Menu, X, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
-import { scrollToSection } from "@/lib/utils";
+import { NAV_LINKS, SITE_CONFIG } from "@/lib/config/site";
+import { scrollToSection } from "@/lib/utils/cn";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

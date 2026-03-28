@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import type { PricingPlan } from "@/lib/types";
+import type { PricingPlan } from "@/lib/domain/types";
 import PricingCard from "@/components/cards/PricingCard";
 import { jsonResponse } from "@/tests/utils/http";
 

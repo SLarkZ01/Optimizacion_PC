@@ -17,11 +17,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DetailSheet } from "@/components/dashboard/detail-sheet/DetailSheet";
 import { DetailSheetSectionHeader } from "@/components/dashboard/detail-sheet/DetailSheetSectionHeader";
 import { useDetailSheet } from "@/components/dashboard/detail-sheet/useDetailSheet";
-import { PLAN_NAMES, PAYMENT_STATUS_CONFIG } from "@/lib/constants";
-import { getCustomerDetailsAction } from "@/lib/actions";
+import { PLAN_NAMES, PAYMENT_STATUS_CONFIG } from "@/lib/config/site";
+import { getCustomerDetailsAction } from "@/lib/server/dashboard/actions";
 import { BOOKING_STATUS_CONFIG } from "@/lib/dashboard/constants";
 import { countryCodeToFlagUrl, countryCodeToName } from "@/lib/dashboard/formatters";
-import type { CustomerDetails, CustomerWithPurchaseCount } from "@/lib/dashboard";
+import type { CustomerDetails, CustomerWithPurchaseCount } from "@/lib/server/dashboard/queries";
 
 function getInitials(name: string | null, email: string): string {
   if (name) {

@@ -1,6 +1,6 @@
 import { Monitor, Mail, MessageCircle, Twitter, Instagram, Youtube } from "lucide-react";
-import { SITE_CONFIG, NAV_LINKS } from "@/lib/constants";
-import { WHATSAPP_URL } from "@/lib/whatsapp";
+import { SITE_CONFIG, NAV_LINKS } from "@/lib/config/site";
+import { WHATSAPP_URL } from "@/lib/utils/whatsapp";
 import ScrollLink from "@/components/shared/ScrollLink";
 
 /**

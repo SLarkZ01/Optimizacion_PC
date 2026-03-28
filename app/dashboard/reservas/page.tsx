@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getBookings, PAGE_SIZE } from "@/lib/dashboard";
+import { getBookings, PAGE_SIZE } from "@/lib/server/dashboard/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -14,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarCheck } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { BookingWithPurchase } from "@/lib/dashboard";
-import { PLAN_NAMES } from "@/lib/constants";
+import type { BookingWithPurchase } from "@/lib/server/dashboard/queries";
+import { PLAN_NAMES } from "@/lib/config/site";
 import SearchInput from "@/components/dashboard/common/SearchInput";
 import Pagination from "@/components/dashboard/common/Pagination";
 import { BOOKING_STATUS_CONFIG } from "@/lib/dashboard/constants";

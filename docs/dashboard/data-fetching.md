@@ -3,7 +3,7 @@
 - Ultima actualizacion: Marzo 2026
 - Owner: Backend
 
-Funciones en `lib/dashboard.ts`:
+Funciones en `lib/server/dashboard/queries.ts`:
 
 - usan `createAdminClient()` para acceso completo
 - usan `React.cache()` para deduplicar lecturas

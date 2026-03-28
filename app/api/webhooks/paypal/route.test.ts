@@ -7,12 +7,12 @@ const getPayPalAccessToken = vi.fn();
 const getPayPalApiBase = vi.fn();
 const createAdminClient = vi.fn();
 
-vi.mock("@/lib/paypal", () => ({
+vi.mock("@/lib/integrations/paypal", () => ({
   getPayPalAccessToken,
   getPayPalApiBase,
 }));
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/integrations/supabase", () => ({
   createAdminClient,
 }));
 

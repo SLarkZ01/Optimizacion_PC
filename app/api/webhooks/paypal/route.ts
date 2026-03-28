@@ -4,9 +4,9 @@
 // Este webhook es una red de seguridad para pagos que no se capturaron en el frontend
 
 import { NextResponse } from "next/server";
-import { getPayPalAccessToken, getPayPalApiBase } from "@/lib/paypal";
-import { createAdminClient } from "@/lib/supabase";
-import type { PlanType } from "@/lib/database.types";
+import { getPayPalAccessToken, getPayPalApiBase } from "@/lib/integrations/paypal";
+import { createAdminClient } from "@/lib/integrations/supabase";
+import type { PlanType } from "@/lib/domain/database.types";
 
 export const runtime = "nodejs";
 

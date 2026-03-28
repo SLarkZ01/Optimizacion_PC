@@ -6,9 +6,9 @@ import { toast } from "sonner";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { PricingPlan } from "@/lib/types";
-import type { PricingRegion } from "@/lib/paypal";
-import { cn } from "@/lib/utils";
+import type { PricingPlan } from "@/lib/domain/types";
+import type { PricingRegion } from "@/lib/integrations/paypal";
+import { cn } from "@/lib/utils/cn";
 
 interface PricingCardProps {
   plan: PricingPlan;

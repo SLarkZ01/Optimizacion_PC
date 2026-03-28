@@ -3,11 +3,11 @@ import Link from "next/link";
 import { CheckCircle, Calendar, Mail, Home, Loader2, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { createAdminClient } from "@/lib/supabase";
-import { buildCalComUrl } from "@/lib/email";
-import { WHATSAPP_URL } from "@/lib/whatsapp";
-import { PLAN_NAMES } from "@/lib/constants";
-import type { PlanType } from "@/lib/database.types";
+import { createAdminClient } from "@/lib/integrations/supabase";
+import { buildCalComUrl } from "@/lib/integrations/email";
+import { WHATSAPP_URL } from "@/lib/utils/whatsapp";
+import { PLAN_NAMES } from "@/lib/config/site";
+import type { PlanType } from "@/lib/domain/database.types";
 
 // Datos del pago obtenidos desde Supabase
 interface PurchaseData {

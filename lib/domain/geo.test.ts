@@ -2,7 +2,7 @@ import {
   countryCodeToRegion,
   normalizeCountryCode,
   resolveGeoFromHeaders,
-} from "@/lib/geo";
+} from "@/lib/domain/geo";
 
 describe("lib/geo", () => {
   it("normaliza codigo de pais valido", () => {

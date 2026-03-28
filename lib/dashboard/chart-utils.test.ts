@@ -1,4 +1,4 @@
-import { buildDualAxisScales, tickUSD } from "@/lib/chart-utils";
+import { buildDualAxisScales, tickUSD } from "@/lib/dashboard/chart-utils";
 
 describe("lib/chart-utils", () => {
   it("tickUSD formatea valores grandes en k", () => {

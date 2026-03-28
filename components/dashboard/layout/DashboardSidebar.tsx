@@ -26,7 +26,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { logout } from "@/app/login/actions";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
   {

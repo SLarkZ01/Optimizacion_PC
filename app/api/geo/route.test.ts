@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { GET } from "@/app/api/geo/route";
-import * as geoModule from "@/lib/geo";
+import * as geoModule from "@/lib/domain/geo";
 
 describe("GET /api/geo", () => {
   it("retorna region y countryCode con cache headers", async () => {

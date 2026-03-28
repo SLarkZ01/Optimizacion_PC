@@ -1,4 +1,4 @@
-import { buildCalComUrl, sendBookingConfirmationEmail, sendPaymentConfirmationEmail } from "@/lib/email";
+import { buildCalComUrl, sendBookingConfirmationEmail, sendPaymentConfirmationEmail } from "@/lib/integrations/email";
 
 const sendTransacEmail = vi.fn();
 

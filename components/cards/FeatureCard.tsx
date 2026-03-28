@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Feature } from "@/lib/types";
-import { ICON_MAP, DEFAULT_ICON } from "@/lib/icons";
+import { Feature } from "@/lib/domain/types";
+import { ICON_MAP, DEFAULT_ICON } from "@/lib/ui/icons";
 
 interface FeatureCardProps {
   feature: Feature;

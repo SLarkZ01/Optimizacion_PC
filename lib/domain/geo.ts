@@ -1,4 +1,4 @@
-import type { PricingRegion } from "@/lib/paypal";
+import type { PricingRegion } from "@/lib/integrations/paypal";
 
 export const LATAM_COUNTRIES = new Set([
   "CO",

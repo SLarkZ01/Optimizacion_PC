@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { resolveGeoFromHeaders } from "@/lib/geo";
+import { resolveGeoFromHeaders } from "@/lib/domain/geo";
 
 export async function GET(request: Request) {
   const geo = resolveGeoFromHeaders(request.headers);

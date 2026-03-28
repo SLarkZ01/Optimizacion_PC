@@ -2,8 +2,8 @@
 
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { WHATSAPP_URL } from "@/lib/whatsapp";
-import { scrollToSection } from "@/lib/utils";
+import { WHATSAPP_URL } from "@/lib/utils/whatsapp";
+import { scrollToSection } from "@/lib/utils/cn";
 
 // Handler hoisted para evitar recreación en cada render
 const handlePricingClick = () => scrollToSection("#precios");

@@ -6,7 +6,7 @@
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import type { Database } from "@/lib/database.types";
+import type { Database } from "@/lib/domain/database.types";
 
 // ============================================================
 // Cliente navegador (Client Components)
