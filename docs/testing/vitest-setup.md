@@ -44,3 +44,7 @@ bun run test:coverage
 
 - Meta de calidad actual configurada en CI: `80/80/80` para statements/lines/functions y `65` para branches.
 - Cobertura global actual supera el objetivo y se valida en `bun run test:coverage`.
+
+## Soporte
+
+- Para interpretar logs, modo watch y diferencias entre error real vs salida informativa, ver: `docs/testing/troubleshooting.md`.

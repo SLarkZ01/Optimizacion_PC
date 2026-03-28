@@ -8,6 +8,7 @@ Indice principal para navegar la documentacion tecnica de PCOptimize.
 - Comandos: `docs/setup/commands.md`
 - Variables de entorno: `docs/setup/environment-variables.md`
 - Testing (Vitest): `docs/testing/vitest-setup.md`
+- Troubleshooting de testing: `docs/testing/troubleshooting.md`
 
 ## Arquitectura
 
