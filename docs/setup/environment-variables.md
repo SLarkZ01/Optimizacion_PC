@@ -32,3 +32,10 @@ NEXT_PUBLIC_APP_URL=https://tu-dominio.com
 ## Regla de seguridad
 
 - Nunca subir `.env.local` al repositorio.
+
+## Nota de integracion de precios dinamicos
+
+- La seccion de precios del dashboard usa Supabase (`createAdminClient`) y depende de:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+- Si estas variables faltan en runtime, el checkout usa fallback de precios hardcoded para no cortar ventas.

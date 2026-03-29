@@ -17,4 +17,12 @@
 ## Esquema
 
 - Referencia SQL: `supabase/schema.sql`
-- Tablas clave: `customers`, `purchases`, `bookings`
+- Tablas clave: `customers`, `purchases`, `bookings`, `pricing_rules`
+
+## Cambios recientes de dominio
+
+- `purchases` ahora incluye:
+  - `gross_amount_usd`
+  - `paypal_fee_usd`
+  - `net_amount_usd`
+- `pricing_rules` define precios editables por `plan_type` + `region` para checkout/landing/emails.

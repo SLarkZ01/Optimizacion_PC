@@ -21,3 +21,14 @@
 
 - USD por plan y region (`latam` e `international`).
 - Region resuelta en servidor desde `x-vercel-ip-country`.
+- Fuente principal de precios: tabla `public.pricing_rules` en Supabase.
+- Fallback de resiliencia: `PAYPAL_PRICES` en `lib/integrations/paypal.ts`.
+
+## Monto bruto, fee y neto
+
+- Al capturar pago (`/api/paypal/capture-order`) se persiste:
+  - `gross_amount_usd` (monto bruto)
+  - `paypal_fee_usd` (comision PayPal)
+  - `net_amount_usd` (monto neto recibido)
+- El webhook de PayPal actualiza los mismos campos como respaldo.
+- Si PayPal no envia `seller_receivable_breakdown`, se guarda bruto y `fee/neto` quedan `null`.
