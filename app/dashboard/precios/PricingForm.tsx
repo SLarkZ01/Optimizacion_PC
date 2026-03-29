@@ -52,16 +52,10 @@ export default function PricingForm({ initialPricing, lastUpdatedLabel }: Pricin
     if (!state.message) return;
     if (state.success) {
       toast.success(state.message);
-      setDraftValues({
-        basic_latam: String(initialPricing.basic.latam),
-        basic_international: String(initialPricing.basic.international),
-        gamer_latam: String(initialPricing.gamer.latam),
-        gamer_international: String(initialPricing.gamer.international),
-      });
       return;
     }
     toast.error(state.message);
-  }, [initialPricing.basic.international, initialPricing.basic.latam, initialPricing.gamer.international, initialPricing.gamer.latam, state.message, state.success]);
+  }, [state.message, state.success]);
 
   const inputClasses = (isChanged: boolean) =>
     isChanged
