@@ -235,10 +235,15 @@ export async function sendPaymentConfirmationEmail(
   const fromEmail = process.env.BREVO_FROM_EMAIL || "no-reply@pcoptimize.com";
 
   try {
-    const expectedAmount = await getCheckoutPriceUSD(
-      data.planId,
-      data.region === "international" ? "international" : "latam",
-    );
+    let expectedAmount = data.amount;
+    try {
+      expectedAmount = await getCheckoutPriceUSD(
+        data.planId,
+        data.region === "international" ? "international" : "latam",
+      );
+    } catch (pricingError) {
+      console.warn("No se pudo resolver precio dinamico para email; usando monto capturado:", pricingError);
+    }
 
     const response = await getBrevoClient().transactionalEmails.sendTransacEmail({
       sender: { name: fromName, email: fromEmail },
