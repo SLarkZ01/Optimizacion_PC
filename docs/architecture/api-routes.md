@@ -8,6 +8,7 @@
 | Metodo | Ruta | Descripcion |
 |---|---|---|
 | GET | `/api/geo` | Region y pais por header de Vercel |
+| GET | `/api/pricing` | Retorna matriz de precios activa (fallback seguro si falla DB) |
 | POST | `/api/paypal/create-order` | Crea orden en PayPal |
 | POST | `/api/paypal/capture-order` | Captura pago, guarda datos y envia email |
 | POST | `/api/webhooks/paypal` | Webhook de respaldo de pagos |

@@ -17,6 +17,16 @@ Funciones clave:
 - `getPurchases(page, search)`
 - `getBookings(page, search)`
 
+Funciones en `lib/server/pricing/queries.ts`:
+
+- `getPricingRules()`
+- `getPricingMatrix()`
+- `getCheckoutPriceUSD(planId, region)`
+
+Mutacion de precios:
+
+- `lib/server/pricing/actions.ts` -> `updatePricingRulesAction()` (upsert en `pricing_rules`, revalidate de `/` y `/dashboard/precios`).
+
 Constante de paginacion:
 
 - `PAGE_SIZE = 10`
