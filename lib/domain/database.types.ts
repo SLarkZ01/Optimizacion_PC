@@ -10,6 +10,7 @@
 export type PlanType = "basic" | "gamer";
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
 export type BookingStatus = "scheduled" | "completed" | "cancelled" | "no_show";
+export type PricingRegion = "latam" | "international";
 
 // Tipos de fila — usar `type` (no `interface`) para compatibilidad con Record<string, unknown>
 export type DbCustomer = {
@@ -26,6 +27,9 @@ export type DbPurchase = {
   paypal_order_id: string;
   paypal_capture_id: string | null;
   plan_type: PlanType;
+  gross_amount_usd: number | null;
+  paypal_fee_usd: number | null;
+  net_amount_usd: number | null;
   amount: number;
   currency: string;
   status: PaymentStatus;
@@ -41,6 +45,17 @@ export type DbBooking = {
   status: BookingStatus;
   rustdesk_id: string | null;
   notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DbPricingRule = {
+  id: string;
+  plan_type: PlanType;
+  region: PricingRegion;
+  price_usd: number;
+  currency: "USD";
+  updated_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -66,6 +81,9 @@ export type Database = {
           id?: string;
           created_at?: string;
           updated_at?: string;
+          gross_amount_usd?: number;
+          paypal_fee_usd?: number | null;
+          net_amount_usd?: number | null;
         };
         Update: Partial<Omit<DbPurchase, "id">>;
         Relationships: [
@@ -99,6 +117,16 @@ export type Database = {
           },
         ];
       };
+      pricing_rules: {
+        Row: DbPricingRule;
+        Insert: Omit<DbPricingRule, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Omit<DbPricingRule, "id" | "created_at">>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -110,6 +138,9 @@ export type Database = {
           paypal_order_id: string;
           paypal_capture_id: string | null;
           plan_type: PlanType;
+          gross_amount_usd: number | null;
+          paypal_fee_usd: number | null;
+          net_amount_usd: number | null;
           amount: number;
           currency: string;
           status: PaymentStatus;

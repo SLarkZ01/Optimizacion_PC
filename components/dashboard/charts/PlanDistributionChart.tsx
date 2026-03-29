@@ -25,7 +25,12 @@ import {
 import "@/lib/dashboard/chart-utils";
 
 interface PlanDistributionChartProps {
-  data: { plan: string; total: number; ingresos: number }[];
+  data: {
+    plan: string;
+    total: number;
+    ingresosNetos: number;
+    ingresosBrutos: number;
+  }[];
 }
 
 function buildOptions(isMobile: boolean): ChartOptions<"bar"> {
@@ -82,14 +87,15 @@ const PlanDistributionChart = memo(function PlanDistributionChart({
             ? "hsl(213 94% 68%)"
             : "hsl(270 95% 75%)");
 
-      return {
-        plan: d.plan,
-        name: PLAN_NAMES[d.plan] ?? d.plan,
-        color: resolvedColor,
-        total: d.total,
-        ingresos: d.ingresos,
-      };
-    });
+        return {
+          plan: d.plan,
+          name: PLAN_NAMES[d.plan] ?? d.plan,
+          color: resolvedColor,
+          total: d.total,
+          ingresosNetos: d.ingresosNetos,
+          ingresosBrutos: d.ingresosBrutos,
+        };
+      });
 
     const labels = planEntries.map((e) => e.name);
 
@@ -97,7 +103,7 @@ const PlanDistributionChart = memo(function PlanDistributionChart({
       ? [
           {
             label: "Ingresos (USD)",
-            data: planEntries.map((e) => e.ingresos),
+            data: planEntries.map((e) => e.ingresosNetos),
             backgroundColor: planEntries.map((e) => e.color),
             borderRadius: 5,
             borderSkipped: false as const,
@@ -107,7 +113,7 @@ const PlanDistributionChart = memo(function PlanDistributionChart({
       : [
           {
             label: "Ingresos (USD)",
-            data: planEntries.map((e) => e.ingresos),
+            data: planEntries.map((e) => e.ingresosNetos),
             backgroundColor: planEntries.map((e) => e.color),
             borderRadius: 5,
             borderSkipped: false as const,
@@ -164,8 +170,8 @@ const PlanDistributionChart = memo(function PlanDistributionChart({
           {data
             .map(
               (d) =>
-                `${PLAN_NAMES[d.plan] ?? d.plan}: ${d.total} compras, $${d.ingresos} USD`,
-            )
+                `${PLAN_NAMES[d.plan] ?? d.plan}: ${d.total} compras, neto $${d.ingresosNetos} USD, bruto $${d.ingresosBrutos} USD`,
+              )
             .join(", ")}
           .
         </p>

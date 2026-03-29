@@ -25,7 +25,7 @@ import {
 import "@/lib/dashboard/chart-utils";
 
 interface IngresosChartProps {
-  data: { mes: string; total: number; ingresos: number }[];
+  data: { mes: string; total: number; ingresosNetos: number; ingresosBrutos: number }[];
 }
 
 // Array de nombres de meses hoisted — sin re-allocación por render
@@ -101,7 +101,7 @@ const IngresosChart = memo(function IngresosChart({ data }: IngresosChartProps) 
         {
           type: "bar" as const,
           label: "Ingresos (USD)",
-          data: data.map((d) => d.ingresos),
+          data: data.map((d) => d.ingresosNetos),
           backgroundColor: color1,
           borderRadius: 5,
           borderSkipped: false,
@@ -156,8 +156,8 @@ const IngresosChart = memo(function IngresosChart({ data }: IngresosChartProps) 
         <p className="sr-only">
           Gráfico combinado: ingresos y compras mensuales.{" "}
           {data
-            .map((d) => `${formatMes(d.mes)}: $${d.ingresos} USD, ${d.total} compras`)
-            .join(", ")}.
+          .map((d) => `${formatMes(d.mes)}: neto $${d.ingresosNetos} USD, bruto $${d.ingresosBrutos} USD, ${d.total} compras`)
+          .join(", ")}.
         </p>
 
         {/* Canvas — Chart.js gestiona el resize internamente sin pasar por React */}

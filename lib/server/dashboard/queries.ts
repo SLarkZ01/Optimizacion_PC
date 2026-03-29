@@ -41,10 +41,32 @@ export type BookingWithPurchase = DbBooking & {
 /** Fila estrecha para la tabla de compras recientes (solo campos renderizados) */
 export type ComprasRecientesRow = Pick<
   DbPurchase,
-  "id" | "status" | "plan_type" | "amount" | "created_at"
+  | "id"
+  | "status"
+  | "plan_type"
+  | "gross_amount_usd"
+  | "paypal_fee_usd"
+  | "net_amount_usd"
+  | "amount"
+  | "created_at"
 > & {
   customers: Pick<DbCustomer, "name" | "email"> | null;
 };
+
+function getGrossAmountUSD(purchase: {
+  gross_amount_usd?: number | null;
+  amount: number;
+}): number {
+  return purchase.gross_amount_usd ?? purchase.amount;
+}
+
+function getNetAmountUSD(purchase: {
+  net_amount_usd?: number | null;
+  gross_amount_usd?: number | null;
+  amount: number;
+}): number {
+  return purchase.net_amount_usd ?? purchase.gross_amount_usd ?? purchase.amount;
+}
 
 /**
  * Detalles completos de un cliente: sus datos, compras y reservas.
@@ -71,9 +93,20 @@ export interface DashboardKPIs {
 }
 
 export interface DashboardChartData {
-  ingresosTotales: number;
-  comprasPorPlan: { plan: string; total: number; ingresos: number }[];
-  comprasPorMes: { mes: string; total: number; ingresos: number }[];
+  ingresosTotalesNetos: number;
+  ingresosTotalesBrutos: number;
+  comprasPorPlan: {
+    plan: string;
+    total: number;
+    ingresosNetos: number;
+    ingresosBrutos: number;
+  }[];
+  comprasPorMes: {
+    mes: string;
+    total: number;
+    ingresosNetos: number;
+    ingresosBrutos: number;
+  }[];
   comprasRecientes: ComprasRecientesRow[];
 }
 
@@ -125,43 +158,58 @@ export const getDashboardChartData = cache(
         // Solo compras completadas en los últimos 6 meses, solo columnas necesarias
         supabase
           .from("purchases")
-          .select("plan_type, amount, created_at")
+          .select("plan_type, amount, gross_amount_usd, net_amount_usd, created_at")
           .eq("status", "completed")
           .gte("created_at", sixMonthsAgoISO),
         // Últimas 5 compras — solo columnas que la tabla renderiza (P4)
         supabase
           .from("purchases")
-          .select("id, status, plan_type, amount, created_at, customers(name, email)")
+          .select("id, status, plan_type, amount, gross_amount_usd, paypal_fee_usd, net_amount_usd, created_at, customers(name, email)")
           .order("created_at", { ascending: false })
           .limit(5),
       ]);
 
     const purchases = (completedForStats ?? []) as Pick<
       DbPurchase,
-      "plan_type" | "amount" | "created_at"
+      "plan_type" | "amount" | "gross_amount_usd" | "net_amount_usd" | "created_at"
     >[];
 
-    // Un solo loop — combina ingresosTotales + comprasPorPlan + comprasPorMes (P6)
-    let ingresosTotales = 0;
-    const planMap = new Map<string, { total: number; ingresos: number }>();
-    const comprasPorMesMap = new Map<string, { total: number; ingresos: number }>();
+    // Un solo loop — combina ingresos netos/brutos + compras por plan y mes (P6)
+    let ingresosTotalesNetos = 0;
+    let ingresosTotalesBrutos = 0;
+    const planMap = new Map<string, { total: number; ingresosNetos: number; ingresosBrutos: number }>();
+    const comprasPorMesMap = new Map<string, { total: number; ingresosNetos: number; ingresosBrutos: number }>();
 
     for (const p of purchases) {
+      const grossAmount = getGrossAmountUSD(p);
+      const netAmount = getNetAmountUSD(p);
+
       // Ingresos totales
-      ingresosTotales += p.amount;
+      ingresosTotalesBrutos += grossAmount;
+      ingresosTotalesNetos += netAmount;
 
       // Por plan
-      const planEntry = planMap.get(p.plan_type) ?? { total: 0, ingresos: 0 };
+      const planEntry = planMap.get(p.plan_type) ?? {
+        total: 0,
+        ingresosNetos: 0,
+        ingresosBrutos: 0,
+      };
       planEntry.total += 1;
-      planEntry.ingresos += p.amount;
+      planEntry.ingresosNetos += netAmount;
+      planEntry.ingresosBrutos += grossAmount;
       planMap.set(p.plan_type, planEntry);
 
       // Por mes
       const date = new Date(p.created_at);
       const mesKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      const mesEntry = comprasPorMesMap.get(mesKey) ?? { total: 0, ingresos: 0 };
+      const mesEntry = comprasPorMesMap.get(mesKey) ?? {
+        total: 0,
+        ingresosNetos: 0,
+        ingresosBrutos: 0,
+      };
       mesEntry.total += 1;
-      mesEntry.ingresos += p.amount;
+      mesEntry.ingresosNetos += netAmount;
+      mesEntry.ingresosBrutos += grossAmount;
       comprasPorMesMap.set(mesKey, mesEntry);
     }
 
@@ -174,7 +222,8 @@ export const getDashboardChartData = cache(
       .sort((a, b) => a.mes.localeCompare(b.mes));
 
     return {
-      ingresosTotales,
+      ingresosTotalesNetos,
+      ingresosTotalesBrutos,
       comprasPorPlan,
       comprasPorMes,
       comprasRecientes: (comprasRecientesRaw ?? []) as ComprasRecientesRow[],
@@ -267,6 +316,9 @@ export const getPurchases = cache(
       paypal_order_id: r.paypal_order_id,
       paypal_capture_id: r.paypal_capture_id,
       plan_type: r.plan_type,
+      gross_amount_usd: r.gross_amount_usd,
+      paypal_fee_usd: r.paypal_fee_usd,
+      net_amount_usd: r.net_amount_usd,
       amount: r.amount,
       currency: r.currency,
       status: r.status,

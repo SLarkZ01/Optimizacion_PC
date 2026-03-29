@@ -8,6 +8,12 @@ import { getPayPalAccessToken, getPayPalApiBase } from "@/lib/integrations/paypa
 import { createAdminClient } from "@/lib/integrations/supabase";
 import type { PlanType } from "@/lib/domain/database.types";
 
+function parseOptionalAmount(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
@@ -119,12 +125,28 @@ async function handlePaymentCompleted(event: Record<string, unknown>) {
 
   let orderId: string | undefined;
   let captureId: string | undefined;
-  let amount = 0;
+  let grossAmount = 0;
+  let paypalFee: number | null = null;
+  let netAmount: number | null = null;
   let customId: string | undefined;
 
   if (isCapture) {
     captureId = resource.id as string;
-    amount = parseFloat((resource.amount as Record<string, string>)?.value || "0");
+    grossAmount =
+      parseOptionalAmount(
+        (resource.seller_receivable_breakdown as Record<string, Record<string, string>> | undefined)
+          ?.gross_amount?.value,
+      ) ??
+      parseOptionalAmount((resource.amount as Record<string, string>)?.value) ??
+      0;
+    paypalFee = parseOptionalAmount(
+      (resource.seller_receivable_breakdown as Record<string, Record<string, string>> | undefined)
+        ?.paypal_fee?.value,
+    );
+    netAmount = parseOptionalAmount(
+      (resource.seller_receivable_breakdown as Record<string, Record<string, string>> | undefined)
+        ?.net_amount?.value,
+    );
     customId = resource.custom_id as string;
 
     // Extraer order ID del supplementary_data o links
@@ -157,7 +179,14 @@ async function handlePaymentCompleted(event: Record<string, unknown>) {
     if (captureId) {
       await supabase
         .from("purchases")
-        .update({ paypal_capture_id: captureId, status: "completed" })
+        .update({
+          paypal_capture_id: captureId,
+          status: "completed",
+          gross_amount_usd: grossAmount,
+          amount: grossAmount,
+          paypal_fee_usd: paypalFee,
+          net_amount_usd: netAmount,
+        })
         .eq("paypal_order_id", orderId);
     }
     return;
@@ -179,7 +208,9 @@ async function handlePaymentCompleted(event: Record<string, unknown>) {
   console.warn(
     `Webhook PayPal: Orden ${orderId} no encontrada en DB. ` +
     `Esto indica que la captura del frontend falló. ` +
-    `Plan: ${planId}, Monto: $${amount} USD. Requiere revisión manual.`
+    `Plan: ${planId}, Bruto: $${grossAmount} USD, Neto: ${
+      netAmount == null ? "N/D" : `$${netAmount} USD`
+    }. Requiere revisión manual.`
   );
 }
 

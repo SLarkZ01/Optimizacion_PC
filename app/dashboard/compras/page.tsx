@@ -78,7 +78,9 @@ async function ComprasContent({
                   <TableRow>
                     <TableHead>Cliente</TableHead>
                     <TableHead>Plan</TableHead>
-                    <TableHead>Monto</TableHead>
+                    <TableHead>Neto</TableHead>
+                    <TableHead>Comisión</TableHead>
+                    <TableHead>Bruto</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead>ID PayPal</TableHead>
                     <TableHead>Fecha</TableHead>
@@ -87,6 +89,8 @@ async function ComprasContent({
                 <TableBody>
                   {purchases.map((purchase: PurchaseWithCustomer) => {
                     const statusConfig = PAYMENT_STATUS_CONFIG[purchase.status];
+                    const grossAmount = purchase.gross_amount_usd ?? purchase.amount;
+                    const netAmount = purchase.net_amount_usd ?? grossAmount;
                     return (
                       <TableRow key={purchase.id}>
                         <TableCell>
@@ -112,7 +116,13 @@ async function ComprasContent({
                           </Badge>
                         </TableCell>
                         <TableCell className="font-medium">
-                          {formatUSD(purchase.amount)}
+                          {formatUSD(netAmount)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {purchase.paypal_fee_usd == null ? "—" : formatUSD(purchase.paypal_fee_usd)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatUSD(grossAmount)}
                         </TableCell>
                         <TableCell>
                           <Badge variant={statusConfig.variant}>

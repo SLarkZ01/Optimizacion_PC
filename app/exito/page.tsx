@@ -14,7 +14,7 @@ interface PurchaseData {
   customerName: string | null;
   customerEmail: string | null;
   planType: PlanType;
-  amount: number;
+  grossAmountUsd: number;
 }
 
 // Consultar Supabase para obtener datos reales del pago
@@ -23,7 +23,7 @@ async function getPurchaseData(orderId: string): Promise<PurchaseData | null> {
     const supabase = createAdminClient();
     const { data } = await supabase
       .from("purchases")
-      .select("plan_type, amount, customers(name, email)")
+      .select("plan_type, amount, gross_amount_usd, customers(name, email)")
       .eq("paypal_order_id", orderId)
       .eq("status", "completed")
       .single();
@@ -41,7 +41,7 @@ async function getPurchaseData(orderId: string): Promise<PurchaseData | null> {
       customerName,
       customerEmail,
       planType: data.plan_type as PlanType,
-      amount: Number(data.amount),
+      grossAmountUsd: Number(data.gross_amount_usd ?? data.amount),
     };
   } catch {
     return null;
@@ -63,7 +63,7 @@ async function ExitoContent({
     ? purchase.customerName.split(" ")[0]
     : null;
   const planLabel = purchase ? (PLAN_NAMES[purchase.planType] ?? purchase.planType) : null;
-  const amount = purchase?.amount ?? null;
+  const amount = purchase?.grossAmountUsd ?? null;
 
   // Link de Cal.com pre-llenado con email y nombre del cliente
   // Graceful degradation: si no hay datos, usa la URL base genérica
