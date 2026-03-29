@@ -2,6 +2,9 @@
 // Precios fijos en USD, helpers para autenticación y creación de órdenes
 
 import type { PlanId } from "@/lib/domain/types";
+import type { PricingRegion } from "@/lib/domain/database.types";
+
+export type { PricingRegion } from "@/lib/domain/database.types";
 
 // ============================================================
 // Configuración del entorno
@@ -14,8 +17,6 @@ const PAYPAL_API_BASE = process.env.NODE_ENV === "production"
 // ============================================================
 // Tipo de región para diferenciación de precios
 // ============================================================
-
-export type PricingRegion = "latam" | "international";
 
 // ============================================================
 // Mapa de precios fijos en USD

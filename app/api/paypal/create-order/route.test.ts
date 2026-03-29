@@ -4,17 +4,20 @@ import { jsonResponse } from "@/tests/utils/http";
 
 const getPayPalAccessToken = vi.fn();
 const getPayPalApiBase = vi.fn();
-const getPrice = vi.fn();
+const getCheckoutPriceUSD = vi.fn();
 const resolveGeoFromHeaders = vi.fn();
 
 vi.mock("@/lib/integrations/paypal", () => ({
   getPayPalAccessToken,
   getPayPalApiBase,
-  getPrice,
   PLAN_NAMES: {
     basic: "PCOptimize - Plan Basico",
     gamer: "PCOptimize - Plan Gamer",
   },
+}));
+
+vi.mock("@/lib/server/pricing/queries", () => ({
+  getCheckoutPriceUSD,
 }));
 
 vi.mock("@/lib/domain/geo", () => ({
@@ -26,7 +29,7 @@ describe("POST /api/paypal/create-order", () => {
     vi.resetAllMocks();
     getPayPalAccessToken.mockResolvedValue("token-123");
     getPayPalApiBase.mockReturnValue("https://api-m.sandbox.paypal.com");
-    getPrice.mockReturnValue(19);
+    getCheckoutPriceUSD.mockResolvedValue(19);
     resolveGeoFromHeaders.mockReturnValue({ region: "latam", countryCode: "CO", source: "vercel-header" });
   });
 

@@ -5,6 +5,8 @@
 import { BrevoClient } from "@getbrevo/brevo";
 import type { PlanId } from "@/lib/domain/types";
 import { PLAN_NAMES } from "@/lib/integrations/paypal";
+import { getCheckoutPriceUSD } from "@/lib/server/pricing/queries";
+import type { PricingRegion } from "@/lib/domain/database.types";
 
 // Link base de Cal.com para agendar sesiones
 const CAL_COM_BASE_URL = process.env.NEXT_PUBLIC_CAL_COM_URL || "https://cal.com/pcoptimize";
@@ -60,6 +62,7 @@ export interface ConfirmationEmailData {
   customerEmail?: string;   // Para construir el link de Cal.com pre-llenado
   planId: PlanId;
   amount: number;
+  region?: PricingRegion;
   orderId: string;
 }
 
@@ -232,11 +235,19 @@ export async function sendPaymentConfirmationEmail(
   const fromEmail = process.env.BREVO_FROM_EMAIL || "no-reply@pcoptimize.com";
 
   try {
+    const expectedAmount = await getCheckoutPriceUSD(
+      data.planId,
+      data.region === "international" ? "international" : "latam",
+    );
+
     const response = await getBrevoClient().transactionalEmails.sendTransacEmail({
       sender: { name: fromName, email: fromEmail },
       to: [{ email: data.toEmail, name: data.customerName || undefined }],
       subject,
-      htmlContent: buildConfirmationEmailHtml(data),
+      htmlContent: buildConfirmationEmailHtml({
+        ...data,
+        amount: expectedAmount,
+      }),
     });
 
     console.log(

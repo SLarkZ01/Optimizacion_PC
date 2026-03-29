@@ -17,6 +17,7 @@ const ROUTE_NAMES: Record<string, string> = {
   "/dashboard": "Resumen",
   "/dashboard/clientes": "Clientes",
   "/dashboard/compras": "Compras",
+  "/dashboard/precios": "Precios",
   "/dashboard/reservas": "Reservas",
 };
 
