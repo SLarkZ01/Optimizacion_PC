@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { PRICING_PLANS } from "@/lib/config/site";
 import { PAYPAL_PRICES } from "@/lib/integrations/paypal";
 import PricingCard from "@/components/cards/PricingCard";
 import { useRegion } from "@/hooks/useCurrency";
 import type { PlanId } from "@/lib/domain/types";
+import type { PricingRegion } from "@/lib/integrations/paypal";
 
 // ============================================================
 // Skeleton de una tarjeta de precios mientras carga
@@ -56,6 +58,33 @@ const PricingCardSkeleton = ({ popular = false }: { popular?: boolean }) => (
 
 const PricingSection = () => {
   const { region, loading } = useRegion();
+  const [pricingMap, setPricingMap] = useState<Record<PlanId, Record<PricingRegion, number>>>(PAYPAL_PRICES);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPricing() {
+      try {
+        const response = await fetch("/api/pricing", { method: "GET", cache: "no-store" });
+        if (!response.ok) return;
+
+        const payload = (await response.json()) as {
+          pricing?: Record<PlanId, Record<PricingRegion, number>>;
+        };
+
+        if (cancelled || !payload.pricing) return;
+        setPricingMap(payload.pricing);
+      } catch {
+        // fallback silencioso a PAYPAL_PRICES
+      }
+    }
+
+    loadPricing();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section id="precios" className="py-20 md:py-32 bg-card/30">
@@ -84,7 +113,7 @@ const PricingSection = () => {
               <PricingCard
                 key={plan.id}
                 plan={plan}
-                priceUSD={PAYPAL_PRICES[plan.id as PlanId][region]}
+                priceUSD={pricingMap[plan.id as PlanId][region]}
                 region={region}
               />
             ))

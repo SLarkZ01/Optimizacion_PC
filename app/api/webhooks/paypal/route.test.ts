@@ -135,6 +135,11 @@ describe("POST /api/webhooks/paypal", () => {
         resource: {
           id: "CAPTURE-10",
           amount: { value: "19.00" },
+          seller_receivable_breakdown: {
+            gross_amount: { value: "19.00" },
+            paypal_fee: { value: "1.33" },
+            net_amount: { value: "17.67" },
+          },
           supplementary_data: {
             related_ids: {
               order_id: "ORDER-10",
@@ -149,7 +154,14 @@ describe("POST /api/webhooks/paypal", () => {
     expect(supabase.calls.updates).toContainEqual(
       expect.objectContaining({
         table: "purchases",
-        payload: { paypal_capture_id: "CAPTURE-10", status: "completed" },
+        payload: {
+          paypal_capture_id: "CAPTURE-10",
+          status: "completed",
+          gross_amount_usd: 19,
+          amount: 19,
+          paypal_fee_usd: 1.33,
+          net_amount_usd: 17.67,
+        },
       }),
     );
   });

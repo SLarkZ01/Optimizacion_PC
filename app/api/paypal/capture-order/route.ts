@@ -10,6 +10,12 @@ import { sendPaymentConfirmationEmail } from "@/lib/integrations/email";
 import { normalizeCountryCode } from "@/lib/domain/geo";
 import type { PlanType } from "@/lib/domain/database.types";
 
+function parseOptionalAmount(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -116,7 +122,12 @@ export async function POST(request: Request) {
       ? `${payer.name.given_name || ""} ${payer.name.surname || ""}`.trim()
       : null;
     const captureId = capture?.id || null;
-    const amount = parseFloat(capture?.amount?.value || "0");
+    const grossAmount =
+      parseOptionalAmount(capture?.seller_receivable_breakdown?.gross_amount?.value) ??
+      parseOptionalAmount(capture?.amount?.value) ??
+      0;
+    const paypalFee = parseOptionalAmount(capture?.seller_receivable_breakdown?.paypal_fee?.value);
+    const netAmount = parseOptionalAmount(capture?.seller_receivable_breakdown?.net_amount?.value);
 
     // Guardar en Supabase
     const supabase = createAdminClient();
@@ -181,7 +192,10 @@ export async function POST(request: Request) {
         paypal_order_id: orderID,
         paypal_capture_id: captureId,
         plan_type: planId,
-        amount,
+        amount: grossAmount,
+        gross_amount_usd: grossAmount,
+        paypal_fee_usd: paypalFee,
+        net_amount_usd: netAmount,
         currency: "USD",
         status: "completed",
       });
@@ -191,7 +205,9 @@ export async function POST(request: Request) {
         // No fallar — el pago ya fue cobrado
       } else {
         console.log(
-          `PayPal Capture: Compra registrada - Plan: ${planId} (${region}), Email: ${email}, Monto: $${amount} USD`
+          `PayPal Capture: Compra registrada - Plan: ${planId} (${region}), Email: ${email}, Bruto: $${grossAmount} USD, Neto: ${
+            netAmount == null ? "N/D" : `$${netAmount} USD`
+          }`
         );
       }
 
@@ -202,7 +218,8 @@ export async function POST(request: Request) {
           customerName: name,
           customerEmail: email,   // Para construir el link de Cal.com pre-llenado
           planId: activePlanId,
-          amount,
+          amount: grossAmount,
+          region: region === "international" ? "international" : "latam",
           orderId: orderID,
         })
       );

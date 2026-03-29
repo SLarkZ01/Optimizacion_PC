@@ -217,14 +217,15 @@ const SheetDetailsContent = memo(function SheetDetailsContentComponent({
                       </span>
                     ) : null}
                   </div>
-                  <span className="shrink-0 whitespace-nowrap text-right text-sm font-semibold tabular-nums text-foreground">
-                    ${purchase.amount}
-                    <span className="ml-1 text-xs font-normal text-muted-foreground">
-                      {purchase.currency}
+                    <span className="shrink-0 whitespace-nowrap text-right text-sm font-semibold tabular-nums text-foreground">
+                      ${purchase.net_amount_usd ?? purchase.gross_amount_usd ?? purchase.amount}
+                      <span className="ml-1 text-xs font-normal text-muted-foreground">USD neto</span>
+                      <span className="block text-[11px] font-normal text-muted-foreground">
+                        Bruto ${purchase.gross_amount_usd ?? purchase.amount} · Fee {purchase.paypal_fee_usd == null ? "—" : `$${purchase.paypal_fee_usd}`}
+                      </span>
                     </span>
-                  </span>
-                </div>
-              );
+                  </div>
+                );
             })}
           </div>
         )}

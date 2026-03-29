@@ -66,7 +66,9 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
                 <TableRow>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Plan</TableHead>
-                  <TableHead>Monto</TableHead>
+                  <TableHead>Neto</TableHead>
+                  <TableHead>Comisión</TableHead>
+                  <TableHead>Bruto</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Fecha</TableHead>
                 </TableRow>
@@ -74,6 +76,8 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
               <TableBody>
                 {compras.map((purchase) => {
                   const statusConfig = PAYMENT_STATUS_CONFIG[purchase.status];
+                  const grossAmount = purchase.gross_amount_usd ?? purchase.amount;
+                  const netAmount = purchase.net_amount_usd ?? grossAmount;
                   return (
                     <TableRow key={purchase.id}>
                       <TableCell>
@@ -92,7 +96,13 @@ const ComprasRecientesTable = ({ compras }: ComprasRecientesTableProps) => {
                         </Badge>
                       </TableCell>
                       <TableCell className="font-medium">
-                        {formatUSD(purchase.amount)}
+                        {formatUSD(netAmount)}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {purchase.paypal_fee_usd == null ? "—" : formatUSD(purchase.paypal_fee_usd)}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatUSD(grossAmount)}
                       </TableCell>
                       <TableCell>
                         <Badge variant={statusConfig.variant}>

@@ -6,11 +6,11 @@ import { NextResponse } from "next/server";
 import {
   getPayPalAccessToken,
   getPayPalApiBase,
-  getPrice,
   PLAN_NAMES,
 } from "@/lib/integrations/paypal";
 import { resolveGeoFromHeaders } from "@/lib/domain/geo";
 import type { PlanId } from "@/lib/domain/types";
+import { getCheckoutPriceUSD } from "@/lib/server/pricing/queries";
 
 // Planes válidos para validación
 const VALID_PLANS: PlanId[] = ["basic", "gamer"];
@@ -42,7 +42,10 @@ export async function POST(request: Request) {
     const geo = resolveGeoFromHeaders(request.headers);
 
     // Obtener precio y nombre del plan
-    const price = getPrice(planId, geo.region);
+    const price = await getCheckoutPriceUSD(
+      planId,
+      geo.region === "international" ? "international" : "latam",
+    );
     const planName = PLAN_NAMES[planId];
 
     // Obtener access token de PayPal

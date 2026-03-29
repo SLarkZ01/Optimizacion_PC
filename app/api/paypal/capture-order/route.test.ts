@@ -129,6 +129,11 @@ describe("POST /api/paypal/capture-order", () => {
                 {
                   id: "CAPTURE-1",
                   amount: { value: "32.00" },
+                  seller_receivable_breakdown: {
+                    gross_amount: { value: "32.00" },
+                    paypal_fee: { value: "2.03" },
+                    net_amount: { value: "29.97" },
+                  },
                 },
               ],
             },
@@ -167,6 +172,9 @@ describe("POST /api/paypal/capture-order", () => {
           paypal_capture_id: "CAPTURE-1",
           plan_type: "gamer",
           amount: 32,
+          gross_amount_usd: 32,
+          paypal_fee_usd: 2.03,
+          net_amount_usd: 29.97,
           status: "completed",
         }),
       }),

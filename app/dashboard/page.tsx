@@ -132,10 +132,10 @@ async function KPIsContent() {
         description="Sesiones agendadas"
       />
       <KPICard
-        title="Ingresos Totales"
-        value={formatUSD(chartData.ingresosTotales)}
+        title="Ingresos Netos"
+        value={formatUSD(chartData.ingresosTotalesNetos)}
         icon={DollarSign}
-        description="Solo compras completadas"
+        description={`Bruto ${formatUSD(chartData.ingresosTotalesBrutos)} · solo completadas`}
       />
     </div>
   );

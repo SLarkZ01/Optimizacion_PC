@@ -12,12 +12,13 @@ interface StoredResult {
   count?: number | null;
 }
 
-type TableName = "customers" | "purchases" | "bookings";
+type TableName = "customers" | "purchases" | "bookings" | "pricing_rules";
 
 interface TableState {
   selectQueue: StoredResult[];
   insertQueue: StoredResult[];
   updateQueue: StoredResult[];
+  upsertQueue: StoredResult[];
 }
 
 const DEFAULT_RESULT: StoredResult = {
@@ -35,9 +36,10 @@ function toStoredResult<T>(result: QueryResult<T>): StoredResult {
 
 function buildTableState(): Record<TableName, TableState> {
   return {
-    customers: { selectQueue: [], insertQueue: [], updateQueue: [] },
-    purchases: { selectQueue: [], insertQueue: [], updateQueue: [] },
-    bookings: { selectQueue: [], insertQueue: [], updateQueue: [] },
+    customers: { selectQueue: [], insertQueue: [], updateQueue: [], upsertQueue: [] },
+    purchases: { selectQueue: [], insertQueue: [], updateQueue: [], upsertQueue: [] },
+    bookings: { selectQueue: [], insertQueue: [], updateQueue: [], upsertQueue: [] },
+    pricing_rules: { selectQueue: [], insertQueue: [], updateQueue: [], upsertQueue: [] },
   };
 }
 
@@ -56,6 +58,7 @@ export interface SupabaseMock {
     select: <T>(table: TableName, result: QueryResult<T>) => void;
     insert: <T>(table: TableName, result: QueryResult<T>) => void;
     update: <T>(table: TableName, result: QueryResult<T>) => void;
+    upsert: <T>(table: TableName, result: QueryResult<T>) => void;
     rpc: <T>(fnName: string, result: QueryResult<T>) => void;
   };
   calls: {
@@ -172,6 +175,9 @@ export function createSupabaseMock(): SupabaseMock {
       insert: vi.fn((payload: unknown) =>
         createAwaitableChain(tableName, "insertQueue", payload),
       ),
+      upsert: vi.fn((payload: unknown) =>
+        createAwaitableChain(tableName, "upsertQueue", payload),
+      ),
       update: vi.fn((payload: unknown) =>
         createAwaitableChain(tableName, "updateQueue", payload),
       ),
@@ -197,6 +203,9 @@ export function createSupabaseMock(): SupabaseMock {
       },
       update: (table, result) => {
         tables[table].updateQueue.push(toStoredResult(result));
+      },
+      upsert: (table, result) => {
+        tables[table].upsertQueue.push(toStoredResult(result));
       },
       rpc: (fnName, result) => {
         const queue = rpcQueues.get(fnName) ?? [];

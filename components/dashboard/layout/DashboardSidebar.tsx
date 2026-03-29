@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Users,
   CreditCard,
+  Tags,
   CalendarCheck,
   Monitor,
   LogOut,
@@ -43,6 +44,11 @@ const NAV_ITEMS = [
     title: "Compras",
     href: "/dashboard/compras",
     icon: CreditCard,
+  },
+  {
+    title: "Precios",
+    href: "/dashboard/precios",
+    icon: Tags,
   },
   {
     title: "Reservas",

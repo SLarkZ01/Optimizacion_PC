@@ -36,8 +36,20 @@ describe("lib/dashboard", () => {
     supabase.queue.select("purchases", {
       data: [
         { plan_type: "basic", amount: 19, created_at: "2026-01-01T00:00:00.000Z" },
-        { plan_type: "gamer", amount: 32, created_at: "2026-01-15T00:00:00.000Z" },
-        { plan_type: "basic", amount: 19, created_at: "2026-02-01T00:00:00.000Z" },
+        {
+          plan_type: "gamer",
+          amount: 32,
+          gross_amount_usd: 32,
+          net_amount_usd: 29.97,
+          created_at: "2026-01-15T00:00:00.000Z",
+        },
+        {
+          plan_type: "basic",
+          amount: 19,
+          gross_amount_usd: 19,
+          net_amount_usd: 17.67,
+          created_at: "2026-02-01T00:00:00.000Z",
+        },
       ],
       error: null,
     });
@@ -48,6 +60,9 @@ describe("lib/dashboard", () => {
           status: "completed",
           plan_type: "basic",
           amount: 19,
+          gross_amount_usd: 19,
+          paypal_fee_usd: 1.33,
+          net_amount_usd: 17.67,
           created_at: "2026-02-01T00:00:00.000Z",
           customers: { name: "Ana", email: "ana@example.com" },
         },
@@ -58,16 +73,27 @@ describe("lib/dashboard", () => {
     const { getDashboardChartData } = await import("@/lib/server/dashboard/queries");
     const result = await getDashboardChartData();
 
-    expect(result.ingresosTotales).toBe(70);
+    expect(result.ingresosTotalesBrutos).toBe(70);
+    expect(result.ingresosTotalesNetos).toBeCloseTo(66.64, 2);
     expect(result.comprasPorPlan).toEqual(
       expect.arrayContaining([
-        { plan: "basic", total: 2, ingresos: 38 },
-        { plan: "gamer", total: 1, ingresos: 32 },
+        { plan: "basic", total: 2, ingresosBrutos: 38, ingresosNetos: 36.67 },
+        { plan: "gamer", total: 1, ingresosBrutos: 32, ingresosNetos: 29.97 },
       ]),
     );
     expect(result.comprasPorMes).toEqual([
-      { mes: "2026-01", total: 2, ingresos: 51 },
-      { mes: "2026-02", total: 1, ingresos: 19 },
+      {
+        mes: "2026-01",
+        total: 2,
+        ingresosBrutos: 51,
+        ingresosNetos: 48.97,
+      },
+      {
+        mes: "2026-02",
+        total: 1,
+        ingresosBrutos: 19,
+        ingresosNetos: 17.67,
+      },
     ]);
     expect(result.comprasRecientes).toHaveLength(1);
   });
@@ -101,6 +127,9 @@ describe("lib/dashboard", () => {
           paypal_order_id: "o-1",
           paypal_capture_id: "cap-1",
           plan_type: "basic",
+          gross_amount_usd: 19,
+          paypal_fee_usd: 1.33,
+          net_amount_usd: 17.67,
           amount: 19,
           currency: "USD",
           status: "completed",
