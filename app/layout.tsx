@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   keywords: [
     "optimizacion PC",
     "limpieza computadora",
-    "eliminar malware",
+    "mas fps PC",
     "mejorar rendimiento PC",
     "soporte tecnico remoto",
     "optimizar Windows",
