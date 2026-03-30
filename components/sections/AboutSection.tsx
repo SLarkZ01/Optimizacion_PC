@@ -44,13 +44,13 @@ const AboutSection = () => {
             <p className="text-muted-foreground mb-6 leading-relaxed">
               Soy técnico especializado en optimización y mantenimiento de
               computadoras con más de 5 años de experiencia. He ayudado a más de
-              100 personas a recuperar el rendimiento de sus equipos de forma
+              100 personas a mejorar por completo el rendimiento de sus equipos de forma
               remota, segura y profesional.
             </p>
             <p className="text-muted-foreground mb-8 leading-relaxed">
               Mi misión es brindarte un servicio de calidad, explicándote cada
-              paso del proceso y asegurándome de que tu PC funcione como el
-              primer día. La satisfacción de mis clientes es mi mejor carta de
+              paso del proceso y asegurándome de que tu PC funcione con mucho mejor rendimiento. 
+              La satisfacción de mis clientes es mi mejor carta de
               presentación.
             </p>
 
